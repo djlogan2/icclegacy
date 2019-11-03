@@ -1,73 +1,4 @@
 const L2 = require('./l2');
-if (typeof require != "undefined") {
-
-}
-
-/*
- * The packets the admin user will receive for saving and publishing.
- */
-const ADMIN_LEVEL2_PACKETS = [
-    L2.WHO_AM_I,
-    L2.LOGIN_FAILED,
-    L2.CHANNEL_QTELL,
-    L2.CHANNEL_TELL
-];
-
-/*
- * The packets a normal legacy user will receive for saving and publishing.
- */
-const USER_LEVEL2_PACKETS = [
-    L2.WHO_AM_I,
-    L2.LOGIN_FAILED,
-    L2.MOVE_ALGEBRAIC,
-    L2.MOVE_CLOCK,
-    L2.MOVE_LIST,
-    //    L2.MOVE_SMITH,
-    //    L2.MOVE_TIME,
-    L2.IS_VARIATION,
-    L2.SET2,
-    L2.ERROR,
-    L2.MESSAGELIST_BEGIN,
-    L2.MESSAGELIST_ITEM,
-    L2.PERSONAL_QTELL,
-    L2.PERSONAL_TELL,
-    L2.PERSONAL_TELL_ECHO,
-    L2.STARTED_OBSERVING,
-    L2.STOP_OBSERVING,
-    L2.PLAYERS_IN_MY_GAME,
-    L2.OFFERS_IN_MY_GAME,
-    L2.TAKEBACK,
-    L2.BACKWARD,
-    L2.SEND_MOVES,
-    L2.MY_GAME_CHANGE,
-    L2.MY_GAME_ENDED,
-    L2.MY_GAME_RESULT,
-    L2.MY_GAME_STARTED,
-    L2.MSEC,
-    L2.PLAYER_ARRIVED,
-    L2.OPEN,
-    L2.TITLES,
-    L2.STATE,
-    L2.BULLET,
-    L2.BLITZ,
-    L2.STANDARD,
-    L2.WILD,
-    L2.BUGHOUSE,
-    L2.LOSERS,
-    L2.CRAZYHOUSE,
-    L2.FIVEMINUTE,
-    L2.ONEMINUTE,
-    L2.CORRESPONDENCE_RATING,
-    L2.FIFTEENMINUTE,
-    L2.THREEMINUTE,
-    L2.FORTYFIVEMINUTE,
-    L2.CHESS960,
-    L2.PLAYER_LEFT,
-    L2.MUGSHOT,
-    L2.MATCH,
-    L2.SEEK,
-    L2.SEEK_REMOVED
-];
 
 const LegacyICC = function (options) {
 
@@ -88,8 +19,9 @@ const LegacyICC = function (options) {
     let host = options.host || "chessclub.com";
     let port = options.port || 23;
     let error_function = options.error || generic_error;
-    let packet_processor = options.processpackets || eat_packets;
     let preprocessor = options.preprocessor || null;
+    let functions = {};
+    if(options.loggedin) functions.loggedin = options.loggedin;
 
     let state = "login";
     let databuffer = "";
@@ -104,10 +36,6 @@ const LegacyICC = function (options) {
 
     function generic_error(error) {
         console.log(error);
-    }
-
-    function eat_packets() {
-        console.log("Eating packets - Define options.processpackets");
     }
 
     function login() {
@@ -148,7 +76,7 @@ const LegacyICC = function (options) {
                 databuffer = "";
                 socket.write("level1=13\n");
                 socket.write(
-                    "level2settings=" + L2.LEVEL2STRING(USER_LEVEL2_PACKETS) + "\n"
+                    "level2settings=" + L2.LEVEL2STRING( USER_LEVEL2_PACKETS) + "\n"
                 );
                 socket.write(user.profile.legacy.username + "\n");
                 state = "password";
@@ -285,7 +213,20 @@ const LegacyICC = function (options) {
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
-            packet_processor(p2);
+            switch(parseInt(p2[0])) {
+                case L2.WHO_AM_I:
+                    if (functions.loggedin)
+                        functions.loggedin({successful: true, username: p2[1], titles: p2[2].split(" ")});
+                    break;
+                case L2.LOGIN_FAILED:
+                    if (functions.loggedin)
+                        functions.loggedin({successful: false, code: parseInt(p2[1]), message: p2[2]});
+                    break;
+                default:
+                    error_function("Unknown packet: " + p2);
+            }
+            console.log(p2);
+            //packet_processor(p2);
         });
     }
 
@@ -373,26 +314,21 @@ const LegacyICC = function (options) {
         return parms;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     return {
-        //user: options.username || "g",
-        //password: options.password || "",
-        //host: options.host || "chessclub.com",
-        //port: options.port || 23,
-        //socket_error: options.error || generic_error,
-        //packet_processor: options.processpackets || eat_packets,
         /*
             Public API
          */
+        login: function() {
+            login();
+        },
+        logout: function() {
+            logout();
+        },
         test_socket_data: function (data) {
             socket_data(data);
         }
     }
 };
-/* export Legacy object if using node or any other CommonJS compatible
- * environment */
-if (typeof exports !== 'undefined') exports.LegacyICC = LegacyICC;
-/* export Chess object for any RequireJS compatible environment */
-if (typeof define !== 'undefined')
-    define(function () {
-        return LegacyICC;
-    });
+
+exports.LegacyICC = LegacyICC;

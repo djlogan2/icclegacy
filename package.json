@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Telnet connection to legacy ICC servers",
   "main": "legacy.js",
+  "filename": "legacy.min.js",
   "scripts": {
     "test": "mocha"
   },
@@ -10,6 +11,17 @@
     "type": "git",
     "url": "git+https://github.com/djlogan2/icclegacy.git"
   },
+  "npmName": "legacy.js",
+  "npmFileMap": [
+    {
+      "basePath": "",
+      "files": [
+        "legacy.js",
+        "cn.js",
+        "l2.js"
+      ]
+    }
+  ],
   "keywords": [
     "chessclub.com",
     "icc"
@@ -23,6 +35,6 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
-    "sinon": "^7.5.0"
+    "nyc": "^14.1.1"
   }
 }

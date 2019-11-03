@@ -198,29 +198,29 @@ module.exports = Object.freeze({
     DG_196: 196,
     DG_197: 197,
     DG_198: 198,
-    DG_199: 199
+    DG_199: 199,
+    /**
+     * @return {string}
+     */
+    LEVEL2STRING: function (arg) {
+        if (!Array.isArray(arg)) arg = [arg];
+        arg.sort(function (a, b) {
+            return a - b;
+        });
+
+        let max = arg[arg.length - 1];
+        let y = 0;
+        let str = "";
+
+        for (let x = 0; x <= max; x++) {
+            if (y < arg.length && x === arg[y]) {
+                str += "1";
+                y++;
+            } else str += "0";
+        }
+
+        return str;
+    }
 });
 
-/**
- * @return {string}
- */
 
-function LEVEL2STRING(arg) {
-    if (!Array.isArray(arg)) arg = [arg];
-    arg.sort(function (a, b) {
-        return a - b;
-    });
-
-    let max = arg[arg.length - 1];
-    let y = 0;
-    let str = "";
-
-    for (let x = 0; x <= max; x++) {
-        if (y < arg.length && x === arg[y]) {
-            str += "1";
-            y++;
-        } else str += "0";
-    }
-
-    return str;
-}
