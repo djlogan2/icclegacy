@@ -112,7 +112,7 @@ const LegacyICC = function (options) {
     }
 
     function _parse() {
-        if(options.preparser && options.preparser(databuffer)) {
+        if(preparser && preparser(databuffer)) {
             databuffer = "";
             return;
         }
@@ -328,8 +328,6 @@ const LegacyICC = function (options) {
                 default:
                     error_function("Unknown packet: " + p2);
             }
-            console.log(p2);
-            //packet_processor(p2);
         });
     }
 
@@ -439,6 +437,10 @@ const LegacyICC = function (options) {
 
         test_socket_data: function (data) {
             socket_data(data);
+        },
+
+        active_level2: function() {
+            return level2values.slice(0);
         }
     }
 };

@@ -67,6 +67,9 @@ describe("loggedin function", function(){
         legacy.test_socket_data(level1(10, null, level2(69, 11, B("Enter something valid"))));
     });
     it("should set datagrams 0 and 69", function(){
-        chai.assert.fail("do me");
+        const legacy1 = new Legacy({loggedin: () => console.log("hi")});
+        chai.assert.sameMembers(legacy1.active_level2(), [0]);
+        const legacy2 = new Legacy({login_failed: () => console.log("hi")});
+        chai.assert.sameMembers(legacy2.active_level2(), [69]);
     });
 });
