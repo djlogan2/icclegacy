@@ -47,7 +47,6 @@ describe("loggedin function", function(){
         const legacy = new Legacy({
             loggedin:(data) => {
                 chai.assert.isDefined(data);
-                chai.assert.isTrue(data.successful);
                 chai.assert.equal(data.username, "uuzz");
                 chai.assert.isArray(data.titles);
                 chai.assert.sameMembers(data.titles, ["TM", "C", "H", "GM"]);
@@ -58,9 +57,8 @@ describe("loggedin function", function(){
     });
     it("should be called with a correct DG69 data when unsuccessful", function(done){
         const legacy = new Legacy({
-            loggedin:(data) => {
+            login_failed:(data) => {
                 chai.assert.isDefined(data);
-                chai.assert.isFalse(data.successful);
                 chai.assert.equal(data.code, 11);
                 chai.assert.equal(data.message, "Enter something valid");
                 done();

@@ -1,4 +1,5 @@
 const L2 = require('./l2');
+const net = require("net");
 
 const LegacyICC = function (options) {
 
@@ -20,8 +21,39 @@ const LegacyICC = function (options) {
     let port = options.port || 23;
     let error_function = options.error || generic_error;
     let preprocessor = options.preprocessor || null;
+    let preparser = options.preparser || null;
     let functions = {};
-    if(options.loggedin) functions.loggedin = options.loggedin;
+    let level2values = [];
+
+    if (options.loggedin) {
+        functions.loggedin = options.loggedin;
+        addl2(L2.WHO_AM_I);
+    }
+
+    if (options.login_failed) {
+        functions.login_failed = options.login_failed;
+        addl2(L2.LOGIN_FAILED);
+    }
+
+    if (options.match) {
+        functions.match = options.match;
+        addl2(L2.MATCH);
+    }
+
+    if (options.match_removed) {
+        functions.match_removed = options.match_removed;
+        addl2(L2.MATCH_REMOVED);
+    }
+
+    if (options.seek) {
+        functions.seek = options.seek;
+        addl2(L2.SEEK);
+    }
+
+    if (options.seek_removed) {
+        functions.seek_removed = options.seek_removed;
+        addl2(L2.SEEK_REMOVED);
+    }
 
     let state = "login";
     let databuffer = "";
@@ -36,6 +68,11 @@ const LegacyICC = function (options) {
 
     function generic_error(error) {
         console.log(error);
+    }
+
+    function addl2(l2v) {
+        if (level2values.indexOf(l2v) === -1)
+            level2values.push(l2v);
     }
 
     function login() {
@@ -53,12 +90,16 @@ const LegacyICC = function (options) {
         databuffer += data;
         let packets = null;
         do {
-            packets = _parse();
+            try {
+                packets = _parse();
+            } catch(e) {
+                error_function(e);
+            }
             if (packets) {
                 if (packets.level2Packets.length && packets.level2Packets[0].packet.indexOf("69 5") === 0) {
                     socket.write(password + "\n");
                 } else {
-                    if(!preprocessor || !preprocessor(packets))
+                    if (!preprocessor || !preprocessor(packets))
                         _processPackets(packets);
                 }
             }
@@ -71,14 +112,18 @@ const LegacyICC = function (options) {
     }
 
     function _parse() {
+        if(options.preparser && options.preparser(databuffer)) {
+            databuffer = "";
+            return;
+        }
         if (state === "login") {
             if (databuffer.indexOf("login") !== -1) {
                 databuffer = "";
                 socket.write("level1=13\n");
                 socket.write(
-                    "level2settings=" + L2.LEVEL2STRING( USER_LEVEL2_PACKETS) + "\n"
+                    "level2settings=" + L2.LEVEL2STRING(level2values) + "\n"
                 );
-                socket.write(user.profile.legacy.username + "\n");
+                socket.write(user + "\n");
                 state = "password";
                 return;
             }
@@ -213,14 +258,72 @@ const LegacyICC = function (options) {
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
-            switch(parseInt(p2[0])) {
+            switch (parseInt(p2.shift())) {
+                case L2.SEEK_REMOVED:
+                    if (functions.seek_removed)
+                        functions.seek_removed({index: parseInt(p2[0]), reasoncode: parseInt(p2[1])});
+                    break;
+                case L2.SEEK:
+                    //
+                    if (functions.seek)
+                        functions.seek({
+                            index: parseInt(p2[0]),
+                            name: p2[1],
+                            titles: p2[2].split(" "),
+                            rating: parseInt(p2[3]),
+                            provisional_status: parseInt(p2[4]),
+                            wild: parseInt(p2[5]),
+                            rating_type: p2[6],
+                            time: parseInt(p2[7]),
+                            inc: parseInt(p2[8]),
+                            rated: p2[9] === "1",
+                            color: p2[10] === "-1" ? null : p2[10] === "0" ? "black" : "white",
+                            minrating: parseInt(p2[11]),
+                            maxrating: parseInt(p2[12]),
+                            autoaccept: p2[13] === "1",
+                            formula: p2[14],
+                            fancy_time_control: p2[15]
+                        });
+                    break;
                 case L2.WHO_AM_I:
                     if (functions.loggedin)
-                        functions.loggedin({successful: true, username: p2[1], titles: p2[2].split(" ")});
+                        functions.loggedin({username: p2[0], titles: p2[1].split(" ")});
                     break;
                 case L2.LOGIN_FAILED:
-                    if (functions.loggedin)
-                        functions.loggedin({successful: false, code: parseInt(p2[1]), message: p2[2]});
+                    if (functions.login_failed)
+                        functions.login_failed({code: parseInt(p2[0]), message: p2[1]});
+                    break;
+                case L2.MATCH:
+                    if (functions.match)
+                        functions.match({
+                            type: "added",
+                            challenger_name: p2[0],
+                            challenger_rating: parseInt(p2[1]),
+                            challenger_titles: p2[2].spit(" "),
+                            receiver_name: p2[3],
+                            receiver_rating: parseInt(p2[4]),
+                            receiver_titles: p2[5].split(" "),
+                            wild_number: parseInt(p2[6]),
+                            rating_type: p2[7],
+                            is_it_rated: p2[8] === "1",
+                            is_it_adjourned: p2[9] === "1",
+                            challenger_time_control: p2[10],
+                            receiver_time_control: p2[11],
+                            challenger_color_request: p2[12],
+                            assess_loss: parseInt(p2[13]),
+                            assess_draw: parseInt(p2[14]),
+                            assess_win: parseInt(p2[15]),
+                            fancy_time_control: p2[16]
+                        });
+                    break;
+                case L2.MATCH_REMOVED:
+                    if (functions.match)
+                         functions.match({
+                            type: "removed",
+                            challenger_name: p2[0],
+                            receiver_name: p2[1],
+                            explanation_string: p2[2]
+                        });
                     break;
                 default:
                     error_function("Unknown packet: " + p2);
@@ -314,17 +417,26 @@ const LegacyICC = function (options) {
         return parms;
     }
 
+    function match(message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
+        socket.write("`" + message_identifier + "`match " + name + " " + time + " " + increment + " " + (time2 ? time2 : "") + " " + (increment2 ? increment2 : "") + " " + (rated ? "r" : "u") + " w" + wild + " " + (color ? color : "") + "\n");
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
             Public API
          */
-        login: function() {
+        login: function () {
             login();
         },
-        logout: function() {
+        logout: function () {
             logout();
         },
+
+        match: function(message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
+            match(message_identifier, name, time, increment, time2, increment2, rated, wild, color);
+        },
+
         test_socket_data: function (data) {
             socket_data(data);
         }

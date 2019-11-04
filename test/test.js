@@ -81,13 +81,13 @@ describe("Legacy", function () {
         legacy.test_socket_data(data);
     });
 
-    it("should parse level 2 packets correctly", function(done){
+    it("should parse level 2 packets correctly", function (done) {
         const data =
-        level1(10,
-            "mi1",
-            "level 2 test" +
-            level2(100, "p1", B("p2 with spaces"), CB("{p3 with brackets and spaces}"))
-        );
+            level1(10,
+                "mi1",
+                "level 2 test" +
+                level2(100, "p1", B("p2 with spaces"), CB("{p3 with brackets and spaces}"))
+            );
         const legacy = new Legacy({
             preprocessor: (packets) => {
                 chai.assert.isDefined(packets);
