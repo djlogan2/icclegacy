@@ -42,7 +42,7 @@ function level2() {
     return l2;
 }
 
-describe("seek function", function(done){
+describe("seek functions", function(done){
     it("should be called with a successful seek", function(done){
         const legacy = new Legacy({
             seek:(data) => {

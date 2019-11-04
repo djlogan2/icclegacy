@@ -42,7 +42,7 @@ function level2() {
     return l2;
 }
 
-describe("loggedin function", function(){
+describe("login functions", function(){
     it("should be called with a successful login when one is successful", function(done){
         const legacy = new Legacy({
             loggedin:(data) => {
