@@ -121,8 +121,6 @@ describe("The match command", function(){
         }
 
         user1 = new Legacy({
-            sendpreprocessor: (data) => console.log(data),
-            preprocessor: (data) => console.log(data),
             username: process.env.USERNAME,
             password: process.env.PASSWORD,
             host: "queen.chessclub.com",
@@ -168,8 +166,6 @@ describe("The match command", function(){
             },
             match: (data) => {
                 match2 = data;
-                console.log("user2 match");
-                console.log(data);
                 checkmatch();
             },
             match_removed: (data) => {

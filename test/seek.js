@@ -93,8 +93,6 @@ describe("The seek command", function () {
         let actualusername;
         let actualindex;
         const legacy = new Legacy({
-            sendpreprocessor: (mi, cmd) => console.log(mi + ":" + cmd),
-            preprocessor: (data) => console.log(data),
             username: process.env.USERNAME,
             password: process.env.PASSWORD,
             host: "queen.chessclub.com",
