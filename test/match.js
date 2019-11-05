@@ -57,17 +57,19 @@ describe("match functions", function(done){
                 chai.assert.equal(data.rating_type, "Standard");
                 chai.assert.equal(data.is_it_rated, true);
                 chai.assert.equal(data.is_it_adjourned, false);
-                chai.assert.equal(data.challenger_time_control, "challenger-time-control");
-                chai.assert.equal(data.receiver_time_control, "receiver-time-control");
-                chai.assert.equal(data.challenger_color_request, "-1");
+                chai.assert.equal(data.challenger_time, 20);
+                chai.assert.equal(data.receiver_time, 40);
+                chai.assert.equal(data.challenger_inc, 30);
+                chai.assert.equal(data.receiver_inc, 50);
+                chai.assert.equal(data.challenger_color_request, "white");
                 chai.assert.equal(data.assess_loss, -30);
                 chai.assert.equal(data.assess_draw, -10);
-                chai.assert.equal(data.assess_win, 20);
+                chai.assert.equal(data.assess_win, -20);
                 chai.assert.equal(data.fancy_time_control, "fancy-time-control");
                 done();
             }
         });
-        legacy.test_socket_data(level1(999, null, level2(29, "challenger-name", 1111, B("C DM"), "receiver-name", 2222, B("GM H"), "0", "Standard", "1" ,"0", "challenger-time-control", "receiver-time-control", "-1", -30, -10, 20, "fancy-time-control")));
+        legacy.test_socket_data(level1(999, null, level2(29, "challenger-name", "1111", "0", B("C DM"), "receiver-name", "2222", "0", B("GM H"), "0", "Standard", "1", "0", "20", "30", "40", "50", "1", "-30", "-10", "-20", "fancy-time-control")));
     });
     it("should be called with a match removed", function(done){
         const legacy = new Legacy({
@@ -83,8 +85,99 @@ describe("match functions", function(done){
     });
     it("should set datagrams 29 and 30", function(){
         const legacy1 = new Legacy({match: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [29]);
+        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 29, 85]);
         const legacy2 = new Legacy({match_removed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [30]);
+        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 30]);
+    });
+});
+
+describe("The match command", function(){
+    let user1;
+    let user2;
+    let username1;
+    let username2;
+    let match1;
+    let match2;
+
+    it("should work", function(done){
+        function checklogin() {
+            if(username1 && username2) {
+                user1.match("mi1", username2, 20, 30, 40, 50, true, 0, "white");
+            }
+        }
+
+        function checkmatch() {
+            if(match1 && match2) {
+                user1.remove_all_matches_and_seeks("mi2");
+            }
+        }
+
+        function checkunmatch() {
+            if(!match1 && !match2) {
+                user1.logout();
+                user2.logout();
+                done();
+            }
+        }
+
+        user1 = new Legacy({
+            sendpreprocessor: (data) => console.log(data),
+            preprocessor: (data) => console.log(data),
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username1 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match1 = data;
+                    chai.assert.equal(data.message_identifier, 'mi1');
+                    chai.assert.equal(data.challenger_name, username1);
+                    chai.assert.equal(data.receiver_name, username2);
+                    chai.assert.equal(data.wild_number, 0);
+                    chai.assert.equal(data.rating_type, 'Standard');
+                    chai.assert.equal(data.is_it_rated, false); // Forced unless we remove time2 and inc2
+                    chai.assert.equal(data.is_it_adjourned, false);
+                    chai.assert.equal(data.challenger_time, 20);
+                    chai.assert.equal(data.challenger_inc, 30);
+                    chai.assert.equal(data.receiver_time, 40);
+                    chai.assert.equal(data.receiver_inc, 50);
+                    chai.assert.equal(data.challenger_color_request, 'white');
+                    chai.assert.equal(data.fancy_time_control, '');
+                    checkmatch();
+            },
+            match_removed: (data) => {
+                match1 = undefined;
+                chai.assert.equal(data.message_identifier,"mi2");
+                chai.assert.equal(data.challenger_name,username1);
+                chai.assert.equal(data.receiver_name,username2);
+                chai.assert.isDefined(data.explanation_string);
+                checkunmatch();
+            }
+        });
+        user2 = new Legacy({
+            username: process.env.USERNAME2,
+            password: process.env.PASSWORD2,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username2 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match2 = data;
+                console.log("user2 match");
+                console.log(data);
+                checkmatch();
+            },
+            match_removed: (data) => {
+                match2 = undefined;
+                checkunmatch();
+            }
+        });
+        user1.login();
+        user2.login();
     });
 });

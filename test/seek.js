@@ -42,10 +42,10 @@ function level2() {
     return l2;
 }
 
-describe("seek functions", function(done){
-    it("should be called with a successful seek", function(done){
+describe("seek functions", function (done) {
+    it("should be called with a successful seek", function (done) {
         const legacy = new Legacy({
-            seek:(data) => {
+            seek: (data) => {
                 chai.assert.isDefined(data);
                 chai.assert.equal(data.index, 123);
                 chai.assert.equal(data.name, "iccguy");
@@ -68,9 +68,9 @@ describe("seek functions", function(done){
         });
         legacy.test_socket_data(level1(999, null, level2(50, "123", "iccguy", B("GM C H TD"), "1234", "2", "5", "rating-type", "15", "0", "1", "2", "1000", "2000", "1", "formula", "fancy-time-control")));
     });
-    it("should be called with a seek removed", function(done){
+    it("should be called with a seek removed", function (done) {
         const legacy = new Legacy({
-            seek_removed:(data) => {
+            seek_removed: (data) => {
                 chai.assert.isDefined(data);
                 chai.assert.equal(data.index, 11);
                 chai.assert.equal(data.reasoncode, 12);
@@ -79,56 +79,54 @@ describe("seek functions", function(done){
         });
         legacy.test_socket_data(level1(10, null, level2(51, 11, 12)));
     });
-    it("should set datagrams 50 and 51", function(){
+    it("should set datagrams 50 and 51", function () {
         const legacy1 = new Legacy({seek: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [50]);
+        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 50]);
         const legacy2 = new Legacy({seek_removed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [51]);
+        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 51]);
     });
 });
 
-describe("The seek command", function() {
-    //  time           The initial time of the match (taken from your time
-    //                  variable if omitted)
-    it("should fail if time is missing or not a number", function () {
-    });
-    //
-    //   increment      The increment of the match (taken from your increment
-    //                  variable if omitted)
-    it("should fail if increment is missing or not a number", function () {
-    });
-    //
-    //   r/u            Indicates if the match should be rated or not.
-    //                  It must be "r" or "u".
-    it("should fail if rated is missing or not a boolean", function () {
-    });
-    //
-    //   w#             The wild number of the match.  (taken from your wild
-    //                  variable if omitted).  For example, "w5" for wild 5.
-    //
-    it("should fail if wild is missing or not a number", function () {
-    });
-    //   white/black    Specifies if the seeker will get white or black.
-    //                  It must be "white", "black" or "w" or "b".
-    //
-    it("should fail if color is not 'null', 'white', or 'black'", function () {
-    });
-    it("should not send a color if color is null", function () {
-    });
-    it("should not send send the correct color if it's not null", function () {
-    });
-    //   auto/manual    Specifies if the match should start automatically
-    //                  when another player issues a play command.  In auto
-    //                  mode (the default) the match starts immediately.  In
-    //                  manual mode an ordinary match command is issued.  It
-    //                  must be "auto" or "manual" or "a" or "m" for short.
-    //
-    it("should fail if auto is missing or not a boolean", function () {
-    });
-    //   rating-range   This is simply two numbers with a "-" between them.
-    //                  The minimum is 0 and the maximum is 9999.
-    it("should fail if minimum rating is missing or not a number, or less than zero", function () {
-    });
-    it("should fail if maximum rating is missing or not a number, or less than or equal to minrating", function () {
+describe("The seek command", function () {
+    it("should work when actually logged on", function (done) {
+        this.timeout(60000);
+        let actualusername;
+        let actualindex;
+        const legacy = new Legacy({
+            sendpreprocessor: (mi, cmd) => console.log(mi + ":" + cmd),
+            preprocessor: (data) => console.log(data),
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                actualusername = data.username;
+                legacy.seek("mi1", 15, 20, true, 20, "white", true, 1300, 1400);
+            },
+            seek: (data) => {
+                actualindex = data.index;
+                chai.assert.isDefined(data);
+                chai.assert.equal(data.name, actualusername);
+                chai.assert.equal(data.wild, 20);
+                chai.assert.equal(data.rating_type, "Blitz");
+                chai.assert.equal(data.time, 15);
+                chai.assert.equal(data.inc, 20);
+                chai.assert.equal(data.rated, true);
+                chai.assert.equal(data.color, "white");
+                chai.assert.equal(data.minrating, 1300);
+                chai.assert.equal(data.maxrating, 1400);
+                chai.assert.equal(data.autoaccept, true);
+                chai.assert.equal(data.formula, "0");
+                chai.assert.equal(data.fancy_time_control, "");
+                legacy.unseek("mi2", data.index);
+            },
+            seek_removed: (data) => {
+                chai.assert.equal(data.index, actualindex);
+                chai.assert.equal(data.reasoncode, 3);
+                legacy.logout();
+                done();
+            }
+        });
+        legacy.login();
     });
 });

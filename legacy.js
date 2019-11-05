@@ -21,9 +21,10 @@ const LegacyICC = function (options) {
     let port = options.port || 23;
     let error_function = options.error || generic_error;
     let preprocessor = options.preprocessor || null;
+    let sendpreprocessor = options.sendpreprocessor || null;
     let preparser = options.preparser || null;
     let functions = {};
-    let level2values = [];
+    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED];
 
     if (options.loggedin) {
         functions.loggedin = options.loggedin;
@@ -38,6 +39,7 @@ const LegacyICC = function (options) {
     if (options.match) {
         functions.match = options.match;
         addl2(L2.MATCH);
+        addl2(L2.MATCH_ASSESSMENT);
     }
 
     if (options.match_removed) {
@@ -255,18 +257,40 @@ const LegacyICC = function (options) {
         }
     }
 
+    function ratingtype(v) {
+        switch(v) {
+            case "0": return "no games";
+            case "1": return "provisional";
+            case "2": return "established";
+            default:
+                return "?";
+        }
+    }
+
+    function colorrequest(v) {
+        switch(v) {
+            case "-1":
+                return null;
+            case "0":
+                return "black";
+            case "1":
+                return "white";
+        }
+    }
+
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
                 case L2.SEEK_REMOVED:
                     if (functions.seek_removed)
-                        functions.seek_removed({index: parseInt(p2[0]), reasoncode: parseInt(p2[1])});
+                        functions.seek_removed({message_identifier: p.l1messageidentifier, index: parseInt(p2[0]), reasoncode: parseInt(p2[1])});
                     break;
                 case L2.SEEK:
                     //
                     if (functions.seek)
                         functions.seek({
+                            message_identifier: p.l1messageidentifier,
                             index: parseInt(p2[0]),
                             name: p2[1],
                             titles: p2[2].split(" "),
@@ -296,30 +320,34 @@ const LegacyICC = function (options) {
                 case L2.MATCH:
                     if (functions.match)
                         functions.match({
-                            type: "added",
+                            message_identifier: p.l1messageidentifier,
                             challenger_name: p2[0],
                             challenger_rating: parseInt(p2[1]),
-                            challenger_titles: p2[2].split(" "),
-                            receiver_name: p2[3],
-                            receiver_rating: parseInt(p2[4]),
-                            receiver_titles: p2[5].split(" "),
-                            wild_number: parseInt(p2[6]),
-                            rating_type: p2[7],
-                            is_it_rated: p2[8] === "1",
-                            is_it_adjourned: p2[9] === "1",
-                            challenger_time_control: p2[10],
-                            receiver_time_control: p2[11],
-                            challenger_color_request: p2[12],
-                            assess_loss: parseInt(p2[13]),
-                            assess_draw: parseInt(p2[14]),
-                            assess_win: parseInt(p2[15]),
-                            fancy_time_control: p2[16]
+                            challenger_rating_type: ratingtype(p2[2]),
+                            challenger_titles: p2[3].split(" "),
+                            receiver_name: p2[4],
+                            receiver_rating: parseInt(p2[5]),
+                            receiver_rating_type: ratingtype(p2[6]),
+                            receiver_titles: p2[7].split(" "),
+                            wild_number: parseInt(p2[8]),
+                            rating_type: p2[9],
+                            is_it_rated: p2[10] === "1",
+                            is_it_adjourned: p2[11] === "1",
+                            challenger_time: p2[12],
+                            challenger_inc: p2[13],
+                            receiver_time: p2[14],
+                            receiver_inc: p2[15],
+                            challenger_color_request: colorrequest(p2[16]),
+                            assess_loss: parseInt(p2[17]),
+                            assess_draw: parseInt(p2[18]),
+                            assess_win: parseInt(p2[19]),
+                            fancy_time_control: p2[20]
                         });
                     break;
                 case L2.MATCH_REMOVED:
                     if (functions.match_removed)
                          functions.match_removed({
-                            type: "removed",
+                             message_identifier: p.l1messageidentifier,
                             challenger_name: p2[0],
                             receiver_name: p2[1],
                             explanation_string: p2[2]
@@ -415,25 +443,40 @@ const LegacyICC = function (options) {
         return parms;
     }
 
+    function write(message_identifier, cmd) {
+        if(sendpreprocessor && sendpreprocessor((!!message_identifier ? "`" + message_identifier + "`" : "") + cmd))
+            return;
+        if(!!message_identifier)
+            socket.write("`" + message_identifier + "`");
+        socket.write(cmd);
+        socket.write("\n");
+    }
+
     function match(message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
-        socket.write("`" + message_identifier + "`match " + name + " " + time + " " + increment + " " + (time2 ? time2 : "") + " " + (increment2 ? increment2 : "") + " " + (rated ? "r" : "u") + " w" + wild + " " + (color ? color : "") + "\n");
+        write(message_identifier, "match " + name + " " + time + " " + increment + " " + (time2 ? time2 : "") + " " + (increment2 ? increment2 : "") + " " + (rated ? "r" : "u") + " w" + wild + " " + (color ? color : "") + "\n");
     }
 
     // TODO: The match function assumes all parameters exist, the seek function does not. Which to do?
     function seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
-        let cmd = (message_identifier ? "`" + message_identifier + "`" : "");
-        cmd += "seek";
+        let cmd = "seek";
         if(!!time) cmd += " " + time;
         if(!!inc) cmd += " " + inc;
         cmd += !!rated ? " r" : " u";
         cmd += " w" + (!!wild ? wild : "0");
         if(!!color) cmd += " " + color;
-        cmd += (!!a ? " a" : " m");
+        cmd += (!!auto ? " a" : " m");
         cmd += " " + (!!minrating ? minrating : "0");
         cmd += "-" + (!!maxrating ? maxrating : "9999");
-        socket.write(cmd + "\n");
+        write(message_identifier, cmd);
     }
 
+    function unseek(message_identifier, index) {
+        write(message_identifier, "unseek" + (!!index? " " + index : ""));
+    }
+
+    function remove_all_matches_and_seeks(message_identifier) {
+        write(message_identifier, "match");
+    }
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -451,6 +494,12 @@ const LegacyICC = function (options) {
         },
         seek: function(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
             seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
+        },
+        unseek: function(message_identifier, index) {
+            unseek(message_identifier, index);
+        },
+        remove_all_matches_and_seeks: function(message_identifier) {
+            remove_all_matches_and_seeks(message_identifier);
         },
 
         test_socket_data: function (data) {
