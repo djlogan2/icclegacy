@@ -86,3 +86,49 @@ describe("seek functions", function(done){
         chai.assert.sameMembers(legacy2.active_level2(), [51]);
     });
 });
+
+describe("The seek command", function() {
+    //  time           The initial time of the match (taken from your time
+    //                  variable if omitted)
+    it("should fail if time is missing or not a number", function () {
+    });
+    //
+    //   increment      The increment of the match (taken from your increment
+    //                  variable if omitted)
+    it("should fail if increment is missing or not a number", function () {
+    });
+    //
+    //   r/u            Indicates if the match should be rated or not.
+    //                  It must be "r" or "u".
+    it("should fail if rated is missing or not a boolean", function () {
+    });
+    //
+    //   w#             The wild number of the match.  (taken from your wild
+    //                  variable if omitted).  For example, "w5" for wild 5.
+    //
+    it("should fail if wild is missing or not a number", function () {
+    });
+    //   white/black    Specifies if the seeker will get white or black.
+    //                  It must be "white", "black" or "w" or "b".
+    //
+    it("should fail if color is not 'null', 'white', or 'black'", function () {
+    });
+    it("should not send a color if color is null", function () {
+    });
+    it("should not send send the correct color if it's not null", function () {
+    });
+    //   auto/manual    Specifies if the match should start automatically
+    //                  when another player issues a play command.  In auto
+    //                  mode (the default) the match starts immediately.  In
+    //                  manual mode an ordinary match command is issued.  It
+    //                  must be "auto" or "manual" or "a" or "m" for short.
+    //
+    it("should fail if auto is missing or not a boolean", function () {
+    });
+    //   rating-range   This is simply two numbers with a "-" between them.
+    //                  The minimum is 0 and the maximum is 9999.
+    it("should fail if minimum rating is missing or not a number, or less than zero", function () {
+    });
+    it("should fail if maximum rating is missing or not a number, or less than or equal to minrating", function () {
+    });
+});

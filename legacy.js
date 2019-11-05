@@ -299,7 +299,7 @@ const LegacyICC = function (options) {
                             type: "added",
                             challenger_name: p2[0],
                             challenger_rating: parseInt(p2[1]),
-                            challenger_titles: p2[2].spit(" "),
+                            challenger_titles: p2[2].split(" "),
                             receiver_name: p2[3],
                             receiver_rating: parseInt(p2[4]),
                             receiver_titles: p2[5].split(" "),
@@ -317,8 +317,8 @@ const LegacyICC = function (options) {
                         });
                     break;
                 case L2.MATCH_REMOVED:
-                    if (functions.match)
-                         functions.match({
+                    if (functions.match_removed)
+                         functions.match_removed({
                             type: "removed",
                             challenger_name: p2[0],
                             receiver_name: p2[1],
@@ -419,6 +419,21 @@ const LegacyICC = function (options) {
         socket.write("`" + message_identifier + "`match " + name + " " + time + " " + increment + " " + (time2 ? time2 : "") + " " + (increment2 ? increment2 : "") + " " + (rated ? "r" : "u") + " w" + wild + " " + (color ? color : "") + "\n");
     }
 
+    // TODO: The match function assumes all parameters exist, the seek function does not. Which to do?
+    function seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
+        let cmd = (message_identifier ? "`" + message_identifier + "`" : "");
+        cmd += "seek";
+        if(!!time) cmd += " " + time;
+        if(!!inc) cmd += " " + inc;
+        cmd += !!rated ? " r" : " u";
+        cmd += " w" + (!!wild ? wild : "0");
+        if(!!color) cmd += " " + color;
+        cmd += (!!a ? " a" : " m");
+        cmd += " " + (!!minrating ? minrating : "0");
+        cmd += "-" + (!!maxrating ? maxrating : "9999");
+        socket.write(cmd + "\n");
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -433,6 +448,9 @@ const LegacyICC = function (options) {
 
         match: function(message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
             match(message_identifier, name, time, increment, time2, increment2, rated, wild, color);
+        },
+        seek: function(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
+            seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
         },
 
         test_socket_data: function (data) {
