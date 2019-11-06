@@ -1,6 +1,16 @@
 const L2 = require('./l2');
 const net = require("net");
 
+const PACKET_FUNCTIONS = {
+    "loggedin": [L2.WHO_AM_I],
+    "login_failed": [L2.LOGIN_FAILED],
+    "match": [L2.MATCH, L2.MATCH_ASSESSMENT],
+    "match_removed": [L2.MATCH_REMOVED],
+    "seek": [L2.SEEK],
+    "seek_removed": [L2.SEEK_REMOVED],
+    "my_game_started": [L2.MY_GAME_STARTED]
+};
+
 const LegacyICC = function (options) {
 
     options = options || {};
@@ -26,35 +36,13 @@ const LegacyICC = function (options) {
     let functions = {};
     let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED];
 
-    if (options.loggedin) {
-        functions.loggedin = options.loggedin;
-        addl2(L2.WHO_AM_I);
-    }
-
-    if (options.login_failed) {
-        functions.login_failed = options.login_failed;
-        addl2(L2.LOGIN_FAILED);
-    }
-
-    if (options.match) {
-        functions.match = options.match;
-        addl2(L2.MATCH);
-        addl2(L2.MATCH_ASSESSMENT);
-    }
-
-    if (options.match_removed) {
-        functions.match_removed = options.match_removed;
-        addl2(L2.MATCH_REMOVED);
-    }
-
-    if (options.seek) {
-        functions.seek = options.seek;
-        addl2(L2.SEEK);
-    }
-
-    if (options.seek_removed) {
-        functions.seek_removed = options.seek_removed;
-        addl2(L2.SEEK_REMOVED);
+    for(const k in PACKET_FUNCTIONS) {
+        if(PACKET_FUNCTIONS.hasOwnProperty(k)) {
+            if(typeof options[k] === "function") {
+                functions[k] = options[k];
+                PACKET_FUNCTIONS[k].forEach(l2 => addl2(l2));
+            }
+        }
     }
 
     let state = "login";
@@ -282,6 +270,34 @@ const LegacyICC = function (options) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
+                case L2.MY_GAME_STARTED:
+                    if(functions.my_game_started) {
+                        functions.my_game_started({
+                            gamenumber: parseInt(p2[0]),
+                            whitename: p2[1],
+                            blackname: p2[2],
+                            wild_number: parseInt(p2[3]),
+                            rating_type: p2[4],
+                            rated: p2[5] === "1",
+                            white_initial: parseInt(p2[6]),
+                            white_increment: parseInt(p2[7]),
+                            black_initial: parseInt(p2[8]),
+                            black_increment: parseInt(p2[9]),
+                            played_game: p2[10] === "1",
+                            ex_string: p2[11],
+                            white_rating: parseInt(p2[12]),
+                            black_rating: parseInt(p2[13]),
+                            game_id: p2[14],
+                            white_titles: p2[15].split(" "),
+                            black_titles: p2[16].split(" "),
+                            irregular_legality: p2[17],
+                            irregular_semantics: p2[18],
+                            uses_plunkers: p2[19],
+                            fancy_timecontrol: p2[20],
+                            promote_to_king: p2[21] === "1"
+                        });
+                    }
+                    break;
                 case L2.SEEK_REMOVED:
                     if (functions.seek_removed)
                         functions.seek_removed({message_identifier: p.l1messageidentifier, index: parseInt(p2[0]), reasoncode: parseInt(p2[1])});
@@ -477,6 +493,15 @@ const LegacyICC = function (options) {
     function remove_all_matches_and_seeks(message_identifier) {
         write(message_identifier, "match");
     }
+
+    function play(message_identifier, who) {
+        write(message_identifier, "play" + (!!who ? " " + who : ""));
+    }
+
+    function accept(message_identifier, who) {
+        write(message_identifier, "accept" + (!!who ? " " + who : ""));
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -500,6 +525,12 @@ const LegacyICC = function (options) {
         },
         remove_all_matches_and_seeks: function(message_identifier) {
             remove_all_matches_and_seeks(message_identifier);
+        },
+        accept: function(message_identifier, who) {
+            accept(message_identifier, who);
+        },
+        play: function(message_identifier, who) {
+            play(message_identifier, who);
         },
 
         test_socket_data: function (data) {

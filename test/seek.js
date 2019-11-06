@@ -42,7 +42,7 @@ function level2() {
     return l2;
 }
 
-describe("seek functions", function (done) {
+describe("seek functions", function () {
     it("should be called with a successful seek", function (done) {
         const legacy = new Legacy({
             seek: (data) => {
@@ -126,5 +126,72 @@ describe("The seek command", function () {
             }
         });
         legacy.login();
+    });
+});
+
+describe("the play command", function(){
+    it("should work on an outstanding seek", function(done){
+        let username1, username2;
+        let seek1, seek2;
+        let game1, game2;
+
+        function checklogin() {
+            if(username1 && username2) {
+                user1.seek("mi2", 15, 20, false, 0, null, true, 0, 9999);
+            }
+        }
+
+        function checkseek() {
+            if(seek1 && seek2) {
+                user2.play("mi2", username1);
+            }
+        }
+
+        function checkgamestarted() {
+            if(game1 && game2) {
+                user1.logout();
+                user2.logout();
+                done();
+            }
+        }
+
+        user1 = new Legacy({
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username1 = data.username;
+                checklogin();
+            },
+            seek: (data) => {
+                seek1 = data;
+                checkseek();
+            },
+            my_game_started: (data) => {
+                game1 = data;
+                checkgamestarted();
+            }
+        });
+        user2 = new Legacy({
+            username: process.env.USERNAME2,
+            password: process.env.PASSWORD2,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username2 = data.username;
+                checklogin();
+            },
+            seek: (data) => {
+                seek2 = data;
+                checkseek();
+            },
+            my_game_started: (data) => {
+                game2 = data;
+                checkgamestarted();
+            }
+        });
+        user1.login();
+        user2.login();
     });
 });
