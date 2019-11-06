@@ -1,7 +1,6 @@
 const chai = require('chai');
 const Legacy = require('../legacy').LegacyICC;
 
-
 const CONTROL_Y = String.fromCharCode(25);
 const CONTROL_Z = String.fromCharCode(26);
 
@@ -176,4 +175,75 @@ describe("The match command", function(){
         user1.login();
         user2.login();
     });
+});
+
+describe("the accept command", function(){
+    it("should work on an outstanding match", function(done){
+        let username1, username2;
+        let match1, match2;
+        let game1, game2;
+
+        function checklogin() {
+            if(username1 && username2) {
+                user1.match("mi2", username2, 20, 30, 40, 50, false, 0);
+            }
+        }
+
+        function checkmatch() {
+            if(match1 && match2) {
+                user2.accept("mi2", username1);
+            }
+        }
+
+        function checkgamestarted() {
+            if(game1 && game2) {
+                user1.logout();
+                user2.logout();
+                done();
+            }
+        }
+
+        user1 = new Legacy({
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username1 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match1 = data;
+                checkmatch();
+            },
+            my_game_started: (data) => {
+                game1 = data;
+                checkgamestarted();
+            }
+        });
+        user2 = new Legacy({
+            username: process.env.USERNAME2,
+            password: process.env.PASSWORD2,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username2 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match2 = data;
+                checkmatch();
+            },
+            my_game_started: (data) => {
+                game2 = data;
+                checkgamestarted();
+            }
+        });
+        user1.login();
+        user2.login();
+    });
+});
+
+describe("the decline command", function(){
+    it("should decline a current match", function(){chai.assert.fail("do me")});
 });

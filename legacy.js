@@ -8,7 +8,9 @@ const PACKET_FUNCTIONS = {
     "match_removed": [L2.MATCH_REMOVED],
     "seek": [L2.SEEK],
     "seek_removed": [L2.SEEK_REMOVED],
-    "my_game_started": [L2.MY_GAME_STARTED]
+    "my_game_started": [L2.MY_GAME_STARTED],
+    "my_game_result": [L2.MY_GAME_RESULT],
+    "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK]
 };
 
 const LegacyICC = function (options) {
@@ -205,8 +207,8 @@ const LegacyICC = function (options) {
                         if (ctrl) {
                             ctrl = false;
                             level2 = false;
-                            let hdrstr = currentLevel1;
-                            hdrstr.replace(/([\n\r])+$/, "");
+                            let hdrstr = currentLevel1.split("\r\n")[0];
+                            //hdrstr.replace(/([\n\r])+$/, "");
                             let cl1 = hdrstr.split(/\s+/);
                             level2Array.push({
                                 l1command: cl1.length > 0 ? parseInt(cl1[0]) : null,
@@ -270,6 +272,29 @@ const LegacyICC = function (options) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
+                case L2.SEND_MOVES:
+                    if(functions.move) {
+                        functions.move({
+                            gamenumber: parseInt(p2[0]),
+                            algebraic_move: p2[1],
+                            smith_move: p2[2],
+                            time: parseInt(p2[3]),
+                            clock: parseInt(p2[4]),
+                            is_variation: p2[5] === "1"
+                        });
+                    }
+                    break;
+                case L2.MY_GAME_RESULT:
+                    if(functions.my_game_result) {
+                        functions.my_game_result({
+                            gamenumber: parseInt(p2[0]),
+                            become_examined: p2[1] === "1",
+                            game_result_code: p2[2],
+                            score_string2: p2[3],
+                            description_string: p2[4],
+                            ECO: p2[5]});
+                    }
+                    break;
                 case L2.MY_GAME_STARTED:
                     if(functions.my_game_started) {
                         functions.my_game_started({
@@ -502,6 +527,14 @@ const LegacyICC = function (options) {
         write(message_identifier, "accept" + (!!who ? " " + who : ""));
     }
 
+    function move(message_identifier, move) {
+        write(message_identifier, "chessmove " + move);
+    }
+
+    function resign(message_identifier, who) {
+        write(message_identifier, "resign" + (!!who ? " " + who : ""));
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -531,6 +564,12 @@ const LegacyICC = function (options) {
         },
         play: function(message_identifier, who) {
             play(message_identifier, who);
+        },
+        move: function(message_identifier, _move) {
+            move(message_identifier, _move);
+        },
+        resign: function(message_identifier, who) {
+            resign(message_identifier, who);
         },
 
         test_socket_data: function (data) {

@@ -27,6 +27,8 @@ const legacy = new Legacy({
     seek: (data) => {},            // DG50 - SEEK
     seek_removed: (data) => {}.    // DG51 - SEEK_REMOVED
 
+    my_game_started: (data) => {}  // DG15 - MY_GAME_STARTED
+    my_game_result: (data) => {}   // DG16 - MY_GAME_RESULT
 });
 
 legacy.login();
@@ -34,8 +36,12 @@ legacy.login();
 /* ... */
 
 legacy.match(message_identifier, name, time, increment, time2, increment2, rated, wild, color);
+legacy.accept(message_identifier, name);
+legacy.decline(message_identifier, name);
 legacy.seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
 legacy.unseek(message_identifier, index);
+legacy.play(message_identifier, index);
+legacy.move(message_identifier, move);
 legacy.remove_all_matches_and_seeks(message_identifier);
 legacy.active_level2(); // Just returns an array of level 2 datagrams we are receiving
 
