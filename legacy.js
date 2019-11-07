@@ -535,6 +535,10 @@ const LegacyICC = function (options) {
         write(message_identifier, "resign" + (!!who ? " " + who : ""));
     }
 
+    function decline(message_identifier, who_or_what) {
+        write(message_identifier, "decline" + (!!who_or_what ? " " + who_or_what : ""));
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -570,6 +574,9 @@ const LegacyICC = function (options) {
         },
         resign: function(message_identifier, who) {
             resign(message_identifier, who);
+        },
+        decline_match(message_identifier, who) {
+            decline(message_identifier, who);
         },
 
         test_socket_data: function (data) {

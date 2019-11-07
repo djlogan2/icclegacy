@@ -245,5 +245,70 @@ describe("the accept command", function(){
 });
 
 describe("the decline command", function(){
-    it("should decline a current match", function(){chai.assert.fail("do me")});
+    it("should decline a current match", function(done){
+        let username1, username2;
+        let match1, match2;
+        function checklogin() {
+            if(username1 && username2) {
+                user1.match("mi1", username2, 20, 30, 40, 50, true, 0, "white");
+            }
+        }
+
+        function checkmatch() {
+            if(match1 && match2) {
+                user2.decline_match("mi2", user1.username);
+            }
+        }
+
+        function checkunmatch() {
+            if(!match1 && !match2) {
+                user1.logout();
+                user2.logout();
+                done();
+            }
+        }
+
+        user1 = new Legacy({
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username1 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match1 = data;
+                checkmatch();
+            },
+            match_removed: (data) => {
+                match1 = undefined;
+                chai.assert.equal(data.message_identifier,"server");
+                chai.assert.equal(data.challenger_name,username1);
+                chai.assert.equal(data.receiver_name,username2);
+                chai.assert.isDefined(data.explanation_string);
+                checkunmatch();
+            }
+        });
+        user2 = new Legacy({
+            username: process.env.USERNAME2,
+            password: process.env.PASSWORD2,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                username2 = data.username;
+                checklogin();
+            },
+            match: (data) => {
+                match2 = data;
+                checkmatch();
+            },
+            match_removed: (data) => {
+                match2 = undefined;
+                checkunmatch();
+            }
+        });
+        user1.login();
+        user2.login();
+    });
 });

@@ -3,13 +3,13 @@ const Legacy = require('../legacy').LegacyICC;
 
 function checkresult(obj, n, data) {
     obj.resultcheck += n;
-    if(obj.resultcheck === 3)
+    if (obj.resultcheck === 3)
         obj.resolve(obj);
 }
 
 function checkmove(obj, n, data) {
     obj.movecheck += n;
-    if(obj.movecheck === 3)
+    if (obj.movecheck === 3)
         obj.resolve(obj);
 }
 
@@ -100,8 +100,8 @@ function get_a_game_started() {
 }
 
 describe("Games", function () {
+    this.timeout(5000);
     it("should work for basic happy path with resign", function (done) {
-        this.timeout(500000);
         get_a_game_started()
             .then((obj) => {
                 return play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]);
@@ -111,6 +111,25 @@ describe("Games", function () {
                 return new Promise((resolve) => {
                     obj.resolve = resolve;
                     obj.user1.resign("killit!");
+                });
+            })
+            .then((obj) => {
+                obj.user1.logout();
+                obj.user2.logout();
+                done();
+            });
+    });
+
+    it("should adjourn and resume correctly", function(done){
+        get_a_game_started()
+            .then((obj) => {
+                return play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]);
+            })
+            .then((obj) => {
+                obj.resultcheck = 0;
+                return new Promise((resolve) => {
+                    obj.resolve = resolve;
+                    obj.user1.adjourn("killit!");
                 });
             })
             .then((obj) => {
