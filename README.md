@@ -36,13 +36,18 @@ legacy.login();
 /* ... */
 
 legacy.match(message_identifier, name, time, increment, time2, increment2, rated, wild, color);
-legacy.accept(message_identifier, name);
-legacy.decline(message_identifier, name);
 legacy.seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
 legacy.unseek(message_identifier, index);
-legacy.play(message_identifier, index);
-legacy.move(message_identifier, move);
 legacy.remove_all_matches_and_seeks(message_identifier);
+legacy.accept(message_identifier, who);
+legacy.play(message_identifier, who);
+legacy.move(message_identifier, _move);
+legacy.resign(message_identifier, who);
+legacy.decline_match(message_identifier, who);
+legacy.adjourn(message_identifier);
+legacy.resume(message_identifier);
+legacy.decline_adjourn(message_identifier);
+
 legacy.active_level2(); // Just returns an array of level 2 datagrams we are receiving
 
 /* ... */

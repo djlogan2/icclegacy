@@ -122,8 +122,8 @@ function check_login(n, data) {
 
 function login(obj, n, username, password) {
     obj["user" + n] = new Legacy({
-        sendpreprocessor: (data) => log(n, data),
-        preprocessor: (data) => log(n, data),
+        //sendpreprocessor: (data) => log(n, data),
+        //preprocessor: (data) => log(n, data),
         username: username,
         password: password,
         host: "queen.chessclub.com",
