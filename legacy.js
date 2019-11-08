@@ -36,8 +36,11 @@ const LegacyICC = function (options) {
     let preprocessor = options.preprocessor || null;
     let sendpreprocessor = options.sendpreprocessor || null;
     let preparser = options.preparser || null;
-    let functions = {};
-    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED];
+    let functions = {
+        error: options.error || generic_error,
+        fail: options.fail || generic_error,
+    };
+    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL];
 
     for(const k in PACKET_FUNCTIONS) {
         if(PACKET_FUNCTIONS.hasOwnProperty(k)) {
@@ -273,6 +276,24 @@ const LegacyICC = function (options) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
+                case L2.ERROR:
+                    if(functions.error) {
+                        functions.error({
+                            error_number: parseInt(p2[0]),
+                            iso_language: p2[1],
+                            error_text: p2[2],
+                            url: p2[3]
+                        });
+                    }
+                    break;
+                case L2.FAIL:
+                    if(functions.fail) {
+                        functions.fail({
+                            command_id: parseInt(p2[0]),
+                            error_message: p2[1]
+                        });
+                    }
+                    break;
                 case L2.OFFERS_IN_MY_GAME:
                     if(functions.offers_in_my_game) {
                         functions.offers_in_my_game({

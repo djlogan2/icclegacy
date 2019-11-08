@@ -61,14 +61,17 @@ function accept_adjourn(obj, n) {
 }
 
 function accept_takeback(obj, n) {
+/*
     const promise1 = new Promise((resolve, reject) => {
         obj["user1"].resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
         obj["user2"].resolves.game_result = resolve;
     });
+*/
     obj["user" + n].takeback("accept-takeback");
-    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+//    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+    return Promise.resolve(obj);
 }
 
 function accept_abort(obj, n) {
