@@ -1,531 +1,446 @@
-//
-// These are in order on purpose.
-// Don't screw this up, or nothing will work.
-// Each name corresponds to the level-1 packet
-// number we are going to get from the ICC
-// server as an index (i.e. CN1 is "S_ILLEGAL_MOVE")
-//
-export const S_UNKNOWN = 0;
-export const S_ILLEGAL_MOVE = 1;
-export const S_MOVE = 2;
-export const S_EDIT_EXAMINED = 3;
-export const S_UNKNOWN4 = 4;
-export const S_UNKNOWN5 = 5;
-export const S_UNKNOWN6 = 6;
-export const S_UNKNOWN7 = 7;
-export const S_UNKNOWN8 = 8;
-export const S_UNKNOWN9 = 9;
-export const S_PING_RESPONSE = 10;
-export const S_WEIRD = 11;
-export const S_REALLY_LOG_IN = 12;
-export const S_MOED = 13;
-export const S_EVENTS = 14;
-export const S_NEWS = 15;
-export const S_LOGOUT = 16;
-export const S_TIMEOUT = 17;
-export const S_CONNECT = 18;
-export const S_REALLY_QUIT = 19;
-export const S_LOGIN = 20;
-export const S_PASSWORD = 21;
-export const S_REGISTRATION = 22;
-export const S_EXTENSION = 23;
-export const S_AUTHENTICATION = 24;
-export const S_BAD = 25;
-export const S_AUTOMATIC = 26;
-export const S_CONFIRM = 27;
-export const S_MULTI_DISCARD = 28;
-export const S_IDLE = 29;
-export const S_ACK_PING = 30;
-export const S_MISCELLANEOUS = 31;
-export const S_UNKNOWN32 = 32;
-export const S_UNKNOWN33 = 33;
-export const S_UNKNOWN34 = 34;
-export const S_UNKNOWN35 = 35;
-export const S_UNKNOWN36 = 36;
-export const S_UNKNOWN37 = 37;
-export const S_UNKNOWN38 = 38;
-export const S_UNKNOWN39 = 39;
-export const S_UNKNOWN40 = 40;
-export const S_UNKNOWN41 = 41;
-export const S_UNKNOWN42 = 42;
-export const S_UNKNOWN43 = 43;
-export const S_UNKNOWN44 = 44;
-export const S_UNKNOWN45 = 45;
-export const S_UNKNOWN46 = 46;
-export const S_UNKNOWN47 = 47;
-export const S_UNKNOWN48 = 48;
-export const S_UNKNOWN49 = 49;
-export const S_UNKNOWN50 = 50;
-export const S_UNKNOWN51 = 51;
-export const S_UNKNOWN52 = 52;
-export const S_UNKNOWN53 = 53;
-export const S_UNKNOWN54 = 54;
-export const S_UNKNOWN55 = 55;
-export const S_UNKNOWN56 = 56;
-export const S_UNKNOWN57 = 57;
-export const S_UNKNOWN58 = 58;
-export const S_UNKNOWN59 = 59;
-export const S_UNKNOWN60 = 60;
-export const S_UNKNOWN61 = 61;
-export const S_UNKNOWN62 = 62;
-export const S_UNKNOWN63 = 63;
-export const S_UNKNOWN64 = 64;
-export const S_UNKNOWN65 = 65;
-export const S_UNKNOWN66 = 66;
-export const S_UNKNOWN67 = 67;
-export const ACCEPT0 = 68;
-export const CC_LIST0 = 69;
-export const BACK0 = 70;
-export const FORWARD0 = 71;
-export const EXAMINE0 = 72;
-export const CLEARMESSAGES0 = 73;
-export const TAKEBACK0 = 74;
-export const STORED0 = 75;
-export const BEST0 = 76;
-export const QUOTA0 = 77;
-export const QUIT_PLAY = 78;
-export const INFO0 = 79;
-export const CENSOR = 80;
-export const CENSOR0 = 81;
-export const INCHANNEL0 = 82;
-export const ALLOBSERVERS0 = 83;
-export const GAMES0 = 84;
-export const WHISPER_TO = 85;
-export const KIBITZ_TO = 86;
-export const ACCESS0 = 87;
-export const VARS0 = 88;
-export const FINGER0 = 89;
-export const FIRSTMOVE_QUEUE = 90;
-export const THREEMIN = 91;
-export const ECO0 = 92;
-export const HISTORY0 = 93;
-export const TIME0 = 94;
-export const TELL0 = 95;
-export const PLAYERS = 96;
-export const WHO0 = 97;
-export const TELL_DOT = 98;
-export const XTELL = 99;
-export const TELL = 100;
-export const I = 101;
-export const SHOUT = 102;
-export const SHOUT0 = 103;
-export const SLASH = 104;
-export const WHO = 105;
-export const SET = 106;
-export const FLAG = 107;
-export const SAY = 108;
-export const CHANNELTELL = 109;
-export const SSHOUT = 110;
-export const BAD = 111;
-export const KIBITZ = 112;
-export const WHISPER = 113;
-export const EXAMINE = 114;
-export const MEXAMINE = 115;
-export const COPYGAME0 = 116;
-export const COPYGAME = 117;
-export const FORWARD = 118;
-export const BACK = 119;
-export const MATCH = 120;
-export const MATCH0 = 121;
-export const ACCEPT = 122;
-export const HELP0 = 123;
-export const HELP = 124;
-export const MORE = 125;
-export const NEWS = 126;
-export const NEWS0 = 127;
-export const HISTORY = 128;
-export const FINGER = 129;
-export const VARS = 130;
-export const UPSTATISTICS = 131;
-export const UNEXAMINE = 132;
-export const ADJOURN = 133;
-export const ASSESS = 134;
-export const OBSERVE0 = 135;
-export const OBSERVE = 136;
-export const FOLLOW0 = 137;
-export const FOLLOW = 138;
-export const ECO = 139;
-export const STYLE = 140;
-export const BELL = 141;
-export const OPEN = 142;
-export const DECLINE = 143;
-export const REFRESH = 144;
-export const RESIGNADJ = 145;
-export const REVERT = 146;
-export const RATED = 147;
-export const RANK = 148;
-export const MOVES = 149;
-export const MAILOLDMOVES = 150;
-export const MAILSTORED = 151;
-export const MAILHELP = 152;
-export const PENDING = 153;
-export const GAMES = 154;
-export const ABORT = 155;
-export const ALLOBSERVERS = 156;
-export const INCHANNEL = 157;
-export const INFO = 158;
-export const MORETIME = 159;
-export const BEST = 160;
-export const QUIT = 161;
-export const QUOTA = 162;
-export const LLOGONS = 163;
-export const LHISTORY = 164;
-export const TIME = 165;
-export const TAKEBACK = 166;
-export const SEARCH = 167;
-export const SEARCH0 = 168;
-export const SMOVES = 169;
-export const SPOSITION = 170;
-export const PASSWORD = 171;
-export const MESSAGE = 172;
-export const MESSAGE0 = 173;
-export const CLEARMESSAGES = 174;
-export const DATE = 175;
-export const LIST = 176;
-export const PLUS = 177;
-export const MINUS = 178;
-export const ZNOTL = 179;
-export const FLIP = 180;
-export const PROMOTE = 181;
-export const EXPUNGE = 182;
-export const IWCMATCH = 183;
-export const LIMITS = 184;
-export const PING = 185;
-export const EXTEND = 186;
-export const QTELL = 187;
-export const GETPI = 188;
-export const STARTSIMUL = 189;
-export const GOTO = 190;
-export const SETCLOCK = 191;
-export const LIBLIST = 192;
-export const LIBSAVE = 193;
-export const LIBDELETE = 194;
-export const LIBANNOTATE = 195;
-export const LIBKEEPEXAM = 196;
-export const PARTNER = 197;
-export const PARTNER0 = 198;
-export const PTELL = 199;
-export const BUGWHO = 200;
-export const UNUSED203 = 201;
-export const WILDRANK = 202;
-export const XOBSERVE = 203;
-export const PRIMARY = 204;
-export const DRAW = 205;
-export const RESIGN = 206;
-export const STATISTICS = 207;
-export const STORED = 208;
-export const CHANNELQTELL = 209;
-export const XPARTNER = 210;
-export const YFINGER = 211;
-export const SEEKING = 212;
-export const SOUGHT = 213;
-export const SET2 = 214;
-export const PLAY = 215;
-export const UNSEEKING = 216;
-export const AWAY = 217;
-export const LAGSTATS = 218;
-export const COMMANDS = 219;
-export const REMATCH = 220;
-export const REGISTER = 221;
-export const RESUME = 222;
-export const CIRCLE = 223;
-export const ARROW = 224;
-export const BLANKING = 225;
-export const RELAY = 226;
-export const LOADGAME = 227;
-export const DRAWADJ = 228;
-export const ABORTADJ = 229;
-export const MAILNEWS = 230;
-export const QSET = 231;
-export const CC_START = 232;
-export const CC_LIST = 233;
-export const CC_MOVE = 234;
-export const CC_DELETE = 235;
-export const CC_QSTART = 236;
-export const CC_QLIST = 237;
-export const CC_QLABEL = 238;
-export const CC_QDELETE = 239;
-export const CC_QADJUDICATE = 240;
-export const CC_ASK_DIRECTOR = 241;
-export const LOADFEN = 242;
-export const GETPX = 243;
-export const UNRELAYED = 244;
-export const NORELAY = 245;
-export const REFER = 246;
-export const PGN = 247;
-export const SPGN = 248;
-export const QFOLLOW = 249;
-export const QUNFOLLOW = 250;
-export const QMATCH = 251;
-export const QPARTNER = 252;
-export const ISREGNAME = 253;
-export const REQUIRETICKET = 254;
-export const ANNOTATE = 255;
-export const CLEARBOARD = 256;
-export const REQUEST_WIN = 257;
-export const REQUEST_DRAW = 258;
-export const REQUEST_ABORT = 259;
-export const LOGPGN = 260;
-export const RESULT = 261;
-export const FEN = 262;
-export const SFEN = 263;
-export const SETGAMEPARAM = 264;
-export const TAG = 265;
-export const TOMOVE = 266;
-export const REGENTRY = 267;
-export const PERSONALINFO = 268;
-export const EVENTS = 269;
-export const QADDEVENT = 270;
-export const GLISTGROUPS = 271;
-export const GLISTMEMBERS = 272;
-export const GINVITE = 273;
-export const GJOIN = 274;
-export const GLISTINVITED = 275;
-export const GLISTJOINING = 276;
-export const GDESCRIBE = 277;
-export const GKICK = 278;
-export const GBEST = 279;
-export const SIMULIZE = 280;
-export const GAMEID = 281;
-export const FIVEMINUTE = 282;
-export const QIMPART = 283;
-export const GMESSAGE = 284;
-export const COMPLAIN = 285;
-export const LASTTELLS = 286;
-export const VIEW = 287;
-export const SHOWADMIN = 288;
-export const PSTAT = 289;
-export const BOARDINFO = 290;
-export const UNUSED293 = 291;
-export const UNUSED294 = 292;
-export const UNUSED295 = 293;
-export const UNUSED296 = 294;
-export const UNUSED297 = 295;
-export const UNUSED298 = 296;
-export const UNUSED299 = 297;
-export const ADMIN = 298;
-export const ADMIN_UN = 299;
-export const ADJUDICATE = 300;
-export const ASET = 301;
-export const ASET0 = 302;
-export const AWHO = 303;
-export const NUKE = 304;
-export const LOUDSHOUT = 305;
-export const TELLUNREG = 306;
-export const BROADCAST = 307;
-export const SHUTDOWN = 308;
-export const REMGAME = 309;
-export const ADDCOMMENT = 310;
-export const ADDRESS = 311;
-export const FINDADDRESS = 312;
-export const ADDPLAYER = 313;
-export const FORCEREGISTER = 314;
-export const SHOW_ALL_OPEN_FDS = 315;
-export const ALLOCS = 316;
-export const MAILPASSWORD = 317;
-export const REHASH = 318;
-export const REMPLAYER = 319;
-export const KEEPGAME = 320;
-export const EXTEND_PART = 321;
-export const PAYMENT = 322;
-export const BOGOMODE = 323;
-export const COOKIE = 324;
-export const COOKIE0 = 325;
-export const SPOOF = 326;
-export const DUMP = 327;
-export const FINDIP = 328;
-export const FINDNAME = 329;
-export const GIVE_TICKET = 330;
-export const TAKE_TICKET = 331;
-export const C_PENDING = 332;
-export const C_OFFER = 333;
-export const C_WITHDRAW = 334;
-export const C_HISTORY = 335;
-export const C_ACCEPT = 336;
-export const C_DECLINE = 337;
-export const C_REFUND = 338;
-export const C_ISSUE = 339;
-export const C_PAY = 340;
-export const C_ACCRUED = 341;
-export const C_CLEAR = 342;
-export const C_BUY = 343;
-export const UNUSED346 = 344;
-export const UNUSED347 = 345;
-export const UNUSED348 = 346;
-export const UNUSED349 = 347;
-export const QSUGGEST = 348;
-export const UNUSED351 = 349;
-export const RATING = 350;
-export const TEST = 351;
-export const FLUSH = 352;
-export const PDS = 353;
-export const USCFID = 354;
-export const FORFEITADJOURNED = 355;
-export const ACCOUNT = 356;
-export const SNUBBING = 357;
-export const COMMENTGAME = 358;
-export const R_RATING = 359;
-export const ATELL = 360;
-export const UNCOMMENT = 361;
-export const WSUGGEST = 362;
-export const QUERYUI = 363;
-export const SJIAD = 364;
-export const QRETRACT = 365;
-export const SQL = 366;
-export const PAYFAILURE = 367;
-export const RESTRICT = 368;
-export const SET_OTHER = 369;
-export const DEBUG = 370;
-export const PHRASELIST = 371;
-export const PHRASETELL = 372;
-export const PHRASEPTELL = 373;
-export const PHRASESAY = 374;
-export const CHECK_SPEAK = 375;
-export const UNOBSERVE = 376;
-export const UNOBSERVE0 = 377;
-export const SLASH0 = 378;
-export const RES_ADJ = 379;
-export const OLDMOVES = 380;
-export const UNKNOWN383 = 381;
-export const UNKNOWN384 = 382;
-export const UNKNOWN385 = 383;
-export const UNKNOWN386 = 384;
-export const UNKNOWN387 = 385;
-export const UNKNOWN388 = 386;
-export const UNKNOWN389 = 387;
-export const UNKNOWN390 = 388;
-export const UNKNOWN391 = 389;
-export const UNCENSOR = 390;
-export const QUITPLAY = 391;
-export const GETPS = 392;
-export const SETCLOCK_WHITE = 393;
-export const SETCLOCK_BLACK = 394;
-export const SETCLOCK_WHITE_QUIET = 395;
-export const SETCLOCK_BLACK_QUIET = 396;
-export const LIBAPPEND = 397;
-export const PREFRESH = 398;
-export const XKIBITZ = 399;
-export const XWHISPER = 400;
-export const QCLEAR = 401;
-export const APPEND = 402;
-export const UNCENSOR0 = 403;
-export const FM0 = 404;
-export const FM30 = 405;
-export const POOL_P3 = 406;
-export const POOL_P45 = 407;
-export const POOL_P960 = 408;
-export const EXIT = 409;
-export const EXIT_PLAY = 410;
-export const CC_START_BLACK = 411;
-export const CC_START_WHITE = 412;
-export const DB_MACHINE = 413;
-export const DB_BY_DISK = 414;
-export const DB_BY_MACID = 415;
-export const G45_MIN = 416;
-export const G1_MIN = 417;
-export const G15_MIN = 418;
-export const POOL_P5 = 419;
-export const POOL_P15 = 420;
-export const POOL_TUNE = 421;
-export const G_960_JOIN = 422;
-export const FEN0 = 423;
-export const POOL_P = 424;
-export const DB_BY_MAXID = 425;
-export const SET_QUIET = 426;
-export const CC_QMODIFY = 427;
-export const UNFOLLOW = 428;
-export const UNCIRCLE = 429;
-export const UNARROW = 430;
-export const SET_BLACK_NAME = 431;
-export const SET_WHITE_NAME = 432;
-export const REG_SUBMIT = 433;
-export const QCHAN_MINUS = 434;
-export const QCHAN_PLUS = 435;
-export const QREMOVE_EVENT = 436;
-export const RESET_RECORD = 437;
-export const COMMA_TELL = 438;
-export const TEST_DG = 439;
-export const TEST_LOG = 440;
-export const MODERATE = 441;
-export const MODERATE0 = 442;
-export const UNMODERATE = 443;
-export const CONSISTENCY_CHECK = 444;
-export const MOTD = 445;
-export const MOTD0 = 446;
-export const TITLE_NEEDED = 447;
-export const SHOW_SPEAK = 448;
-export const SET_CLIENTID = 449;
-export const SET_SPEAK = 450;
-export const REG_RESPONSE = 451;
-export const SERVER = 452;
-export const QSIMULIZE = 453;
-export const LOADFEN_W = 454;
-export const REVERSE = 455;
-export const SHUTDOWN_STAY = 456;
-export const SHUTDOWN_SLOW = 457;
-export const BAD_D = 458;
-export const ADMIN_ALREADY = 459;
-export const RESERVE = 460;
-export const ABORT_ADJUDICATE = 461;
-export const UNKNOWN466 = 462;
-export const REHASH1 = 463;
-export const REHASH2 = 464;
-export const MAIL_MESSAGE = 465;
-export const FMESSAGE = 466;
-export const GFREE = 467;
-export const UNKNOWN472 = 468;
-export const CHANGEPASSWORD = 469;
-export const LIST_OTHER = 470;
-export const UNKNOWN475 = 471;
-export const CAPITALIZE = 472;
-export const SQL_CONNECT = 473;
-export const DUMP_ACCOUNTS = 474;
-export const RATING_RECORD = 475;
-export const PROCESS_RESULT = 476;
-export const GUEST_IP = 477;
-export const DEBUG_GAME = 478;
-export const DEBUG_ANON0 = 479;
-export const DEBUG_ANON1 = 480;
-export const DEBUG_L = 481;
-export const CLEAR_CLIENTID = 482;
-export const SHOW_COMMANDS = 483;
-export const SHOW_GUEST_COMMANDS = 484;
-export const COMPLAINT_STATUS = 485;
-export const FLUSH_PLAYERS = 486;
-export const SHOW_PASSWORD = 487;
-export const LOGOUT = 488;
-export const LOGOUT_QUIET = 489;
-export const RELAY_NOW = 490;
-export const LOGOUT_PLAY = 491;
-export const Z_REGISTER = 492;
-export const PLAYER_LOAD = 493;
-export const CONSISTANCY_CHECK = 494;
-export const GSPEC_LOAD = 495;
-export const GSPEC_SET_CLASS = 496;
-export const C_TRANSFER = 497;
-export const ORG_STATUS = 498;
-export const UNKNOWN_499 = 499;
-export const UNKNOWN_500 = 500;
-export const UNKNOWN_501 = 501;
-export const UNKNOWN_502 = 502;
-export const UNKNOWN_503 = 503;
-export const UNKNOWN_504 = 504;
-export const UNKNOWN_505 = 505;
-export const UNKNOWN_506 = 506;
-export const UNKNOWN_507 = 507;
-export const UNKNOWN_508 = 508;
-export const UNKNOWN_509 = 509;
-export const UNKNOWN_510 = 510;
-export const UNKNOWN_511 = 511;
-export const UNKNOWN_512 = 512;
-export const UNKNOWN_513 = 513;
-export const UNKNOWN_514 = 514;
-export const UNKNOWN_515 = 515;
-export const UNKNOWN_516 = 516;
-export const UNKNOWN_517 = 517;
-export const UNKNOWN_518 = 518;
-export const UNKNOWN_519 = 519;
-export const UNKNOWN_520 = 520;
-export const UNKNOWN_521 = 521;
-export const UNKNOWN_522 = 522;
-export const POOL_P25 = 523;
+module.exports = Object.freeze({
+    S_UNKNOWN: 0,
+    S_ILLEGAL_MOVE: 1,
+    S_MOVE: 2,
+    S_EDIT_EXAMINED: 3,
+    S_PING_RESPONSE: 10,
+    S_WEIRD: 11,
+    S_REALLY_LOG_IN: 12,
+    S_MOED: 13,
+    S_EVENTS: 14,
+    S_NEWS: 15,
+    S_LOGOUT: 16,
+    S_TIMEOUT: 17,
+    S_CONNECT: 18,
+    S_REALLY_QUIT: 19,
+    S_LOGIN: 20,
+    S_PASSWORD: 21,
+    S_REGISTRATION: 22,
+    S_EXTENSION: 23,
+    S_AUTHENTICATION: 24,
+    S_BAD: 25,
+    S_AUTOMATIC: 26,
+    S_CONFIRM: 27,
+    S_MULTI_DISCARD: 28,
+    S_IDLE: 29,
+    S_ACK_PING: 30,
+    S_MISCELLANEOUS: 31,
+    ACCEPT0: 68,
+    CC_LIST0: 69,
+    BACK0: 70,
+    FORWARD0: 71,
+    EXAMINE0: 72,
+    CLEARMESSAGES0: 73,
+    TAKEBACK0: 74,
+    STORED0: 75,
+    BEST0: 76,
+    LOGONS0: 77,
+    QUOTA0: 78,
+    QUIT_PLAY: 79,
+    INFO0: 80,
+    CENSOR: 81,
+    CENSOR0: 82,
+    INCHANNEL0: 83,
+    ALLOBSERVERS0: 84,
+    GAMES0: 85,
+    WHISPER_TO: 86,
+    KIBITZ_TO: 87,
+    ACCESS0: 88,
+    VARS0: 89,
+    FINGER0: 90,
+    FIRSTMOVE_QUEUE: 91,
+    THREEMIN: 92,
+    ECO0: 93,
+    HISTORY0: 94,
+    TIME0: 95,
+    TELL0: 96,
+    PLAYERS: 97,
+    WHO0: 98,
+    TELL_DOT: 99,
+    XTELL: 100,
+    TELL: 101,
+    I: 102,
+    SHOUT: 103,
+    SHOUT0: 104,
+    SLASH: 105,
+    WHO: 106,
+    SET: 107,
+    FLAG: 108,
+    SAY: 109,
+    CHANNELTELL: 110,
+    SSHOUT: 111,
+    BAD: 112,
+    KIBITZ: 113,
+
+    WHISPER: 114,
+    EXAMINE: 115,
+    MEXAMINE: 116,
+    COPYGAME0: 117,
+    COPYGAME: 118,
+    FORWARD: 119,
+    BACK: 120,
+    MATCH: 121,
+    MATCH0: 122,
+    ACCEPT: 123,
+    HELP0: 124,
+    HELP: 125,
+    MORE: 126,
+    NEWS: 127,
+    NEWS0: 128,
+    HISTORY: 129,
+    FINGER: 130,
+    VARS: 131,
+    UPSTATISTICS: 132,
+    UNEXAMINE: 133,
+    ADJOURN: 134,
+    ASSESS: 135,
+    OBSERVE0: 136,
+    OBSERVE: 137,
+    FOLLOW0: 138,
+    FOLLOW: 139,
+    ECO: 140,
+    STYLE: 141,
+    BELL: 142,
+    OPEN: 143,
+    DECLINE: 144,
+    REFRESH: 145,
+    RESIGNADJ: 146,
+    REVERT: 147,
+    RATED: 148,
+    RANK: 149,
+    MOVES: 150,
+    MAILOLDMOVES: 151,
+    MAILSTORED: 152,
+    MAILHELP: 153,
+    PENDING: 154,
+    GAMES: 155,
+    ABORT: 156,
+    ALLOBSERVERS: 157,
+    INCHANNEL: 158,
+    INFO: 159,
+    MORETIME: 160,
+    BEST: 161,
+    QUIT: 162,
+    QUOTA: 163,
+    LLOGONS: 164,
+    LHISTORY: 165,
+    LOGONS: 166,
+    TIME: 167,
+    TAKEBACK: 168,
+    SEARCH: 169,
+    SEARCH0: 170,
+    SMOVES: 171,
+    SPOSITION: 172,
+    PASSWORD: 173,
+    MESSAGE: 174,
+    MESSAGE0: 175,
+    CLEARMESSAGES: 176,
+    DATE: 177,
+    LIST: 178,
+    PLUS: 179,
+    MINUS: 180,
+    ZNOTL: 181,
+    FLIP: 182,
+    PROMOTE: 183,
+    EXPUNGE: 184,
+    IWCMATCH: 185,
+    LIMITS: 186,
+    PING: 187,
+    EXTEND: 188,
+    QTELL: 189,
+    GETPI: 190,
+    STARTSIMUL: 191,
+    GOTO: 192,
+    SETCLOCK: 193,
+    LIBLIST: 194,
+    LIBSAVE: 195,
+    LIBDELETE: 196,
+    LIBANNOTATE: 197,
+    LIBKEEPEXAM: 198,
+    PARTNER: 199,
+    PARTNER0: 200,
+    PTELL: 201,
+    BUGWHO: 202,
+    WILDRANK: 204,
+    XOBSERVE: 205,
+    PRIMARY: 206,
+    DRAW: 207,
+    RESIGN: 208,
+    STATISTICS: 209,
+    STORED: 210,
+    CHANNELQTELL: 211,
+    XPARTNER: 212,
+    YFINGER: 213,
+    SEEKING: 214,
+    SOUGHT: 215,
+    SET2: 216,
+    PLAY: 217,
+    UNSEEKING: 218,
+    AWAY: 219,
+    LAGSTATS: 220,
+    COMMANDS: 221,
+    REMATCH: 222,
+    REGISTER: 223,
+    RESUME: 224,
+    CIRCLE: 225,
+    ARROW: 226,
+    BLANKING: 227,
+    RELAY: 228,
+    LOADGAME: 229,
+    DRAWADJ: 230,
+    ABORTADJ: 231,
+    MAILNEWS: 232,
+    QSET: 233,
+    CC_START: 234,
+    CC_LIST: 235,
+    CC_MOVE: 236,
+    CC_DELETE: 237,
+    CC_QSTART: 238,
+    CC_QLIST: 239,
+    CC_QLABEL: 240,
+    CC_QDELETE: 241,
+    CC_QADJUDICATE: 242,
+    CC_ASK_DIRECTOR: 243,
+    LOADFEN: 244,
+    GETPX: 245,
+    UNRELAYED: 246,
+    NORELAY: 247,
+    REFER: 248,
+    PGN: 249,
+    SPGN: 250,
+    QFOLLOW: 251,
+    QUNFOLLOW: 252,
+    QMATCH: 253,
+    QPARTNER: 254,
+    ISREGNAME: 255,
+    REQUIRETICKET: 256,
+    ANNOTATE: 257,
+    CLEARBOARD: 258,
+    REQUEST_WIN: 259,
+    REQUEST_DRAW: 260,
+    REQUEST_ABORT: 261,
+    LOGPGN: 262,
+    RESULT: 263,
+    FEN: 264,
+    SFEN: 265,
+    SETGAMEPARAM: 266,
+    TAG: 267,
+    TOMOVE: 268,
+    REGENTRY: 269,
+    PERSONALINFO: 270,
+    EVENTS: 271,
+    QADDEVENT: 272,
+    GLISTGROUPS: 273,
+    GLISTMEMBERS: 274,
+    GINVITE: 275,
+    GJOIN: 276,
+    GLISTINVITED: 277,
+    GLISTJOINING: 278,
+    GDESCRIBE: 279,
+    GKICK: 280,
+    GBEST: 281,
+    SIMULIZE: 282,
+    GAMEID: 283,
+    FIVEMINUTE: 284,
+    QIMPART: 285,
+    GMESSAGE: 286,
+    COMPLAIN: 287,
+    LASTTELLS: 288,
+    VIEW: 289,
+    SHOWADMIN: 290,
+    PSTAT: 291,
+    BOARDINFO: 292,
+    ADMIN: 300,
+    ADMIN_UN: 301,
+    ADJUDICATE: 302,
+    ASET: 303,
+    ASET0: 304,
+    AWHO: 305,
+    NUKE: 306,
+    LOUDSHOUT: 307,
+    TELLUNREG: 308,
+    BROADCAST: 309,
+    SHUTDOWN: 310,
+    REMGAME: 311,
+    ADDCOMMENT: 312,
+    ADDRESS: 313,
+    FINDADDRESS: 314,
+    ADDPLAYER: 315,
+    FORCEREGISTER: 316,
+    SHOW_ALL_OPEN_FDS: 317,
+    ALLOCS: 318,
+    MAILPASSWORD: 319,
+    REHASH: 320,
+    REMPLAYER: 321,
+    KEEPGAME: 322,
+    EXTEND_PART: 323,
+    PAYMENT: 324,
+    BOGOMODE: 325,
+    COOKIE: 326,
+    COOKIE0: 327,
+    SPOOF: 328,
+    DUMP: 329,
+    FINDIP: 330,
+    FINDNAME: 331,
+    GIVE_TICKET: 332,
+    TAKE_TICKET: 333,
+    C_PENDING: 334,
+    C_OFFER: 335,
+    C_WITHDRAW: 336,
+    C_HISTORY: 337,
+    C_ACCEPT: 338,
+    C_DECLINE: 339,
+    C_REFUND: 340,
+    C_ISSUE: 341,
+    C_PAY: 342,
+    C_ACCRUED: 343,
+    C_CLEAR: 344,
+    C_BUY: 345,
+    QSUGGEST: 350,
+    RATING: 352,
+    TEST: 353,
+    FLUSH: 354,
+    PDS: 355,
+    USCFID: 356,
+    FORFEITADJOURNED: 357,
+    ACCOUNT: 358,
+    SNUBBING: 359,
+    COMMENTGAME: 360,
+    R_RATING: 361,
+    ATELL: 362,
+    UNCOMMENT: 363,
+    WSUGGEST: 364,
+    SJIAD: 366,
+    QRETRACT: 367,
+    SQL: 368,
+    PAYFAILURE: 369,
+    RESTRICT: 370,
+    SET_OTHER: 371,
+    DEBUG: 372,
+    PHRASELIST: 373,
+    PHRASETELL: 374,
+    PHRASEPTELL: 375,
+    PHRASESAY: 376,
+    CHECK_SPEAK: 377,
+    UNOBSERVE: 378,
+    UNOBSERVE0: 379,
+    SLASH0: 380,
+    RES_ADJ: 381,
+    OLDMOVES: 382,
+    UNCENSOR: 392,
+// QUITPLAY: 393,
+    GETPS: 394,
+    SETCLOCK_WHITE: 395,
+    SETCLOCK_BLACK: 396,
+    SETCLOCK_WHITE_QUIET: 397,
+    SETCLOCK_BLACK_QUIET: 398,
+    LIBAPPEND: 399,
+    PREFRESH: 400,
+    XKIBITZ: 401,
+    XWHISPER: 402,
+    QCLEAR: 403,
+    APPEND: 404,
+    UNCENSOR0: 405,
+    FM0: 406,
+    FM30: 407,
+    POOL_P3: 408,
+    POOL_P45: 409,
+    POOL_P960: 410,
+    EXIT: 411,
+    EXIT_PLAY: 412,
+    CC_START_BLACK: 413,
+    CC_START_WHITE: 414,
+    DB_MACHINE: 415,
+    DB_MACHINES: 416,
+    DB_BY_DISK: 417,
+    DB_BY_MACID: 418,
+    CN_45_MIN: 419,
+    CN_1_MIN: 420,
+    CN_15_MIN: 421,
+    POOL_P5: 422,
+    POOL_P15: 423,
+    POOL_TUNE: 424,
+    CN_960_JOIN: 425,
+    FEN0: 426,
+    POOL_P1: 427,
+    DB_USERS: 428,
+//: 429, unused
+    SET_QUIET: 430,
+    CC_QMODIFY: 431,
+    UNFOLLOW: 432,
+    UNCIRCLE: 433,
+    UNARROW: 434,
+    SET_BLACK_NAME: 435,
+    SET_WHITE_NAME: 436,
+    REG_SUBMIT: 437,
+    QCHAN_MINUS: 438,
+    QCHAN_PLUS: 439,
+    QREMOVE_EVENT: 440,
+    RESET_RECORD: 441,
+    COMMA_TELL: 442,
+    csTEST_DG: 443,
+    TEST_LOG: 444,
+    MODERATE: 445,
+    MODERATE0: 446,
+    UNMODERATE: 447,
+    CONSISTENCY_CHECK: 448,
+    MOTD: 449,
+    MOTD0: 450,
+    TITLE_NEEDED: 451,
+    SHOW_SPEAK: 452,
+    SET_CLIENTID: 453,
+    SET_SPEAK: 454,
+    REG_RESPONSE: 455,
+    SERVER: 456,
+    QSIMULIZE: 457,
+    LOADFEN_W20: 458,
+    REVERSE: 459,
+    SHUTDOWN_STAY: 460,
+    SHUTDOWN_SLOW: 461,
+    BAD_D: 462,
+    ADMIN_ALREADY: 463,
+    RESERVE: 464,
+    ABORT_ADJUDICATE: 465,
+    REHASH1: 467,
+    REHASH2: 468,
+    MAIL_MESSAGE: 469,
+    FMESSAGE: 470,
+    GFREE: 471,
+    CHANGEPASSWORD: 473,
+    LIST_OTHER: 474,
+    CAPITALIZE: 476,
+    SQL_CONNECT: 477,
+    DUMP_ACCOUNTS: 478,
+    LOCATION: 479,
+    RATING_RECORD: 480,
+    PROCESS_RESULT: 481,
+    GUEST_IP: 482,
+    DEBUG_GAME: 483,
+    DEBUG_ANON0: 484,
+    DEBUG_ANON1: 485,
+    DEBUG_L2: 486,
+    CLEAR_CLIENTID: 487,
+    SHOW_COMMANDS: 488,
+    SHOW_GUEST_COMMANDS: 489,
+    COMPLAINT_STATUS: 490,
+    FLUSH_PLAYERS: 491,
+    SHOW_PASSWORD: 492,
+    LOGOUT: 493,
+    LOGOUT_QUIET: 494,
+    RELAY_NOW: 495,
+    LOGOUT_PLAY: 496,
+    Z_REGISTER: 497,
+    PLAYER_LOAD: 498,
+    CONSISTANCY_CHECK: 499,
+    GSPEC_LOAD: 500,
+    GSPEC_SET_CLASS: 501,
+    C_TRANSFER: 502,
+    ORG_STATUS: 503,
+    POOL_CHECKERS: 504,
+    POOL_CHECKERS_SERVICE: 505,
+    DB_BY_CLIENTID: 506,
+    ZRATINGS0: 507,
+    ZRATINGS: 508,
+    LEAVEPOOL: 509,
+    JOINPOOL: 517
+});

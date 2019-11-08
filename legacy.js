@@ -1,4 +1,5 @@
 const L2 = require('./l2');
+const CN = require("./cn");
 const net = require("net");
 
 const PACKET_FUNCTIONS = {
@@ -28,6 +29,10 @@ const LegacyICC = function (options) {
     const CONTROL_Y = String.fromCharCode(25);
     const CONTROL_Z = String.fromCharCode(26);
 
+    let save_offers = {};
+    let my_username;
+    let game_play_color = {};
+
     let user = options.username || "g";
     let password = options.password || "";
     let host = options.host || "chessclub.com";
@@ -42,9 +47,9 @@ const LegacyICC = function (options) {
     };
     let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL];
 
-    for(const k in PACKET_FUNCTIONS) {
-        if(PACKET_FUNCTIONS.hasOwnProperty(k)) {
-            if(typeof options[k] === "function") {
+    for (const k in PACKET_FUNCTIONS) {
+        if (PACKET_FUNCTIONS.hasOwnProperty(k)) {
+            if (typeof options[k] === "function") {
                 functions[k] = options[k];
                 PACKET_FUNCTIONS[k].forEach(l2 => addl2(l2));
             }
@@ -88,7 +93,7 @@ const LegacyICC = function (options) {
         do {
             try {
                 packets = _parse();
-            } catch(e) {
+            } catch (e) {
                 error_function(e);
             }
             if (packets) {
@@ -108,7 +113,7 @@ const LegacyICC = function (options) {
     }
 
     function _parse() {
-        if(preparser && preparser(databuffer)) {
+        if (preparser && preparser(databuffer)) {
             databuffer = "";
             return;
         }
@@ -252,17 +257,20 @@ const LegacyICC = function (options) {
     }
 
     function ratingtype(v) {
-        switch(v) {
-            case "0": return "no games";
-            case "1": return "provisional";
-            case "2": return "established";
+        switch (v) {
+            case "0":
+                return "no games";
+            case "1":
+                return "provisional";
+            case "2":
+                return "established";
             default:
                 return "?";
         }
     }
 
     function colorrequest(v) {
-        switch(v) {
+        switch (v) {
             case "-1":
                 return null;
             case "0":
@@ -277,7 +285,7 @@ const LegacyICC = function (options) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
                 case L2.ERROR:
-                    if(functions.error) {
+                    if (functions.error) {
                         functions.error({
                             error_number: parseInt(p2[0]),
                             iso_language: p2[1],
@@ -287,7 +295,7 @@ const LegacyICC = function (options) {
                     }
                     break;
                 case L2.FAIL:
-                    if(functions.fail) {
+                    if (functions.fail) {
                         functions.fail({
                             command_id: parseInt(p2[0]),
                             error_message: p2[1]
@@ -295,8 +303,8 @@ const LegacyICC = function (options) {
                     }
                     break;
                 case L2.OFFERS_IN_MY_GAME:
-                    if(functions.offers_in_my_game) {
-                        functions.offers_in_my_game({
+                    if (functions.offers_in_my_game) {
+                        save_offers[parseInt(p2[0])] = {
                             gamenumber: parseInt(p2[0]),
                             wdraw: p2[1] === "1",
                             bdraw: p2[2] === "1",
@@ -306,11 +314,12 @@ const LegacyICC = function (options) {
                             babort: p2[6] === "1",
                             wtakeback: parseInt(p2[7]),
                             btakeback: parseInt(p2[8])
-                        });
+                        };
+                        functions.offers_in_my_game(save_offers[parseInt(p2[0])]);
                     }
                     break;
                 case L2.SEND_MOVES:
-                    if(functions.move) {
+                    if (functions.move) {
                         functions.move({
                             gamenumber: parseInt(p2[0]),
                             algebraic_move: p2[1],
@@ -322,18 +331,22 @@ const LegacyICC = function (options) {
                     }
                     break;
                 case L2.MY_GAME_RESULT:
-                    if(functions.my_game_result) {
+                    delete game_play_color[parseInt(p2[0])];
+                    delete save_offers[parseInt(p2[0])];
+                    if (functions.my_game_result) {
                         functions.my_game_result({
                             gamenumber: parseInt(p2[0]),
                             become_examined: p2[1] === "1",
                             game_result_code: p2[2],
                             score_string2: p2[3],
                             description_string: p2[4],
-                            ECO: p2[5]});
+                            ECO: p2[5]
+                        });
                     }
                     break;
                 case L2.MY_GAME_STARTED:
-                    if(functions.my_game_started) {
+                    game_play_color[parseInt(p2[0])] = (p2[1] === my_username ? "w" : "b");
+                    if (functions.my_game_started) {
                         functions.my_game_started({
                             gamenumber: parseInt(p2[0]),
                             whitename: p2[1],
@@ -362,7 +375,11 @@ const LegacyICC = function (options) {
                     break;
                 case L2.SEEK_REMOVED:
                     if (functions.seek_removed)
-                        functions.seek_removed({message_identifier: p.l1messageidentifier, index: parseInt(p2[0]), reasoncode: parseInt(p2[1])});
+                        functions.seek_removed({
+                            message_identifier: p.l1messageidentifier,
+                            index: parseInt(p2[0]),
+                            reasoncode: parseInt(p2[1])
+                        });
                     break;
                 case L2.SEEK:
                     //
@@ -388,6 +405,8 @@ const LegacyICC = function (options) {
                         });
                     break;
                 case L2.WHO_AM_I:
+                    my_username = p2[0];
+                    write(null, "set style 13");
                     if (functions.loggedin)
                         functions.loggedin({username: p2[0], titles: p2[1].split(" ")});
                     break;
@@ -424,8 +443,8 @@ const LegacyICC = function (options) {
                     break;
                 case L2.MATCH_REMOVED:
                     if (functions.match_removed)
-                         functions.match_removed({
-                             message_identifier: p.l1messageidentifier,
+                        functions.match_removed({
+                            message_identifier: p.l1messageidentifier,
                             challenger_name: p2[0],
                             receiver_name: p2[1],
                             explanation_string: p2[2]
@@ -435,6 +454,62 @@ const LegacyICC = function (options) {
                     error_function("Unknown packet: " + p2);
             }
         });
+
+        packets.level1Packets.forEach(function (p) {
+            const p1 = _parseLevel1(p);
+            const hdrstring = p1[0].split(" ");
+            const cmd = parseInt(hdrstring[0]);
+            const who = hdrstring[1];
+            const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
+            switch (cmd) {
+                case CN.DECLINE:
+                    if (save_offers) {
+                        if (p1[1].indexOf("declines your draw offer") !== -1) {
+                            update_offers_from_decline("draw", true);
+                        } else if (p1[1].indexOf("draw declined") !== -1) {
+                            update_offers_from_decline("draw", false);
+                        } else if (p1[1].indexOf("declines to abort") !== -1) {
+                            update_offers_from_decline("abort", true);
+                        } else if (p1[1].indexOf("abort declined") !== -1) {
+                            update_offers_from_decline("abort", false);
+                        } else if (p1[1].indexOf("declines to adjourn") !== -1) {
+                            update_offers_from_decline("adjourn", true);
+                        } else if (p1[1].indexOf("adjourn declined") !== -1) {
+                            update_offers_from_decline("adjourn", false);
+                        }
+                    }
+                    //write(null, "pending");
+                    break;
+            }
+        });
+    }
+
+    //                            wdraw: p2[1] === "1",
+    //                             bdraw: p2[2] === "1",
+    //                             wadjourn: p2[3] === "1",
+    //                             badjourn: p2[4] === "1",
+    //                             wabort: p2[5] === "1",
+    //                             babort: p2[6] === "1",
+    //                             wtakeback: parseInt(p2[7]),
+    //                             btakeback: parseInt(p2[8])
+    function update_offers_from_decline(type, decliner) {
+        if (functions.offers_in_my_game) {
+            for (k in save_offers) {
+                if (game_play_color[k]) {
+                    const color = game_play_color[k];
+                    const prefix = decliner ? color : (color === "w" ? "b" : "w");
+                    if (save_offers[k][prefix + type]) {
+                        save_offers[k][prefix + type] = false;
+                        functions.offers_in_my_game(save_offers[k]);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    function _parseLevel1(packet) {
+        return packet.split("\r\n");
     }
 
     function _parseLevel2(packet) {
@@ -522,9 +597,9 @@ const LegacyICC = function (options) {
     }
 
     function write(message_identifier, cmd) {
-        if(sendpreprocessor && sendpreprocessor((!!message_identifier ? "`" + message_identifier + "`/" : "/") + cmd))
+        if (sendpreprocessor && sendpreprocessor((!!message_identifier ? "`" + message_identifier + "`/" : "/") + cmd))
             return;
-        if(!!message_identifier)
+        if (!!message_identifier)
             socket.write("`" + message_identifier + "`");
         socket.write(cmd);
         socket.write("\n");
@@ -537,11 +612,11 @@ const LegacyICC = function (options) {
     // TODO: The match function assumes all parameters exist, the seek function does not. Which to do?
     function seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
         let cmd = "seek";
-        if(!!time) cmd += " " + time;
-        if(!!inc) cmd += " " + inc;
+        if (!!time) cmd += " " + time;
+        if (!!inc) cmd += " " + inc;
         cmd += !!rated ? " r" : " u";
         cmd += " w" + (!!wild ? wild : "0");
-        if(!!color) cmd += " " + color;
+        if (!!color) cmd += " " + color;
         cmd += (!!auto ? " a" : " m");
         cmd += " " + (!!minrating ? minrating : "0");
         cmd += "-" + (!!maxrating ? maxrating : "9999");
@@ -549,7 +624,7 @@ const LegacyICC = function (options) {
     }
 
     function unseek(message_identifier, index) {
-        write(message_identifier, "unseek" + (!!index? " " + index : ""));
+        write(message_identifier, "unseek" + (!!index ? " " + index : ""));
     }
 
     function remove_all_matches_and_seeks(message_identifier) {
@@ -608,46 +683,46 @@ const LegacyICC = function (options) {
             logout();
         },
 
-        match: function(message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
+        match: function (message_identifier, name, time, increment, time2, increment2, rated, wild, color) {
             match(message_identifier, name, time, increment, time2, increment2, rated, wild, color);
         },
-        seek: function(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
+        seek: function (message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
             seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
         },
-        unseek: function(message_identifier, index) {
+        unseek: function (message_identifier, index) {
             unseek(message_identifier, index);
         },
-        remove_all_matches_and_seeks: function(message_identifier) {
+        remove_all_matches_and_seeks: function (message_identifier) {
             remove_all_matches_and_seeks(message_identifier);
         },
-        accept: function(message_identifier, who) {
+        accept: function (message_identifier, who) {
             accept(message_identifier, who);
         },
-        play: function(message_identifier, who) {
+        play: function (message_identifier, who) {
             play(message_identifier, who);
         },
-        move: function(message_identifier, _move) {
+        move: function (message_identifier, _move) {
             move(message_identifier, _move);
         },
-        resign: function(message_identifier, who) {
+        resign: function (message_identifier, who) {
             resign(message_identifier, who);
         },
-        decline: function(message_identifier, who) {
+        decline: function (message_identifier, who) {
             decline(message_identifier, who);
         },
-        adjourn: function(message_identifier) {
+        adjourn: function (message_identifier) {
             adjourn(message_identifier);
         },
-        resume: function(message_identifier) {
+        resume: function (message_identifier) {
             resume(message_identifier);
         },
-        draw: function(message_identifier) {
+        draw: function (message_identifier) {
             draw(message_identifier);
         },
-        abort: function(message_identifier) {
+        abort: function (message_identifier) {
             abort(message_identifier);
         },
-        takeback: function(message_identifier, count) {
+        takeback: function (message_identifier, count) {
             takeback(message_identifier, count);
         },
 
@@ -655,7 +730,7 @@ const LegacyICC = function (options) {
             socket_data(data);
         },
 
-        active_level2: function() {
+        active_level2: function () {
             return level2values.slice(0);
         }
     }

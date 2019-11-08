@@ -38,6 +38,17 @@ function request_draw(obj, n) {
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
+function decline(obj, n, what) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.offers = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.offers = resolve;
+    });
+    obj["user" + n].decline("decline-" + what, what);
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
 function request_abort(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
         obj["user1"].resolves.offers = resolve;
@@ -288,8 +299,45 @@ describe("Games", function () {
     });
 
     it("should decline an adjourn correctly", function () {/*There is no message when a user declines an adjourn. (There is an L1, but no L2*/});
-    it("should decline a draw correctly", function () {/*There is no message when a user declines a draw. (There is an L1, but no L2*/});
-    it("should decline an abort correctly", function () {/*There is no message when a user declines an abort. (There is an L1, but no L2*/});
+    it("should decline a draw correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_draw(obj, 1))
+            .then((obj) => decline(obj, 2, "draw"))
+            .then((obj => resign(obj, 1)))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
+    it("should decline an abort correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_abort(obj, 1))
+            .then((obj) => decline(obj, 2, "abort"))
+            .then((obj => resign(obj, 1)))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
+    it("should decline an adjourn correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_adjourn(obj, 1))
+            .then((obj) => decline(obj, 2, "adjourn"))
+            .then((obj => resign(obj, 1)))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
     //  draw N1... CN_DRAW​
     //  moves N1... CN_MOVES​
     //  abort N1...X CN_ABORT​
