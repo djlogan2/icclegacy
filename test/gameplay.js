@@ -307,7 +307,7 @@ describe("Games", function () {
             .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
             .then((obj) => request_draw(obj, 1))
             .then((obj) => decline(obj, 2, "draw"))
-            .then((obj => resign(obj, 1)))
+            .then((obj) => resign(obj, 1))
             .then((obj) => logout(obj, 1))
             .then((obj) => logout(obj, 2)) ;
     });
