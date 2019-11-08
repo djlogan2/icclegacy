@@ -68,8 +68,8 @@ describe("login functions", function(){
     });
     it("should set datagrams 0 and 69", function(){
         const legacy1 = new Legacy({loggedin: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [0, 69]);
+        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 154, 168]);
         const legacy2 = new Legacy({login_failed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [0, 69]);
+        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 154, 168]);
     });
 });

@@ -81,9 +81,9 @@ describe("seek functions", function () {
     });
     it("should set datagrams 50 and 51", function () {
         const legacy1 = new Legacy({seek: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 50]);
+        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 50, 154, 168]);
         const legacy2 = new Legacy({seek_removed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 51]);
+        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 51, 154, 168]);
     });
 });
 

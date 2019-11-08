@@ -191,8 +191,8 @@ function check_login(n, data) {
 
 function login(obj, n, username, password) {
     obj["user" + n] = new Legacy({
-        sendpreprocessor: (data) => log(n, data),
-        preprocessor: (data) => log(n, data),
+        //sendpreprocessor: (data) => log(n, data),
+        //preprocessor: (data) => log(n, data),
         username: username,
         password: password,
         host: "queen.chessclub.com",
@@ -272,7 +272,7 @@ describe("Games", function () {
             .then((obj) => logout(obj, 2)) ;
     });
 
-    it.only("should request and accept takebacks correctly", function () {
+    it("should request and accept takebacks correctly", function () {
         this.timeout(60000);
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
