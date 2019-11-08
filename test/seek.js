@@ -127,6 +127,28 @@ describe("The seek command", function () {
         });
         legacy.login();
     });
+
+    it("should return an error correctly when user cannot issue a seek", function(done){
+        this.timeout(60000);
+        let actualusername;
+        let actualindex;
+        const legacy = new Legacy({
+            sendpreprocessor: (data) => console.log(data),
+            preprocessor: (data) => console.log(data),
+            username: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            host: "queen.chessclub.com",
+            port: 23,
+            loggedin: (data) => {
+                actualusername = data.username;
+                legacy.seek("mi1", 999, 20, true, 20, "white", true, 1300, 1400);
+            },
+            seek_failed: (data) => {
+                done();
+            }
+        });
+        legacy.login();
+    });
 });
 
 describe("the play command", function(){
@@ -157,6 +179,8 @@ describe("the play command", function(){
         }
 
         user1 = new Legacy({
+            //preprocessor: console.log,
+            //sendpreprocessor: console.log,
             username: process.env.USERNAME,
             password: process.env.PASSWORD,
             host: "queen.chessclub.com",

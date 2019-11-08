@@ -1,5 +1,7 @@
 const chai = require('chai');
+const sinon = require('sinon');
 const Legacy = require('../legacy').LegacyICC;
+const net = require("net");
 
 
 const CONTROL_Y = String.fromCharCode(25);
@@ -52,6 +54,14 @@ describe("login functions", function(){
                 chai.assert.sameMembers(data.titles, ["TM", "C", "H", "GM"]);
                 done();
             }
+        });
+        const stubs = {};
+        legacy.test_login((socket) => {
+            stubs.write = sinon.stub(socket, "write");
+            stubs.on = sinon.stub(socket, "on");
+            stubs.setEncoding = sinon.stub(socket, "setEncoding");
+            stubs.connect = sinon.stub(socket, "connect");
+            return socket;
         });
         legacy.test_socket_data(level1(10, null, level2(0, "uuzz", B("TM C H GM"))));
     });

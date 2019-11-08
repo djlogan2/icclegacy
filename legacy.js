@@ -12,7 +12,8 @@ const PACKET_FUNCTIONS = {
     "my_game_started": [L2.MY_GAME_STARTED],
     "my_game_result": [L2.MY_GAME_RESULT],
     "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK],
-    "offers_in_my_game": [L2.OFFERS_IN_MY_GAME]
+    "offers_in_my_game": [L2.OFFERS_IN_MY_GAME],
+    "seek_failed": []
 };
 
 const LegacyICC = function (options) {
@@ -76,8 +77,12 @@ const LegacyICC = function (options) {
             level2values.push(l2v);
     }
 
-    function login() {
-        socket = new net.Socket();
+    function login(test_callback_for_replacing_socket_with_a_stub) {
+        let new_socket = new net.Socket();
+        if (test_callback_for_replacing_socket_with_a_stub)
+            socket = test_callback_for_replacing_socket_with_a_stub(new_socket);
+        else
+            socket = new_socket;
         socket.on("data", socket_data);
         socket.on("error", error_function);
         socket.setEncoding("utf8");
@@ -407,6 +412,9 @@ const LegacyICC = function (options) {
                 case L2.WHO_AM_I:
                     my_username = p2[0];
                     write(null, "set style 13");
+                    write(null, "set width 255");
+                    if (functions.messages)
+                        write(null, "messages");
                     if (functions.loggedin)
                         functions.loggedin({username: p2[0], titles: p2[1].split(" ")});
                     break;
@@ -462,6 +470,13 @@ const LegacyICC = function (options) {
             const who = hdrstring[1];
             const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
             switch (cmd) {
+                case CN.SEEKING:
+                    if(!functions.seek_failed)
+                        return;
+                    if(p1[1].indexOf("Your ad") !== -1)
+                        return;
+                    functions.seek_failed(p1[1]);
+                    break;
                 case CN.DECLINE:
                     if (save_offers) {
                         if (p1[1].indexOf("declines your draw offer") !== -1) {
@@ -476,6 +491,10 @@ const LegacyICC = function (options) {
                             update_offers_from_decline("adjourn", true);
                         } else if (p1[1].indexOf("adjourn declined") !== -1) {
                             update_offers_from_decline("adjourn", false);
+                        } else if (p1[1].indexOf("declines your request to takeback") !== -1) {
+                            update_offers_from_decline("takeback", true);
+                        } else if (p1[1].indexOf("takeback declined") !== -1) {
+                            update_offers_from_decline("takeback", false);
                         }
                     }
                     //write(null, "pending");
@@ -499,7 +518,10 @@ const LegacyICC = function (options) {
                     const color = game_play_color[k];
                     const prefix = decliner ? color : (color === "w" ? "b" : "w");
                     if (save_offers[k][prefix + type]) {
-                        save_offers[k][prefix + type] = false;
+                        if(type === "takeback")
+                            save_offers[k][prefix + type] = 0;
+                        else
+                            save_offers[k][prefix + type] = false;
                         functions.offers_in_my_game(save_offers[k]);
                         return;
                     }
@@ -678,6 +700,9 @@ const LegacyICC = function (options) {
          */
         login: function () {
             login();
+        },
+        test_login: function (test_callback_for_replacing_socket_with_a_stub) {
+            login(test_callback_for_replacing_socket_with_a_stub);
         },
         logout: function () {
             logout();

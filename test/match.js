@@ -247,6 +247,7 @@ describe("the accept command", function(){
 
 describe("the decline command", function(){
     it("should decline a current match", function(done){
+        this.timeout(60000);
         let username1, username2;
         let match1, match2;
         function checklogin() {
