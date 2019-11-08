@@ -563,6 +563,18 @@ const LegacyICC = function (options) {
         write(message_identifier, "resume");
     }
 
+    function draw(message_identifier) {
+        write(message_identifier, "draw");
+    }
+
+    function abort(message_identifier) {
+        write(message_identifier, "abort");
+    }
+
+    function takeback(message_identifier, count) {
+        write(message_identifier, "takeback" + (!!count ? " " + count : ""));
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -599,7 +611,7 @@ const LegacyICC = function (options) {
         resign: function(message_identifier, who) {
             resign(message_identifier, who);
         },
-        decline_match: function(message_identifier, who) {
+        decline: function(message_identifier, who) {
             decline(message_identifier, who);
         },
         adjourn: function(message_identifier) {
@@ -608,8 +620,14 @@ const LegacyICC = function (options) {
         resume: function(message_identifier) {
             resume(message_identifier);
         },
-        decline_adjourn: function(message_identifier) {
-            decline(message_identifier, "adjourn");
+        draw: function(message_identifier) {
+            draw(message_identifier);
+        },
+        abort: function(message_identifier) {
+            abort(message_identifier);
+        },
+        takeback: function(message_identifier, count) {
+            takeback(message_identifier, count);
         },
 
         test_socket_data: function (data) {

@@ -258,7 +258,7 @@ describe("the decline command", function(){
 
         function checkmatch() {
             if(match1 && match2) {
-                user2.decline_match("mi2", user1.username);
+                user2.decline("mi2", user1.username);
             }
         }
 

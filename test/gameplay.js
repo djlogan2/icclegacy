@@ -5,6 +5,17 @@ function check_offers(n, data) {
     this["user" + n].resolves.offers(this);
 }
 
+function request_takeback(obj, n, nm) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.offers = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.offers = resolve;
+    });
+    obj["user" + n].takeback("request-takeback", nm);
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
 function request_adjourn(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
             obj["user1"].resolves.offers = resolve;
@@ -16,6 +27,28 @@ function request_adjourn(obj, n) {
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
+function request_draw(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.offers = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.offers = resolve;
+    });
+    obj["user" + n].draw("request-draw");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function request_abort(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.offers = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.offers = resolve;
+    });
+    obj["user" + n].abort("request-abort");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
 function accept_adjourn(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
         obj["user1"].resolves.game_result = resolve;
@@ -24,6 +57,39 @@ function accept_adjourn(obj, n) {
         obj["user2"].resolves.game_result = resolve;
     });
     obj["user" + n].adjourn("accept-adjourn");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function accept_takeback(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_result = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_result = resolve;
+    });
+    obj["user" + n].takeback("accept-takeback");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function accept_abort(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_result = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_result = resolve;
+    });
+    obj["user" + n].abort("accept-abort");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function accept_draw(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_result = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_result = resolve;
+    });
+    obj["user" + n].draw("accept-draw");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
@@ -122,8 +188,8 @@ function check_login(n, data) {
 
 function login(obj, n, username, password) {
     obj["user" + n] = new Legacy({
-        //sendpreprocessor: (data) => log(n, data),
-        //preprocessor: (data) => log(n, data),
+        sendpreprocessor: (data) => log(n, data),
+        preprocessor: (data) => log(n, data),
         username: username,
         password: password,
         host: "queen.chessclub.com",
@@ -161,7 +227,7 @@ describe("Games", function () {
             ;
     });
 
-    it.only("should adjourn and resume correctly", function () {
+    it("should adjourn and resume correctly", function () {
         this.timeout(60000);
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
@@ -177,7 +243,50 @@ describe("Games", function () {
             .then((obj) => logout(obj, 2)) ;
     });
 
-    it.only("should decline an adjourn correctly", function () {/*There is no message when a user declines an adjourn. (There is an L1, but no L2*/});
+    it("should request and accept draws correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_draw(obj, 1))
+            .then((obj) => accept_draw(obj, 2))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
+
+    it("should request and accept aborts correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_abort(obj, 1))
+            .then((obj) => accept_abort(obj, 2))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
+
+    it.only("should request and accept takebacks correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_takeback(obj, 2, 2))
+            .then((obj) => accept_takeback(obj, 1))
+            .then((obj) => play_moves(obj, ["Bg5"]))
+            .then((obj) => resign(obj, 2))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
+    });
+
+    it("should decline an adjourn correctly", function () {/*There is no message when a user declines an adjourn. (There is an L1, but no L2*/});
+    it("should decline a draw correctly", function () {/*There is no message when a user declines a draw. (There is an L1, but no L2*/});
+    it("should decline an abort correctly", function () {/*There is no message when a user declines an abort. (There is an L1, but no L2*/});
     //  draw N1... CN_DRAW​
     //  moves N1... CN_MOVES​
     //  abort N1...X CN_ABORT​
