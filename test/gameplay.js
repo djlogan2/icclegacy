@@ -1,146 +1,183 @@
 const chai = require('chai');
 const Legacy = require('../legacy').LegacyICC;
 
-function checkresult(obj, n, data) {
-    obj.resultcheck += n;
-    if (obj.resultcheck === 3)
-        obj.resolve(obj);
+function check_offers(n, data) {
+    this["user" + n].resolves.offers(this);
 }
 
-function checkmove(obj, n, data) {
-    obj.movecheck += n;
-    if (obj.movecheck === 3)
-        obj.resolve(obj);
+function request_adjourn(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+            obj["user1"].resolves.offers = resolve;
+        });
+    const promise2 = new Promise((resolve, reject) => {
+            obj["user2"].resolves.offers = resolve;
+        });
+    obj["user" + n].adjourn("request-adjourn");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
-function checkmovepromise(obj) {
-    return new Promise((resolve) => {
-        obj.resolve = resolve;
+function accept_adjourn(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_result = resolve;
     });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_result = resolve;
+    });
+    obj["user" + n].adjourn("accept-adjourn");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
-function makemove(obj, move) {
-    obj["user" + obj.n].move(move, move);
-    obj.movecheck = 0;
-    return checkmovepromise(obj);
+function check_move(n, data) {
+    this["user" + n].resolves.move(this);
+}
+
+function make_move(obj, n, move) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.move = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.move = resolve;
+    });
+    obj["user" + n].move("move-" + move, move);
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
 function play_moves(obj, moves) {
-    obj.n = 0;
+    let n = 0;
     return moves.reduce((promiseChain, move) => {
         return promiseChain.then((obj) => {
-            obj.n = (obj.n === 1 ? 2 : 1);
-            return makemove(obj, move);
+            n = (n === 1 ? 2 : 1);
+            return make_move(obj, n, move);
         });
     }, Promise.resolve(obj));
 }
 
-function get_a_game_started() {
-    return new Promise((resolve) => {
-        let loggedin = 0;
-        let match = 0;
-        let game = 0;
-        const returnObject = {};
+function log(n, data) {
+    console.log("--- user" + n + " ---");
+    console.log(data);
+}
 
-        function checkgame(n, data) {
-            returnObject["game" + n] = data;
-            returnObject.tomove = "w";
-            game += n;
-            if (game === 3)
-                resolve(returnObject);
-        }
+function check_match(n, data) {
+    this["user" + n].resolves.match(this);
+}
 
-        function checkmatch(n) {
-            match += n;
-            if (match === 3)
-                returnObject.user2.accept("mi2", returnObject.username1);
-        }
+function check_game_start(n, data) {
+    this["user" + n].resolves.game_start(this);
+}
 
-        function checkloggedin(n, data) {
-            loggedin += n;
-            returnObject["username" + n] = data.username;
-            if (loggedin === 3) {
-                returnObject.user1.resign("miresign", returnObject.username2); // Make sure any adjourned game is resigned
-                returnObject.user1.match("mi1", returnObject.username2, 15, 0, null, null, false, 0, "white");
-            }
-        }
-
-        function log(n, data) {
-            console.log("--- " + returnObject["username" + n] + " ---");
-            console.log(data);
-        }
-
-        returnObject.user1 = new Legacy({
-            //sendpreprocessor: (data) => log(1, data),
-            //preprocessor: (data) => log(1, data),
-            username: process.env.USERNAME,
-            password: process.env.PASSWORD,
-            host: "queen.chessclub.com",
-            loggedin: (data) => checkloggedin(1, data),
-            match: () => checkmatch(1),
-            my_game_started: (data) => checkgame(1, data),
-            my_game_result: (data) => checkresult(returnObject, 1, data),
-            move: (data) => checkmove(returnObject, 1, data)
-        });
-        returnObject.user2 = new Legacy({
-            //sendpreprocessor: (data) => log(1, data),
-            //preprocessor: (data) => log(2, data),
-            username: process.env.USERNAME2,
-            password: process.env.PASSWORD2,
-            host: "queen.chessclub.com",
-            loggedin: (data) => checkloggedin(2, data),
-            match: () => checkmatch(2),
-            my_game_started: (data) => checkgame(2, data),
-            my_game_result: (data) => checkresult(returnObject, 2, data),
-            move: (data) => checkmove(returnObject, 2, data)
-        });
-        returnObject.user1.login();
-        returnObject.user2.login();
+function accept_match(obj, n) {
+    const username = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_start = resolve;
     });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_start = resolve;
+    });
+    obj["user" + n].accept("accept-" + n + "-" + username, username);
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function check_result(n, data) {
+    this["user" + n].resolves.game_result(this);
+}
+
+function resign(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.game_result = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.game_result = resolve;
+    });
+    obj["user" + n].resign("resigning");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function issue_match(obj, n) {
+    const username = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.match = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.match = resolve;
+    });
+    obj["user" + n].match("match-" + n + "-" + username, username, 15, 0, null, null, false, 0, "white");
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function resume_game(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.match = resolve;
+    });
+    const promise2 = new Promise((resolve, reject) => {
+        obj["user2"].resolves.match = resolve;
+    });
+    obj["user" + n].resume("resume-" + n);
+    return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
+}
+
+function check_login(n, data) {
+    if (n === 2) this["user" + n].resign(null, process.env.USERNAME);
+    this["user" + n].resolves.login(this);
+}
+
+function login(obj, n, username, password) {
+    obj["user" + n] = new Legacy({
+        sendpreprocessor: (data) => log(n, data),
+        preprocessor: (data) => log(n, data),
+        username: username,
+        password: password,
+        host: "queen.chessclub.com",
+        loggedin: (data) => check_login.call(obj, n, data),
+        match: (data) => check_match.call(obj, n, data),
+        my_game_started: (data) => check_game_start.call(obj, n, data),
+        offers_in_my_game: (data) => check_offers.call(obj, n, data),
+        my_game_result: (data) => check_result.call(obj, n, data),
+        move: (data) => check_move.call(obj, n, data)
+    });
+    obj["user" + n].resolves = {};
+    const promise = new Promise((resolve) => {
+        obj["user" + n].resolves.login = resolve;
+    });
+    obj["user" + n].login();
+    return promise;
+}
+
+function logout(obj, n) {
+    obj["user" + n].logout();
+    return Promise.resolve(obj);
 }
 
 describe("Games", function () {
-    this.timeout(5000);
-    it("should work for basic happy path with resign", function (done) {
-        get_a_game_started()
-            .then((obj) => {
-                return play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]);
-            })
-            .then((obj) => {
-                obj.resultcheck = 0;
-                return new Promise((resolve) => {
-                    obj.resolve = resolve;
-                    obj.user1.resign("killit!");
-                });
-            })
-            .then((obj) => {
-                obj.user1.logout();
-                obj.user2.logout();
-                done();
-            });
+    it("should work for basic happy path with resign", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => resign(obj, 1))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2))
+            ;
     });
 
-    it("should adjourn and resume correctly", function(done){
-        get_a_game_started()
-            .then((obj) => {
-                return play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]);
-            })
-            .then((obj) => {
-                obj.resultcheck = 0;
-                return new Promise((resolve) => {
-                    obj.resolve = resolve;
-                    obj.user1.adjourn("killit!");
-                });
-            })
-            .then((obj) => {
-                obj.user1.logout();
-                obj.user2.logout();
-                done();
-            });
+    it.only("should adjourn and resume correctly", function () {
+        this.timeout(60000);
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => login(obj, 2, process.env.USERNAME2, process.env.PASSWORD2))
+            .then((obj) => issue_match(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => play_moves(obj, ["e4", "e5", "Nf3", "Nc6", "Be2", "Be7", "Nc3", "Nf6", "d4", "d5", "Bd2", "Bd7"]))
+            .then((obj) => request_adjourn(obj, 1))
+            .then((obj) => accept_adjourn(obj, 2))
+            .then((obj) => resume_game(obj, 1))
+            .then((obj) => accept_match(obj, 2))
+            .then((obj) => resign(obj, 1))
+            .then((obj) => logout(obj, 1))
+            .then((obj) => logout(obj, 2)) ;
     });
-    //  adjourn N1..1 CN_ADJOURN​
-    //  decline s1... CN_DECLINE​
-    //  decline N1... CN_DECLINE​
+
+    it.only("should decline an adjourn correctly", function () {/*There is no message when a user declines an adjourn. (There is an L1, but no L2*/});
     //  draw N1... CN_DRAW​
     //  moves N1... CN_MOVES​
     //  abort N1...X CN_ABORT​

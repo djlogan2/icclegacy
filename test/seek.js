@@ -137,6 +137,7 @@ describe("the play command", function(){
 
         function checklogin() {
             if(username1 && username2) {
+                user1.resign(null, username2);
                 user1.seek("mi2", 15, 20, false, 0, null, true, 0, 9999);
             }
         }

@@ -101,6 +101,7 @@ describe("The match command", function(){
     it("should work", function(done){
         function checklogin() {
             if(username1 && username2) {
+                user1.resign(null, username2);
                 user1.match("mi1", username2, 20, 30, 40, 50, true, 0, "white");
             }
         }
@@ -250,6 +251,7 @@ describe("the decline command", function(){
         let match1, match2;
         function checklogin() {
             if(username1 && username2) {
+                user1.resign(null, username2);
                 user1.match("mi1", username2, 20, 30, 40, 50, true, 0, "white");
             }
         }

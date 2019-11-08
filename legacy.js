@@ -10,7 +10,8 @@ const PACKET_FUNCTIONS = {
     "seek_removed": [L2.SEEK_REMOVED],
     "my_game_started": [L2.MY_GAME_STARTED],
     "my_game_result": [L2.MY_GAME_RESULT],
-    "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK]
+    "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK],
+    "offers_in_my_game": [L2.OFFERS_IN_MY_GAME]
 };
 
 const LegacyICC = function (options) {
@@ -272,6 +273,21 @@ const LegacyICC = function (options) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             switch (parseInt(p2.shift())) {
+                case L2.OFFERS_IN_MY_GAME:
+                    if(functions.offers_in_my_game) {
+                        functions.offers_in_my_game({
+                            gamenumber: parseInt(p2[0]),
+                            wdraw: p2[1] === "1",
+                            bdraw: p2[2] === "1",
+                            wadjourn: p2[3] === "1",
+                            badjourn: p2[4] === "1",
+                            wabort: p2[5] === "1",
+                            babort: p2[6] === "1",
+                            wtakeback: parseInt(p2[7]),
+                            btakeback: parseInt(p2[8])
+                        });
+                    }
+                    break;
                 case L2.SEND_MOVES:
                     if(functions.move) {
                         functions.move({
@@ -485,7 +501,7 @@ const LegacyICC = function (options) {
     }
 
     function write(message_identifier, cmd) {
-        if(sendpreprocessor && sendpreprocessor((!!message_identifier ? "`" + message_identifier + "`" : "") + cmd))
+        if(sendpreprocessor && sendpreprocessor((!!message_identifier ? "`" + message_identifier + "`/" : "/") + cmd))
             return;
         if(!!message_identifier)
             socket.write("`" + message_identifier + "`");
@@ -539,6 +555,14 @@ const LegacyICC = function (options) {
         write(message_identifier, "decline" + (!!who_or_what ? " " + who_or_what : ""));
     }
 
+    function adjourn(message_identifier) {
+        write(message_identifier, "adjourn");
+    }
+
+    function resume(message_identifier) {
+        write(message_identifier, "resume");
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -575,8 +599,17 @@ const LegacyICC = function (options) {
         resign: function(message_identifier, who) {
             resign(message_identifier, who);
         },
-        decline_match(message_identifier, who) {
+        decline_match: function(message_identifier, who) {
             decline(message_identifier, who);
+        },
+        adjourn: function(message_identifier) {
+            adjourn(message_identifier);
+        },
+        resume: function(message_identifier) {
+            resume(message_identifier);
+        },
+        decline_adjourn: function(message_identifier) {
+            decline(message_identifier, "adjourn");
         },
 
         test_socket_data: function (data) {
