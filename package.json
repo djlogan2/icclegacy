@@ -1,11 +1,12 @@
 {
   "name": "@chessclub.com/legacy",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Telnet connection to legacy ICC servers",
   "main": "legacy.js",
   "filename": "legacy.min.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",

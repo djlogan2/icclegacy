@@ -11,9 +11,11 @@ const PACKET_FUNCTIONS = {
     "seek_removed": [L2.SEEK_REMOVED],
     "my_game_started": [L2.MY_GAME_STARTED],
     "my_game_result": [L2.MY_GAME_RESULT],
-    "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK],
+    "move": [L2.SEND_MOVES, L2.MOVE_ALGEBRAIC, L2.MOVE_SMITH, L2.MOVE_TIME, L2.MOVE_CLOCK, L2.IS_VARIATION],
     "offers_in_my_game": [L2.OFFERS_IN_MY_GAME],
-    "seek_failed": []
+    "players_in_my_game": [L2.PLAYERS_IN_MY_GAME],
+    "my_game_ended": [L2.EXAMINED_GAME_IS_GONE, L2.MY_GAME_ENDED],
+    "backward": [L2.BACKWARD]
 };
 
 const LegacyICC = function (options) {
@@ -43,8 +45,7 @@ const LegacyICC = function (options) {
     let sendpreprocessor = options.sendpreprocessor || null;
     let preparser = options.preparser || null;
     let functions = {
-        error: options.error || generic_error,
-        fail: options.fail || generic_error,
+        error: options.error || generic_error
     };
     let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL];
 
@@ -68,7 +69,8 @@ const LegacyICC = function (options) {
     let currentLevel2 = "";
     let socket;
 
-    function generic_error(error) {
+    function generic_error(message_identifier, error) {
+        console.log("message_identifier=" + message_identifier + ", error=");
         console.log(error);
     }
 
@@ -285,13 +287,56 @@ const LegacyICC = function (options) {
         }
     }
 
+    function convertvariation(variation) {
+        switch(variation) {
+            case "0":
+                return "MOVE_INITIAL";
+            case "1":
+                return "MOVE_PLAYED";
+            case "2":
+                return "MOVE_FORWARD";
+            case "3":
+                return "MOVE_EXAMINE";
+            default:
+                return "MOVE_UNKNOWN_" + variation;
+        }
+    }
+
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
-            switch (parseInt(p2.shift())) {
+            const p2cmd = parseInt(p2.shift());
+            switch (p2cmd) {
+                case L2.BACKWARD:
+                    if(functions.backward) {
+                        functions.backward({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            backup_count: parseInt(p2[1])
+                        });
+                    }
+                    break;
+                case L2.MY_GAME_ENDED:
+                case L2.EXAMINED_GAME_IS_GONE:
+                    if(functions.my_game_ended) {
+                        functions.my_game_ended({message_identifier: p.l1messageidentifier, gamenumber: parseInt(p2[0])});
+                    }
+                    break;
+                case L2.PLAYERS_IN_MY_GAME:
+                    if(functions.players_in_my_game) {
+                        functions.players_in_my_game({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            playername: p2[1],
+                            symbol: p2[2],
+                            kibvalue: parseInt(p2[3])
+                        });
+                    }
+                    break;
                 case L2.ERROR:
                     if (functions.error) {
                         functions.error({
+                            message_identifier: p.l1messageidentifier,
                             error_number: parseInt(p2[0]),
                             iso_language: p2[1],
                             error_text: p2[2],
@@ -300,8 +345,9 @@ const LegacyICC = function (options) {
                     }
                     break;
                 case L2.FAIL:
-                    if (functions.fail) {
-                        functions.fail({
+                    if (functions.error) {
+                        functions.error({
+                            message_identifier: p.l1messageidentifier,
                             command_id: parseInt(p2[0]),
                             error_message: p2[1]
                         });
@@ -310,6 +356,7 @@ const LegacyICC = function (options) {
                 case L2.OFFERS_IN_MY_GAME:
                     if (functions.offers_in_my_game) {
                         save_offers[parseInt(p2[0])] = {
+                            message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
                             wdraw: p2[1] === "1",
                             bdraw: p2[2] === "1",
@@ -326,12 +373,13 @@ const LegacyICC = function (options) {
                 case L2.SEND_MOVES:
                     if (functions.move) {
                         functions.move({
+                            message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
                             algebraic_move: p2[1],
                             smith_move: p2[2],
                             time: parseInt(p2[3]),
                             clock: parseInt(p2[4]),
-                            is_variation: p2[5] === "1"
+                            is_variation: convertvariation(p2[5])
                         });
                     }
                     break;
@@ -340,6 +388,7 @@ const LegacyICC = function (options) {
                     delete save_offers[parseInt(p2[0])];
                     if (functions.my_game_result) {
                         functions.my_game_result({
+                            message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
                             become_examined: p2[1] === "1",
                             game_result_code: p2[2],
@@ -353,6 +402,7 @@ const LegacyICC = function (options) {
                     game_play_color[parseInt(p2[0])] = (p2[1] === my_username ? "w" : "b");
                     if (functions.my_game_started) {
                         functions.my_game_started({
+                            message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
                             whitename: p2[1],
                             blackname: p2[2],
@@ -459,7 +509,8 @@ const LegacyICC = function (options) {
                         });
                     break;
                 default:
-                    error_function("Unknown packet: " + p2);
+                    error_function({message_identifier: p.l1messageidentifier, unknown_packet: p});
+                    write(null, "set-2 " + p2cmd + " 0");
             }
         });
 
@@ -470,31 +521,32 @@ const LegacyICC = function (options) {
             const who = hdrstring[1];
             const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
             switch (cmd) {
+                case CN.MEXAMINE:
+                    if(p1[1].indexOf("now an examiner") === -1 && p1[1].indexOf("made you an examiner") === -1)
+                        error_function(arbitrary_string, p1[1]);
+                    break;
                 case CN.SEEKING:
-                    if(!functions.seek_failed)
-                        return;
-                    if(p1[1].indexOf("Your ad") !== -1)
-                        return;
-                    functions.seek_failed(p1[1]);
+                    if(p1[1].indexOf("Your ad") === -1)
+                        error_function(arbitrary_string, p1[1]);
                     break;
                 case CN.DECLINE:
                     if (save_offers) {
                         if (p1[1].indexOf("declines your draw offer") !== -1) {
-                            update_offers_from_decline("draw", true);
+                            update_offers_from_decline(arbitrary_string, "draw", true);
                         } else if (p1[1].indexOf("draw declined") !== -1) {
-                            update_offers_from_decline("draw", false);
+                            update_offers_from_decline(arbitrary_string, "draw", false);
                         } else if (p1[1].indexOf("declines to abort") !== -1) {
-                            update_offers_from_decline("abort", true);
+                            update_offers_from_decline(arbitrary_string, "abort", true);
                         } else if (p1[1].indexOf("abort declined") !== -1) {
-                            update_offers_from_decline("abort", false);
+                            update_offers_from_decline(arbitrary_string, "abort", false);
                         } else if (p1[1].indexOf("declines to adjourn") !== -1) {
-                            update_offers_from_decline("adjourn", true);
+                            update_offers_from_decline(arbitrary_string, "adjourn", true);
                         } else if (p1[1].indexOf("adjourn declined") !== -1) {
-                            update_offers_from_decline("adjourn", false);
+                            update_offers_from_decline(arbitrary_string, "adjourn", false);
                         } else if (p1[1].indexOf("declines your request to takeback") !== -1) {
-                            update_offers_from_decline("takeback", true);
+                            update_offers_from_decline(arbitrary_string, "takeback", true);
                         } else if (p1[1].indexOf("takeback declined") !== -1) {
-                            update_offers_from_decline("takeback", false);
+                            update_offers_from_decline(arbitrary_string, "takeback", false);
                         }
                     }
                     //write(null, "pending");
@@ -511,7 +563,7 @@ const LegacyICC = function (options) {
     //                             babort: p2[6] === "1",
     //                             wtakeback: parseInt(p2[7]),
     //                             btakeback: parseInt(p2[8])
-    function update_offers_from_decline(type, decliner) {
+    function update_offers_from_decline(arbitrary_string, type, decliner) {
         if (functions.offers_in_my_game) {
             for (k in save_offers) {
                 if (game_play_color[k]) {
@@ -522,6 +574,7 @@ const LegacyICC = function (options) {
                             save_offers[k][prefix + type] = 0;
                         else
                             save_offers[k][prefix + type] = false;
+                        save_offers.message_identifier = arbitrary_string;
                         functions.offers_in_my_game(save_offers[k]);
                         return;
                     }
@@ -645,6 +698,10 @@ const LegacyICC = function (options) {
         write(message_identifier, cmd);
     }
 
+    function examine(message_identifier, what) {
+        write(message_identifier, "examine" + (!!what ? " " + what : ""));
+    }
+
     function unseek(message_identifier, index) {
         write(message_identifier, "unseek" + (!!index ? " " + index : ""));
     }
@@ -663,6 +720,14 @@ const LegacyICC = function (options) {
 
     function move(message_identifier, move) {
         write(message_identifier, "chessmove " + move);
+    }
+
+    function forward(message_identifier, count) {
+        write(message_identifier, "forward" + (!!count ? " " + count : ""));
+    }
+
+    function backward(message_identifier, count) {
+        write(message_identifier, "backward" + (!!count ? " " + count : ""));
     }
 
     function resign(message_identifier, who) {
@@ -693,6 +758,29 @@ const LegacyICC = function (options) {
         write(message_identifier, "takeback" + (!!count ? " " + count : ""));
     }
 
+    function observe(message_identifier, what) {
+        write(message_identifier, "observe" + (!!what ? " " + what : ""));
+    }
+
+    function mexamine(message_identifier, who) {
+        write(message_identifier, "mexamine " + who);
+    }
+
+    function unexamine(message_identifier) {
+        write(message_identifier, "unexamine");
+    }
+
+    function libdelete(message_identifier, slot) {
+        write(message_identifier, "libdelete %" + slot);
+    }
+
+    function libkeepexam(message_identifier, whitename, blackname, result, slot) {
+        let cmd = "libkeepexam";
+        if(!!whitename)
+            cmd += " " + whitename + " " + blackname + " " + result + " " + slot;
+        write(message_identifier, cmd);
+    }
+
     // noinspection JSUnusedGlobalSymbols
     return {
         /*
@@ -714,6 +802,9 @@ const LegacyICC = function (options) {
         seek: function (message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
             seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
         },
+        examine: function(message_identifier, what) {
+            examine(message_identifier, what);
+        },
         unseek: function (message_identifier, index) {
             unseek(message_identifier, index);
         },
@@ -728,6 +819,12 @@ const LegacyICC = function (options) {
         },
         move: function (message_identifier, _move) {
             move(message_identifier, _move);
+        },
+        forward: function(message_identifier, count) {
+            forward(message_identifier, count);
+        },
+        backward: function(message_identifier, count) {
+            backward(message_identifier, count);
         },
         resign: function (message_identifier, who) {
             resign(message_identifier, who);
@@ -749,6 +846,21 @@ const LegacyICC = function (options) {
         },
         takeback: function (message_identifier, count) {
             takeback(message_identifier, count);
+        },
+        observe: function(message_identifier, what) {
+            observe(message_identifier, what);
+        },
+        mexamine: function(message_identifier, who) {
+            mexamine(message_identifier, who);
+        },
+        unexamine: function(message_identifier) {
+            unexamine(message_identifier);
+        },
+        libdelete: function(message_identifier, slot) {
+            libdelete(message_identifier, slot);
+        },
+        libkeepexam: function(message_identifier, whitename, blackname, result, slot) {
+            libkeepexam(message_identifier, whitename, blackname, result, slot);
         },
 
         test_socket_data: function (data) {

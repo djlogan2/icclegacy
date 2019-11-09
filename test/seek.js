@@ -133,8 +133,8 @@ describe("The seek command", function () {
         let actualusername;
         let actualindex;
         const legacy = new Legacy({
-            sendpreprocessor: (data) => console.log(data),
-            preprocessor: (data) => console.log(data),
+            //sendpreprocessor: (data) => console.log(data),
+            //preprocessor: (data) => console.log(data),
             username: process.env.USERNAME,
             password: process.env.PASSWORD,
             host: "queen.chessclub.com",
@@ -143,7 +143,8 @@ describe("The seek command", function () {
                 actualusername = data.username;
                 legacy.seek("mi1", 999, 20, true, 20, "white", true, 1300, 1400);
             },
-            seek_failed: (data) => {
+            error: (data) => {
+                legacy.logout();
                 done();
             }
         });
