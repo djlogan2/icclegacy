@@ -20,8 +20,15 @@ const PACKET_FUNCTIONS = {
     "uncircle": [L2.UNCIRCLE],
     "arrow": [L2.ARROW],
     "unarrow": [L2.UNARROW],
-    "boardinfo": [L2.BOARDINFO]
+    "boardinfo": [L2.BOARDINFO],
+    "player_arrived": [L2.PLAYER_ARRIVED, L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960, L2.TIMESTAMP, L2.TITLES, L2.OPEN, L2.STATE],
+    "player_left": [L2.PLAYER_LEFT]
 };
+
+const sorted_ratings = [L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960];
+sorted_ratings.sort((a,b) => a - b);
+const CONTROL_Y = String.fromCharCode(25);
+const CONTROL_Z = String.fromCharCode(26);
 
 const LegacyICC = function (options) {
 
@@ -34,12 +41,10 @@ const LegacyICC = function (options) {
     const IN_BRACKETS_PARM = 2;
     const IN_CONTROL_BRACKETS_PARM = 3;
 
-    const CONTROL_Y = String.fromCharCode(25);
-    const CONTROL_Z = String.fromCharCode(26);
-
     let save_offers = {};
     let my_username;
     let game_play_color = {};
+    const rating_conversions = {};
 
     let user = options.username || "g";
     let password = options.password || "";
@@ -52,7 +57,7 @@ const LegacyICC = function (options) {
     let functions = {
         error: options.error || generic_error
     };
-    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL];
+    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL, L2.RATING_TYPE_KEY];
 
     for (const k in PACKET_FUNCTIONS) {
         if (PACKET_FUNCTIONS.hasOwnProperty(k)) {
@@ -349,6 +354,34 @@ const LegacyICC = function (options) {
             const p2 = _parseLevel2(p);
             const p2cmd = parseInt(p2.shift());
             switch (p2cmd) {
+                case L2.PLAYER_ARRIVED:
+                    if(functions.player_arrived) {
+                        const packet = {
+                            message_identifier: p.l1messageidentifier,
+                            player_name: p2[0],
+                            ratings: {}
+                        };
+                        let idx = 1;
+                        for(let x = 0, idx = 1 ; x < sorted_ratings.length ; x++, idx++ ) {
+                            packets.ratings[rating_conversions[x]] = {
+                                rating: parseInt(p2[idx++]),
+                                something: parseInt(p2[idx])
+                            }
+                        }
+                        functions.player_arrived(packet);
+                    }
+                    break;
+                case L2.PLAYER_LEFT:
+                    if(functions.player_left)
+                        functions.player_left({
+                            message_identifier: p.l1messageidentifier,
+                            player_name: p2[0]
+                        });
+                    break;
+                case L2.RATING_TYPE_KEY:
+                    rating_conversions[parseInt(p2[0])] = p2[1];
+                    rating_conversions[p2[1]] = parseInt(p2[0]);
+                    break;
                 case L2.BOARDINFO:
                     if (functions.boardinfo)
                         functions.boardinfo({
