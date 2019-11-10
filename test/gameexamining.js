@@ -342,7 +342,7 @@ describe("Examining games", function () {
     // it("returns an error correctly if libkeepexam fails", function () {
     //     chai.assert.fail("do me")
     // });
-    it.only("executes circles and arrows correctly", function () {
+    it("executes circles and arrows correctly", function () {
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => examine(obj, 1, "%10"))
             .then((obj) => circle_cmd(obj, 1, "a4"))
@@ -351,94 +351,44 @@ describe("Examining games", function () {
             .then((obj) => unarrow_cmd(obj, 1, "a4", "h5"))
             .then((obj) => logout(obj, 1));
     });
-    it("executes a clearboard correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if clearboard fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a 'result' commmand correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if 'result' fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a uncircle correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if uncircle fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a unarrow correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if unarrow fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a setwhitename correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if setwhitename fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a setblackname correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if setblackname fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("properly notifies client of players statuses (players in my game)", function () {
-        chai.assert.fail("do me")
-    });
-    //   mexamine s.1.. CN_MEXAMINE​
-    //   forward s.1.. CN_FORWARD​
-    //   forward N.1.. CN_FORWARD0​
-    //   backward s.1.. CN_BACK​
-    //   backward N.1.. CN_BACK0​
-    //   unexamine N.1.. CN_UNEXAMINE​
-    //   examine N.1.. CN_UNEXAMINE​
-    //   revert N.1.. CN_REVERT​
-    //   moves N.1.. CN_MOVES​
+    // it("executes a clearboard correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if clearboard fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("executes a 'result' commmand correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if 'result' fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("executes a setwhitename correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if setwhitename fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("executes a setblackname correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if setblackname fails", function () {
+    //     chai.assert.fail("do me")
+    // });
     //   setwhiteclock s.1.. CN_SETCLOCK_WHITE​
     //   setblackclock s.1.. CN_SETCLOCK_BLACK​
-    //   libkeepexam N.1.1 CN_LIBKEEPEXAM​
-    //   circle S01.. CN_CIRCLE​
-    //   arrow S01.. CN_ARROW​
     //   clearboard N.1.. CN_CLEARBOARD​
     //   result S.1.. CN_RESULT​
-    //   uncircle S01.. CN_UNCIRCLE​
-    //   unarrow S01.. CN_UNARROW​
     //   setwhitename S.1.. CN_SET_WHITE_NAME​
     //   setblackname S.1.. CN_SET_BLACK_NAME​
     //   settimecontrol S.1.. CN_SETGAMEPARAM​
-    //   chessmove s.1.. SCN_MOVE​
 
-    // 15 DG_MY_GAME_STARTED
-    // 16 DG_MY_GAME_RESULT
-    // 17 DG_MY_GAME_ENDED
     // 18 DG_STARTED_OBSERVING
     // 19 DG_STOP_OBSERVING
-    // 20 DG_PLAYERS_IN_MY_GAME
-    // 21 DG_OFFERS_IN_MY_GAME
-    // 22 DG_TAKEBACK
-    // 23 DG_BACKWARD
-    // 33 DG_MOVE_ALGEBRAIC
-    // 34 DG_MOVE_SMITH
-    // 35 DG_MOVE_TIME
-    // 36 DG_MOVE_CLOCK
-    // 24 DG_SEND_MOVES
-    // 25 DG_MOVE_LIST
-    // 38 DG_SET_CLOCK
     // 39 DG_FLIP
     // 42 DG_ILLEGAL_MOVE
     // 70 DG_FEN
-    // 56 DG_MSEC
-    // 61 DG_MORETIME
     // 100 DG_MY_GAME_CHANGE
-    // 59 DG_CIRCLE
-    // 60 DG_ARROW
-    // 89 DG_UNCIRCLE
-    // 90 DG_UNARROW
 
     // From the help file for examine:
     // tag               "help tag"
