@@ -57,6 +57,15 @@ function mexamine(obj, n) {
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
 }
 
+function mexamine2(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user" + n].resolves.error = resolve;
+    });
+    const otherguy = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
+    obj["user" + n].mexamine("mex-" + otherguy, otherguy);
+    return promise1;
+}
+
 function backward_dg(n, data) {
     this["user" + n].resolves.backward(this);
 }
@@ -167,6 +176,59 @@ function error(n, data) {
     }
 }
 
+function revert(obj, n) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.backward = resolve;
+    });
+    obj["user" + n].revert("revert-" + n);
+    return promise1;
+}
+
+function circle_dg(n, data) {
+    this["user" + n].resolves.circle(this);
+}
+function uncircle_dg(n, data) {
+    this["user" + n].resolves.uncircle(this);
+}
+function arrow_dg(n, data) {
+    this["user" + n].resolves.arrow(this);
+}
+function unarrow_dg(n, data) {
+    this["user" + n].resolves.unarrow(this);
+}
+
+function circle_cmd(obj, n, sq) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.circle = resolve;
+    });
+    obj["user" + n].circle("circle-" + n, "e5");
+    return promise1;
+}
+
+function arrow_cmd(obj, n, sq1, sq2) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.arrow = resolve;
+    });
+    obj["user" + n].arrow("arrow-" + n, "d1", "e8");
+    return promise1;
+}
+
+function uncircle_cmd(obj, n, sq) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.uncircle = resolve;
+    });
+    obj["user" + n].uncircle("uncircle-" + n, "e5");
+    return promise1;
+}
+
+function unarrow_cmd(obj, n, sq1, sq2) {
+    const promise1 = new Promise((resolve, reject) => {
+        obj["user1"].resolves.unarrow = resolve;
+    });
+    obj["user" + n].unarrow("arrow-" + n, "d1", "e8");
+    return promise1;
+}
+
 function login(obj, n, username, password) {
     obj["user" + n] = new Legacy({
         sendpreprocessor: (data) => log(n, data),
@@ -181,7 +243,11 @@ function login(obj, n, username, password) {
         move: (data) => check_move.call(obj, n, data),
         my_game_ended: (data) => examine_gone.call(obj, n, data),
         backward: (data) => backward_dg.call(obj, n, data),
-        error: (data) => error.call(obj, n, data)
+        error: (data) => error.call(obj, n, data),
+        circle: (data) => circle_dg.call(obj, n, data),
+        uncircle: (data) => uncircle_dg.call(obj, n, data),
+        arrow: (data) => arrow_dg.call(obj, n, data),
+        unarrow: (data) => unarrow_dg.call(obj, n, data)
     });
     obj["user" + n].resolves = {};
     const promise = new Promise((resolve) => {
@@ -229,7 +295,7 @@ describe("Examining games", function () {
     it("returns an error correctly when mexamine fails", function () {
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => examine(obj, 1))
-            .then((obj) => mexamine(obj, 1, 2))
+            .then((obj) => mexamine2(obj, 1, 2))
             .then((obj) => logout(obj, 1));
     });
     it("executes forward and backward commands correctly", function () {
@@ -241,7 +307,7 @@ describe("Examining games", function () {
             .then((obj) => backward_cmd(obj, 1, 5))
             .then((obj) => logout(obj, 1));
     });
-    it.only("returns an error correctly if unexamine fails", function () {
+    it("returns an error correctly if unexamine fails", function () {
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => {
                 const promise = new Promise((resolve, reject) => obj["user1"].resolves.error = resolve);
@@ -251,37 +317,39 @@ describe("Examining games", function () {
             .then((obj) => logout(obj, 1));
     });
     it("executes a revert correctly", function () {
-        chai.assert.fail("do me")
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => examine(obj, 1, "%10"))
+            .then((obj) => forward(obj, 1, 8))
+            .then((obj) => play_moves(obj, 1, ["a4", "a5", "b4", "b5"]))
+            .then((obj) => revert(obj, 1, 3))
+            .then((obj) => logout(obj, 1));
     });
-    it("returns an error correctly if revert fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a setwhiteclock correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if setwhiteclock fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a setblackclock correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if setblackclock fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if libkeepexam fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a circle correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if circle fails", function () {
-        chai.assert.fail("do me")
-    });
-    it("executes a arrow correctly", function () {
-        chai.assert.fail("do me")
-    });
-    it("returns an error correctly if arrow fails", function () {
-        chai.assert.fail("do me")
+    // it("returns an error correctly if revert fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("executes a setwhiteclock correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if setwhiteclock fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("executes a setblackclock correctly", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if setblackclock fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    // it("returns an error correctly if libkeepexam fails", function () {
+    //     chai.assert.fail("do me")
+    // });
+    it.only("executes circles and arrows correctly", function () {
+        return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
+            .then((obj) => examine(obj, 1, "%10"))
+            .then((obj) => circle_cmd(obj, 1, "a4"))
+            .then((obj) => uncircle_cmd(obj, 1, "a4"))
+            .then((obj) => arrow_cmd(obj, 1, "a4", "h5"))
+            .then((obj) => unarrow_cmd(obj, 1, "a4", "h5"))
+            .then((obj) => logout(obj, 1));
     });
     it("executes a clearboard correctly", function () {
         chai.assert.fail("do me")

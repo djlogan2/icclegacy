@@ -15,7 +15,12 @@ const PACKET_FUNCTIONS = {
     "offers_in_my_game": [L2.OFFERS_IN_MY_GAME],
     "players_in_my_game": [L2.PLAYERS_IN_MY_GAME],
     "my_game_ended": [L2.EXAMINED_GAME_IS_GONE, L2.MY_GAME_ENDED],
-    "backward": [L2.BACKWARD]
+    "backward": [L2.BACKWARD],
+    "circle": [L2.CIRCLE],
+    "uncircle": [L2.UNCIRCLE],
+    "arrow": [L2.ARROW],
+    "unarrow": [L2.UNARROW],
+    "boardinfo": [L2.BOARDINFO]
 };
 
 const LegacyICC = function (options) {
@@ -288,7 +293,7 @@ const LegacyICC = function (options) {
     }
 
     function convertvariation(variation) {
-        switch(variation) {
+        switch (variation) {
             case "0":
                 return "MOVE_INITIAL";
             case "1":
@@ -302,13 +307,100 @@ const LegacyICC = function (options) {
         }
     }
 
+    function boardinfotype(type) {
+        switch (type) {
+            case "0":
+                return "clear";
+            case "1":
+                return "undo";
+            case "4":
+                return "arrow";
+            case "5":
+                return "rectangle";
+            case "6":
+                return "highlight";
+            case "7":
+                return "throbbing";
+            case "8":
+                return "ghost";
+            default:
+                return "unknown-" + type;
+            //	   0 clear all lecture marks
+            // 	   1 undo
+            // 	   4 arrow
+            // 	   5 rectangle
+            // 	   6 highlight
+            // 	   7 throbbing pieces
+            // 	   8 ghost pieces
+        }
+    }
+
+    function boardinfocolor(color) {
+        const colors = ["black", "red", "orange", "yellow", "lightgreen", "darkgreen", "lightblue", "darkblue", "pink", "white"];
+        const icolor = parseInt(color);
+        if (icolor >= 0 && icolor < colors.length)
+            return colors[icolor];
+        else
+            return "unknown-" + color;
+    }
+
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             const p2cmd = parseInt(p2.shift());
             switch (p2cmd) {
+                case L2.BOARDINFO:
+                    if (functions.boardinfo)
+                        functions.boardinfo({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            examiner: p2[1],
+                            type: boardinfotype(p2[2]),
+                            coord1: p2[3],
+                            coord2: p2[4],
+                            color: boardinfocolor(p2[5])
+                        });
+                    break;
+                case L2.ARROW:
+                    if (functions.arrow)
+                        functions.arrow({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            examiner: p2[1],
+                            origin: p2[2],
+                            destination: p2[3]
+                        });
+                    break;
+                case L2.UNARROW:
+                    if (functions.unarrow)
+                        functions.unarrow({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            examiner: p2[1],
+                            origin: p2[2],
+                            destination: p2[3]
+                        });
+                    break;
+                case L2.CIRCLE:
+                    if (functions.circle)
+                        functions.circle({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            examiner: p2[1],
+                            coordinate: p2[2]
+                        });
+                    break;
+                case L2.UNCIRCLE:
+                    if (functions.uncircle)
+                        functions.uncircle({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0]),
+                            examiner: p2[1],
+                            coordinate: p2[2]
+                        });
+                    break;
                 case L2.BACKWARD:
-                    if(functions.backward) {
+                    if (functions.backward) {
                         functions.backward({
                             message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
@@ -318,12 +410,15 @@ const LegacyICC = function (options) {
                     break;
                 case L2.MY_GAME_ENDED:
                 case L2.EXAMINED_GAME_IS_GONE:
-                    if(functions.my_game_ended) {
-                        functions.my_game_ended({message_identifier: p.l1messageidentifier, gamenumber: parseInt(p2[0])});
+                    if (functions.my_game_ended) {
+                        functions.my_game_ended({
+                            message_identifier: p.l1messageidentifier,
+                            gamenumber: parseInt(p2[0])
+                        });
                     }
                     break;
                 case L2.PLAYERS_IN_MY_GAME:
-                    if(functions.players_in_my_game) {
+                    if (functions.players_in_my_game) {
                         functions.players_in_my_game({
                             message_identifier: p.l1messageidentifier,
                             gamenumber: parseInt(p2[0]),
@@ -522,11 +617,11 @@ const LegacyICC = function (options) {
             const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
             switch (cmd) {
                 case CN.MEXAMINE:
-                    if(p1[1].indexOf("now an examiner") === -1 && p1[1].indexOf("made you an examiner") === -1)
+                    if (p1[1].indexOf("now an examiner") === -1 && p1[1].indexOf("made you an examiner") === -1)
                         error_function(arbitrary_string, p1[1]);
                     break;
                 case CN.SEEKING:
-                    if(p1[1].indexOf("Your ad") === -1)
+                    if (p1[1].indexOf("Your ad") === -1)
                         error_function(arbitrary_string, p1[1]);
                     break;
                 case CN.DECLINE:
@@ -570,7 +665,7 @@ const LegacyICC = function (options) {
                     const color = game_play_color[k];
                     const prefix = decliner ? color : (color === "w" ? "b" : "w");
                     if (save_offers[k][prefix + type]) {
-                        if(type === "takeback")
+                        if (type === "takeback")
                             save_offers[k][prefix + type] = 0;
                         else
                             save_offers[k][prefix + type] = false;
@@ -770,13 +865,37 @@ const LegacyICC = function (options) {
         write(message_identifier, "unexamine");
     }
 
+    function revert(message_identifier) {
+        write(message_identifier, "revert");
+    }
+
+    function circle(message_identifier, sq) {
+        write(message_identifier, "circle " + sq);
+    }
+
+    function uncircle(message_identifier, sq) {
+        write(message_identifier, "uncircle " + sq);
+    }
+
+    function arrow(message_identifier, sq1, sq2) {
+        write(message_identifier, "arrow " + sq1 + " " + sq2);
+    }
+
+    function unarrow(message_identifier, sq1, sq2) {
+        write(message_identifier, "unarrow " + sq1 + " " + sq2);
+    }
+
     function libdelete(message_identifier, slot) {
         write(message_identifier, "libdelete %" + slot);
+    }//boardinfo <type> <square-a> <square-b> [<color>]
+
+    function boardinfo(message_identifier, type, square_a, square_b, color) {
+        write(message_identifier, "boardinfo " + type + " " + square_a + " " + square_b + (color === undefined || color === null ? "" : " " + color));
     }
 
     function libkeepexam(message_identifier, whitename, blackname, result, slot) {
         let cmd = "libkeepexam";
-        if(!!whitename)
+        if (!!whitename)
             cmd += " " + whitename + " " + blackname + " " + result + " " + slot;
         write(message_identifier, cmd);
     }
@@ -802,7 +921,7 @@ const LegacyICC = function (options) {
         seek: function (message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating) {
             seek(message_identifier, time, inc, rated, wild, color, auto, minrating, maxrating);
         },
-        examine: function(message_identifier, what) {
+        examine: function (message_identifier, what) {
             examine(message_identifier, what);
         },
         unseek: function (message_identifier, index) {
@@ -820,10 +939,10 @@ const LegacyICC = function (options) {
         move: function (message_identifier, _move) {
             move(message_identifier, _move);
         },
-        forward: function(message_identifier, count) {
+        forward: function (message_identifier, count) {
             forward(message_identifier, count);
         },
-        backward: function(message_identifier, count) {
+        backward: function (message_identifier, count) {
             backward(message_identifier, count);
         },
         resign: function (message_identifier, who) {
@@ -847,19 +966,37 @@ const LegacyICC = function (options) {
         takeback: function (message_identifier, count) {
             takeback(message_identifier, count);
         },
-        observe: function(message_identifier, what) {
+        observe: function (message_identifier, what) {
             observe(message_identifier, what);
         },
-        mexamine: function(message_identifier, who) {
+        mexamine: function (message_identifier, who) {
             mexamine(message_identifier, who);
         },
-        unexamine: function(message_identifier) {
+        unexamine: function (message_identifier) {
             unexamine(message_identifier);
         },
-        libdelete: function(message_identifier, slot) {
+        circle: function (message_identifier, sq) {
+            circle(message_identifier, sq);
+        },
+        uncircle: function (message_identifier, sq) {
+            uncircle(message_identifier, sq);
+        },
+        arrow: function (message_identifier, sq1, sq2) {
+            arrow(message_identifier, sq1, sq2);
+        },
+        unarrow: function (message_identifier, sq1, sq2) {
+            unarrow(message_identifier, sq1, sq2);
+        },
+        boardinfo: function (message_identifier, type, square_a, square_b, color) {
+            boardinfo(message_identifier, type, square_a, square_b, color);
+        },
+        revert: function (message_identifier) {
+            revert(message_identifier);
+        },
+        libdelete: function (message_identifier, slot) {
             libdelete(message_identifier, slot);
         },
-        libkeepexam: function(message_identifier, whitename, blackname, result, slot) {
+        libkeepexam: function (message_identifier, whitename, blackname, result, slot) {
             libkeepexam(message_identifier, whitename, blackname, result, slot);
         },
 
