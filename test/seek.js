@@ -79,12 +79,6 @@ describe("seek functions", function () {
         });
         legacy.test_socket_data(level1(10, null, level2(51, 11, 12)));
     });
-    it("should set datagrams 50 and 51", function () {
-        const legacy1 = new Legacy({seek: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 50, 154, 168]);
-        const legacy2 = new Legacy({seek_removed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 51, 154, 168]);
-    });
 });
 
 describe("The seek command", function () {

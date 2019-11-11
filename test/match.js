@@ -82,12 +82,6 @@ describe("match functions", function(done){
         });
         legacy.test_socket_data(level1(10, null, level2(30, "challenger-name", "receiver-name", CB("Explanation"))));
     });
-    it("should set datagrams 29 and 30", function(){
-        const legacy1 = new Legacy({match: () => console.log("hi")});
-        chai.assert.sameMembers(legacy1.active_level2(), [0, 69, 29, 85, 154, 168]);
-        const legacy2 = new Legacy({match_removed: () => console.log("hi")});
-        chai.assert.sameMembers(legacy2.active_level2(), [0, 69, 30, 154, 168]);
-    });
 });
 
 describe("The match command", function(){
