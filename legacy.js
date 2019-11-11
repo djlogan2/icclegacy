@@ -21,14 +21,16 @@ const PACKET_FUNCTIONS = {
     "arrow": [L2.ARROW],
     "unarrow": [L2.UNARROW],
     "boardinfo": [L2.BOARDINFO],
-    "player_arrived": [L2.PLAYER_ARRIVED, L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960, L2.TIMESTAMP, L2.TITLES, L2.OPEN, L2.STATE],
-    "player_left": [L2.PLAYER_LEFT]
+    "player_arrived": [],
+    "player_left": []
 };
 
 const sorted_ratings = [L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960];
 sorted_ratings.sort((a,b) => a - b);
 const CONTROL_Y = String.fromCharCode(25);
 const CONTROL_Z = String.fromCharCode(26);
+
+const defaultLevel2Values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL, L2.RATING_TYPE_KEY, L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960, L2.TIMESTAMP, L2.TITLES, L2.OPEN, L2.STATE];
 
 const LegacyICC = function (options) {
 
@@ -57,13 +59,16 @@ const LegacyICC = function (options) {
     let functions = {
         error: options.error || generic_error
     };
-    let level2values = [L2.WHO_AM_I, L2.LOGIN_FAILED, L2.ERROR, L2.FAIL, L2.RATING_TYPE_KEY];
+    let level2values = defaultLevel2Values.slice(0); // Get a copy of the default level 2 values
 
     for (const k in PACKET_FUNCTIONS) {
         if (PACKET_FUNCTIONS.hasOwnProperty(k)) {
             if (typeof options[k] === "function") {
                 functions[k] = options[k];
-                PACKET_FUNCTIONS[k].forEach(l2 => addl2(l2));
+                PACKET_FUNCTIONS[k].forEach(l2 => {
+                    if (level2values.indexOf(l2) === -1)
+                        level2values.push(l2);
+                });
             }
         }
     }
@@ -82,11 +87,6 @@ const LegacyICC = function (options) {
     function generic_error(message_identifier, error) {
         console.log("message_identifier=" + message_identifier + ", error=");
         console.log(error);
-    }
-
-    function addl2(l2v) {
-        if (level2values.indexOf(l2v) === -1)
-            level2values.push(l2v);
     }
 
     function login(test_callback_for_replacing_socket_with_a_stub) {
@@ -114,7 +114,7 @@ const LegacyICC = function (options) {
                 error_function(e);
             }
             if (packets) {
-                if (packets.level2Packets.length && packets.level2Packets[0].packet.indexOf("69 5") === 0) {
+                if (packets.level2Packets.length && packets.level2Packets[0].packet.indexOf("69 5") !== -1) {
                     socket.write(password + "\n");
                 } else {
                     if (!preprocessor || !preprocessor(packets))
@@ -349,11 +349,34 @@ const LegacyICC = function (options) {
             return "unknown-" + color;
     }
 
+    function ratingannotation(annotation) {
+        switch(annotation) {
+            case "0":
+                return "nogames";
+            case "1":
+                return "provisional";
+            case "2":
+                return "established";
+            default:
+                return "unknown-" + annotation;
+        }
+    }
+
     function _processPackets(packets) {
         packets.level2Packets.forEach(function (p) {
             const p2 = _parseLevel2(p);
             const p2cmd = parseInt(p2.shift());
             switch (p2cmd) {
+                case L2.STATE:
+                    if(functions.state) {
+                        functions.state({
+                            message_identifier: p.l1messageidentifier,
+                            player_name: p2[0],
+                            state: p2[1],
+                            gamenumber: parseInt(p2[2])
+                        });
+                    }
+                    break;
                 case L2.PLAYER_ARRIVED:
                     if(functions.player_arrived) {
                         const packet = {
@@ -362,12 +385,19 @@ const LegacyICC = function (options) {
                             ratings: {}
                         };
                         let idx = 1;
-                        for(let x = 0, idx = 1 ; x < sorted_ratings.length ; x++, idx++ ) {
-                            packets.ratings[rating_conversions[x]] = {
+                        for(let x = 0 ; x < sorted_ratings.length ; x++, idx++ ) {
+                            packet.ratings[rating_conversions[x]] = {
                                 rating: parseInt(p2[idx++]),
-                                something: parseInt(p2[idx])
+                                status: ratingannotation(p2[idx])
                             }
                         }
+                        packet.timestamp = p2[idx++];
+                        packet.titles = !p2[idx] ? [] : p2[idx].split(" ");
+                        idx++;
+                        packet.open = p2[idx++] === "1";
+                        packet.state = {};
+                        packet.state.state = p2[idx++];
+                        packet.state.game_number = p2[idx];
                         functions.player_arrived(packet);
                     }
                     break;
@@ -595,6 +625,10 @@ const LegacyICC = function (options) {
                         write(null, "messages");
                     if (functions.loggedin)
                         functions.loggedin({username: p2[0], titles: p2[1].split(" ")});
+                    if(functions.player_arrived)
+                        write(null, "set-2 " + L2.PLAYER_ARRIVED + " 1");
+                    if(functions.player_left)
+                        write(null, "set-2 " + L2.PLAYER_LEFT + " 1");
                     break;
                 case L2.LOGIN_FAILED:
                     if (functions.login_failed)
@@ -643,18 +677,19 @@ const LegacyICC = function (options) {
         });
 
         packets.level1Packets.forEach(function (p) {
-            const p1 = _parseLevel1(p);
+            let p1 = _parseLevel1(p);
+            p1 = p1.filter(e => !!e);
             const hdrstring = p1[0].split(" ");
             const cmd = parseInt(hdrstring[0]);
             const who = hdrstring[1];
             const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
             switch (cmd) {
                 case CN.MEXAMINE:
-                    if (p1[1].indexOf("now an examiner") === -1 && p1[1].indexOf("made you an examiner") === -1)
+                    if (p1.length > 1 && p1[1].indexOf("now an examiner") === -1 && p1[1].indexOf("made you an examiner") === -1)
                         error_function(arbitrary_string, p1[1]);
                     break;
                 case CN.SEEKING:
-                    if (p1[1].indexOf("Your ad") === -1)
+                    if (p1.length > 1 && p1[1].indexOf("Your ad") === -1)
                         error_function(arbitrary_string, p1[1]);
                     break;
                 case CN.DECLINE:

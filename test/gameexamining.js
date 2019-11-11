@@ -231,8 +231,8 @@ function unarrow_cmd(obj, n, sq1, sq2) {
 
 function login(obj, n, username, password) {
     obj["user" + n] = new Legacy({
-        sendpreprocessor: (data) => log(n, data),
-        preprocessor: (data) => log(n, data),
+        //sendpreprocessor: (data) => log(n, data),
+        //preprocessor: (data) => log(n, data),
         username: username,
         password: password,
         host: "queen.chessclub.com",
