@@ -139,7 +139,7 @@ function log(n, data) {
 
 function check_match(n, data) {
     this["user" + n].resolves.match(this);
-}
+}``
 
 function check_game_start(n, data) {
     this["user" + n].resolves.game_start(this);
@@ -227,7 +227,7 @@ function logout(obj, n) {
     return Promise.resolve(obj);
 }
 
-describe("Games", function () {
+describe.only("Games", function () {
     it("should work for basic happy path with resign", function () {
         this.timeout(60000);
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
