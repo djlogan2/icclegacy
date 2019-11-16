@@ -227,7 +227,7 @@ function logout(obj, n) {
     return Promise.resolve(obj);
 }
 
-describe.only("Games", function () {
+describe("Games", function () {
     it("should work for basic happy path with resign", function () {
         this.timeout(60000);
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
