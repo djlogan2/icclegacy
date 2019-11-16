@@ -139,7 +139,7 @@ function log(n, data) {
 
 function check_match(n, data) {
     this["user" + n].resolves.match(this);
-}``
+}
 
 function check_game_start(n, data) {
     this["user" + n].resolves.game_start(this);
