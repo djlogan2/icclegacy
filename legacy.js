@@ -751,16 +751,6 @@ const LegacyICC = function (options) {
     }
 
     function _parseLevel2(packet) {
-        /*
-            --- The level 1 stuff ... we will deal with that later right now --
-            TODO: Do this later
-            this.l1PacketData = new String[ours];
-            for (int x = 0; x < ours; x++) {
-                l1PacketData[x] = level1Packets.get(x);
-            }
-            this.l1key = pl1key;
-            this.packet = ppacket;
-    */
         let ctrl = false;
         let currentparm = "";
         let state = IN_BETWEEN;
