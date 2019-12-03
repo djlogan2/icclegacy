@@ -442,5 +442,6 @@ module.exports = Object.freeze({
     ZRATINGS0: 507,
     ZRATINGS: 508,
     LEAVEPOOL: 509,
-    JOINPOOL: 517
+    JOINPOOL: 517,
+    POOL_P25: 523
 });
