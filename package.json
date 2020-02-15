@@ -1,28 +1,16 @@
 {
   "name": "@chessclub.com/legacy",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Telnet connection to legacy ICC servers",
-  "main": "legacy.js",
-  "filename": "legacy.min.js",
   "scripts": {
-    "test": "mocha",
-    "publish": "npm publish --access public"
+    "lint": "eslint .",
+    "publish": "npm publish --access public",
+    "test": "mocha --recursive src"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/djlogan2/icclegacy.git"
   },
-  "npmName": "legacy.js",
-  "npmFileMap": [
-    {
-      "basePath": "",
-      "files": [
-        "legacy.js",
-        "cn.js",
-        "l2.js"
-      ]
-    }
-  ],
   "keywords": [
     "chessclub.com",
     "icc"
@@ -33,9 +21,18 @@
     "url": "https://github.com/djlogan2/icclegacy/issues"
   },
   "homepage": "https://github.com/djlogan2/icclegacy#readme",
+  "dependencies": {
+    "iconv-lite": "0.5.1"
+  },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1"
+    "@types/chai": "4.2.9",
+    "chai": "4.2.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-prettier": "3.1.2",
+    "mocha": "7.0.1",
+    "nyc": "15.0.0",
+    "prettier": "1.19.1",
+    "sinon": "8.1.1"
   }
 }
