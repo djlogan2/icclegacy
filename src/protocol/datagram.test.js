@@ -23,7 +23,7 @@ describe("Datagram", () => {
       const dg = new LoginFailed(meta, ["42", "test reason"]);
       assert.equal(dg.id, DG.LOGIN_FAILED);
       assert.equal(dg.code(), 42);
-      assert.equal(dg.explanation(), "test reason");
+      assert.equal(dg.reason(), "test reason");
     });
   });
 

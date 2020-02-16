@@ -10,7 +10,7 @@ const { DG } = require("./protocol");
 describe("Integration", () => {
   it("can login to queen", done => {
     const client = new Client("queen.chessclub.com", 5000, new GuestCredentials());
-    client.subscribeDatagram(DG.WHO_AM_I, dg => {
+    client.onDatagram(DG.WHO_AM_I, dg => {
       assert.equal(dg.id, DG.WHO_AM_I);
       done();
     });

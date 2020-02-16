@@ -2,7 +2,8 @@
 
 const iconv = require("iconv-lite");
 const { Parser, DG } = require("./protocol");
-const { StateMachine } = require("./state");
+const { StateMachine, STATE_CONNECTING, STATE_OFFLINE, STATE_AUTHENTICATING, STATE_LOGGED_IN } = require("./state");
+const { EventEmitter } = require("./event");
 
 const SERVER_ENCODING = "latin1";
 
@@ -18,14 +19,21 @@ class Client {
 
     this.state = new StateMachine();
 
+    this.protocol = new Parser();
+    this.protocol.onLoginPrompt.on(() => handleLoginPrompt(this));
+    this.protocol.onCommand.on(cmd => handleCommand(this, cmd));
+    this.protocol.onDatagram.on(dg => handleDatagram(this, dg));
+
     this.enabledDatagrams = [];
     this.enabledDatagrams.length = DG.COUNT;
-    this.enabledDatagrams[DG.LOGIN_FAILED] = "1";
+    this.enabledDatagrams.fill("0");
     this.enabledDatagrams[DG.SET2] = "1";
-    this.enabledDatagrams[DG.WHO_AM_I] = "1";
 
-    this.datagramSubscribers = [];
-    this.datagramSubscribers.length = DG.COUNT;
+    this.datagramEvents = [];
+    this.datagramEvents.length = DG.COUNT;
+
+    this.onDatagram(DG.WHO_AM_I, dg => handleWhoAmI(this, dg));
+    this.onDatagram(DG.LOGIN_FAILED, dg => handleLoginFailed(this, dg));
   }
 
   start(socket) {
@@ -35,10 +43,7 @@ class Client {
       this.stop();
     }
 
-    this.protocol = new Parser();
-    this.protocol.onLoginPrompt.on(() => handleLoginPrompt(this));
-    this.protocol.onCommand.on(cmd => handleCommand(this, cmd));
-    this.protocol.onDatagram.on(dg => handleDatagram(this, dg));
+    this.state.transition(STATE_CONNECTING);
 
     this.socket = socket;
     this.socket.setKeepAlive(true);
@@ -53,52 +58,65 @@ class Client {
   }
 
   stop() {
+    this.whoAmI = null;
+
+    this.protocol.reset();
+    this.state.transition(STATE_OFFLINE);
+
     if (this.socket) {
       this.socket.destroy();
       this.socket = null;
-
-      this.protocol = null;
     }
   }
 
-  subscribeDatagram(dg, cb) {
+  onDatagram(dg, cb) {
     if (typeof dg !== "number") throw new Error("dg");
     if (typeof cb !== "function") throw new Error("cb");
 
-    const subs = this.datagramSubscribers[dg];
-    if (subs) {
-      subs.push(cb);
+    let e = this.datagramEvents[dg];
+    if (e) {
+      e.on(cb);
     } else {
-      this.datagramSubscribers[dg] = [cb];
+      e = new EventEmitter();
+      e.on(cb);
+      this.datagramEvents[dg] = e;
+    }
+
+    if (this.enabledDatagrams[dg] !== "1") {
+      this.enabledDatagrams[dg] = "1";
+      if (this.state.currentState.loggedIn) {
+        this.set2(dg, true);
+      }
     }
   }
 
-  enableDatagram(dg) {
-    if (typeof data !== "number") throw new Error("dg");
-    throw new Error("implement me");
-  }
-
-  disableDatagram(dg) {
-    if (typeof data !== "number") throw new Error("dg");
-    throw new Error("implement me");
-  }
-
-  send(cmd, prefix = null) {
+  send(cmd, tag = null) {
     if (typeof cmd !== "string") throw new Error("cmd");
 
     if (!this.state.currentState.active) {
       return;
     }
 
-    if (prefix) {
-      if (/\d/.test(prefix[0])) {
-        throw new Error(`command tag '${prefix}' cannot start with number`);
+    if (tag) {
+      if (!/[a-zA-Z]/.test(tag[0])) {
+        throw new Error(`command tag '${tag}' must start with letter`);
       }
-      cmd = "`" + prefix + "`" + cmd;
+    } else {
+      if (this.state.currentState.loggedIn) {
+        tag = this.whoAmI.username();
+      }
     }
-    cmd += "\n";
+
+    cmd = (tag ? "`" + tag + "`" : "") + cmd + "\n";
     cmd = iconv.decode(Buffer.from(cmd), SERVER_ENCODING);
     this.socket.write(cmd);
+  }
+
+  set2(dg, enable) {
+    if (typeof dg !== "number") throw new Error("dg");
+    if (typeof enable !== "boolean") throw new Error("enable");
+
+    this.send(`set-2 ${dg} ${enable ? "1" : "0"}`);
   }
 }
 
@@ -112,13 +130,17 @@ function handleSocketData(client, data) {
 function handleSocketError(client, err) {
   if (!(client instanceof Client)) throw new Error("client");
   if (!(err instanceof Error)) throw new Error("err");
+
+  client.stop();
 }
 
 function handleLoginPrompt(client) {
   if (!(client instanceof Client)) throw new Error("client");
 
+  client.state.transition(STATE_AUTHENTICATING);
+
   client.send("level1=5");
-  client.send("level2settings=" + client.enabledDatagrams.join());
+  client.send("level2settings=" + client.enabledDatagrams.join(""));
   client.send(client.credentials.formatLoginString());
 }
 
@@ -131,9 +153,25 @@ function handleDatagram(client, dg) {
   if (!(client instanceof Client)) throw new Error("client");
   if (!(dg instanceof Object)) throw new Error("dg");
 
-  for (let sub of client.datagramSubscribers[dg.id]) {
-    sub(dg);
+  const e = client.datagramEvents[dg.id];
+  if (e) {
+    e.emit(dg);
   }
+}
+
+function handleWhoAmI(client, dg) {
+  if (!(client instanceof Client)) throw new Error("client");
+  if (!(dg instanceof Object)) throw new Error("dg");
+
+  client.whoAmI = dg;
+  client.state.transition(STATE_LOGGED_IN);
+}
+
+function handleLoginFailed(client, dg) {
+  if (!(client instanceof Client)) throw new Error("client");
+  if (!(dg instanceof Object)) throw new Error("dg");
+
+  client.stop();
 }
 
 module.exports = {

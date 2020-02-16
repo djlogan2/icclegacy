@@ -15,6 +15,11 @@ class Parser {
     this.onDatagram = new EventEmitter();
   }
 
+  reset() {
+    this.expectPrompt = true;
+    this.leftover = "";
+  }
+
   append(data) {
     if (typeof data !== "string") throw new Error("data");
     this.leftover = parse(this, this.leftover + data);

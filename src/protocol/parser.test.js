@@ -13,5 +13,7 @@ describe("Parser", () => {
   it("can parse", () => {
     const parser = new Parser();
     parser.append(PART1);
+    parser.append(PART2);
+    parser.append(PART3);
   });
 });

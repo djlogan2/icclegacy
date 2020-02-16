@@ -4,8 +4,7 @@ const { EventEmitter } = require("./event");
 
 const OFFLINE = "Offline";
 const CONNECTING = "Connecting";
-const LOGIN_PROMPT = "Login prompt";
-const LOGIN_SENT = "Logging in";
+const AUTHENTICATING = "Authenticating";
 const LOGGED_IN = "Logged in";
 
 const STATE_OFFLINE = Object.freeze({
@@ -15,44 +14,29 @@ const STATE_OFFLINE = Object.freeze({
   active: false,
   transient: false,
   connected: false,
-  waitingForLoginPrompt: false,
-  waitingForAuthentication: false,
+  authenticating: false,
   loggedIn: false
 });
 
 const STATE_CONNECTING = Object.freeze({
   name: CONNECTING,
-  transitions: [OFFLINE, LOGIN_PROMPT],
+  transitions: [OFFLINE, AUTHENTICATING],
 
   active: true,
   transient: true,
   connected: false,
-  waitingForLoginPrompt: false,
-  waitingForAuthentication: false,
+  authenticating: false,
   loggedIn: false
 });
 
-const STATE_LOGIN_PROMPT = Object.freeze({
-  name: LOGIN_PROMPT,
-  transitions: [OFFLINE, LOGIN_SENT],
-
-  active: true,
-  transient: true,
-  connected: true,
-  waitingForLoginPrompt: true,
-  waitingForAuthentication: false,
-  loggedIn: false
-});
-
-const STATE_LOGIN_SENT = Object.freeze({
-  name: LOGIN_SENT,
+const STATE_AUTHENTICATING = Object.freeze({
+  name: AUTHENTICATING,
   transitions: [OFFLINE, LOGGED_IN],
 
   active: true,
   transient: true,
   connected: true,
-  waitingForLoginPrompt: false,
-  waitingForAuthentication: true,
+  authenticating: true,
   loggedIn: false
 });
 
@@ -63,8 +47,7 @@ const STATE_LOGGED_IN = Object.freeze({
   active: true,
   transient: false,
   connected: true,
-  waitingForLoginPrompt: false,
-  waitingForAuthentication: false,
+  authenticating: false,
   loggedIn: true
 });
 
@@ -76,6 +59,10 @@ class StateMachine {
 
   transition(toState) {
     if (!(toState instanceof Object)) throw new Error("toState");
+
+    if (this.currentState === toState) {
+      return;
+    }
 
     if (this.currentState.transitions.indexOf(toState.name) === -1) {
       throw new Error(`Invalid transition ${this.currentState.name} => ${toState.name}`);
@@ -90,8 +77,7 @@ class StateMachine {
 module.exports = {
   STATE_OFFLINE,
   STATE_CONNECTING,
-  STATE_LOGIN_PROMPT,
-  STATE_LOGIN_SENT,
+  STATE_AUTHENTICATING,
   STATE_LOGGED_IN,
   StateMachine
 };

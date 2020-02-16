@@ -45,7 +45,7 @@ class LoginFailed extends Datagram {
     return this.params[0].asInt();
   }
 
-  explanation() {
+  reason() {
     return this.params[1].asString();
   }
 }
