@@ -2,6 +2,7 @@
 
 const iconv = require("iconv-lite");
 const { Parser, DG } = require("./protocol");
+const { StateMachine } = require("./state");
 
 const SERVER_ENCODING = "latin1";
 
@@ -14,6 +15,8 @@ class Client {
     this.host = host;
     this.port = port;
     this.credentials = credentials;
+
+    this.state = new StateMachine();
 
     this.enabledDatagrams = [];
     this.enabledDatagrams.length = DG.COUNT;
@@ -81,10 +84,11 @@ class Client {
   }
 
   send(cmd, prefix = null) {
-    // if (!State.Active)
-    //   return;
-    // if (prefix == null && State.CurrentState.Authenticated)
-    //   prefix = AuthenticatedUserName;
+    if (typeof cmd !== "string") throw new Error("cmd");
+
+    if (!this.state.currentState.active) {
+      return;
+    }
 
     if (prefix) {
       if (/\d/.test(prefix[0])) {
