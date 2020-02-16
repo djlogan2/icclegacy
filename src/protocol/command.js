@@ -56,10 +56,10 @@ function createCommand(meta, content, datagrams) {
 }
 
 module.exports = {
-  createCommand: createCommand,
-  Command: Command,
-  Meta: Meta,
-  Observe: Observe,
-  INVALID_GAME_ID: INVALID_GAME_ID,
-  UNKNOWN_META: UNKNOWN_META
+  createCommand,
+  Command,
+  Meta,
+  Observe,
+  INVALID_GAME_ID,
+  UNKNOWN_META
 };

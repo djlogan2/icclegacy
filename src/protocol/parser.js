@@ -203,6 +203,4 @@ function parseDatagramParams(data, startIdx, endIdx) {
   return params;
 }
 
-module.exports = {
-  Parser: Parser
-};
+module.exports = { Parser };

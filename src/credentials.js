@@ -47,7 +47,7 @@ function anonymousString(isAnonymous) {
 }
 
 module.exports = {
-  AccessTokenCredentials: AccessTokenCredentials,
-  GuestCredentials: GuestCredentials,
-  UserPasswordCredentials: UserPasswordCredentials
+  AccessTokenCredentials,
+  GuestCredentials,
+  UserPasswordCredentials
 };

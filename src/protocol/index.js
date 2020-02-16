@@ -6,9 +6,9 @@ const { Meta } = require("./command");
 const { LoginFailed, WhoAmI } = require("./datagram");
 
 module.exports = {
-  Parser: Parser,
-  CN: CN,
-  DG: DG,
+  Parser,
+  CN,
+  DG,
   Meta,
   LoginFailed,
   WhoAmI

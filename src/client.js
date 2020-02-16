@@ -174,6 +174,4 @@ function handleLoginFailed(client, dg) {
   client.stop();
 }
 
-module.exports = {
-  Client: Client
-};
+module.exports = { Client };
