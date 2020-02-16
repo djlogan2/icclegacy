@@ -149,9 +149,10 @@ describe("Parser", () => {
     actual.length = 6;
     assert.equal(actual.length, want.length);
     for (let i = 0; i < actual.length; i++) {
-      assert.deepStrictEqual(actual[i].meta, want[i].meta, "Command at index " + i);
-      assert.deepStrictEqual(actual[i].content, want[i].content, "Command at index " + i);
-      assert.sameDeepMembers(actual[i].datagrams, want[i].datagrams, "Command at index " + i);
+      const msg = "Command at index " + i;
+      assert.deepStrictEqual(actual[i].meta, want[i].meta, msg);
+      assert.deepStrictEqual(actual[i].content, want[i].content, msg);
+      assert.sameDeepMembers(actual[i].datagrams, want[i].datagrams, msg);
     }
   });
 });
