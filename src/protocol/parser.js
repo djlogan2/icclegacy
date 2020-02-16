@@ -1,7 +1,7 @@
 "use strict";
 
 const { createCommand, Meta, UNKNOWN_META } = require("./command");
-const { Datagram } = require("./datagram");
+const { Datagram, Param } = require("./datagram");
 
 class Parser {
   constructor() {
@@ -150,45 +150,47 @@ function parseDatagramParams(data, startIdx, endIdx) {
         break;
       }
       case CONTROL_Y: {
-        let param = "";
-        let paramLen;
+        let value = "";
+        let valueLen;
         while (data[startIdx] === CONTROL_Y && startIdx < endIdx) {
           if (data[startIdx + 1] !== "{") {
             throw new Error("Malformed start of uber quoted parameter.");
           }
           startIdx += 2;
-          paramLen = data.substr(startIdx, endIdx - startIdx).indexOf(CONTROL_Y + "}");
-          if (paramLen === -1) {
+          valueLen = data.substr(startIdx, endIdx - startIdx).indexOf(CONTROL_Y + "}");
+          if (valueLen === -1) {
             // Cannot find the end of the uber quoted parameter.
             throw new Error(`Can't find the end of uber quoted parameter in '${data.substr(startIdx)}'`);
           }
-          if (param.length > 0) {
-            param += "\n";
+          if (value.length > 0) {
+            value += "\n";
           }
-          param += data.substr(startIdx, paramLen);
-          startIdx += paramLen + 2;
+          value += data.substr(startIdx, valueLen);
+          startIdx += valueLen + 2;
         }
-        params.push(param);
+        params.push(new Param(value));
         break;
       }
       case "{": {
         startIdx += 1;
-        let paramLen = data.substr(startIdx, endIdx - startIdx).indexOf("}");
-        if (paramLen === -1) {
+        let valueLen = data.substr(startIdx, endIdx - startIdx).indexOf("}");
+        if (valueLen === -1) {
           // Cannot find the end of the uber quoted parameter.
           throw new Error(`Can't find the end of uber quoted parameter in '${data.substr(startIdx)}'`);
         }
-        params.push(data.substr(startIdx, paramLen));
-        startIdx += paramLen + 1;
+        const value = data.substr(startIdx, valueLen);
+        params.push(new Param(value));
+        startIdx += valueLen + 1;
         break;
       }
       default: {
-        let offset = data.substr(startIdx, endIdx - startIdx).indexOf(" ");
-        if (offset === -1) {
-          offset = endIdx - startIdx;
+        let valueLen = data.substr(startIdx, endIdx - startIdx).indexOf(" ");
+        if (valueLen === -1) {
+          valueLen = endIdx - startIdx;
         }
-        params.push(data.substr(startIdx, offset));
-        startIdx += offset + 1;
+        const value = data.substr(startIdx, valueLen);
+        params.push(new Param(value));
+        startIdx += valueLen + 1;
         break;
       }
     }
