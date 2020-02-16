@@ -1,17 +1,14 @@
 "use strict";
 
-const { Meta } = require("./command");
 const { DG } = require("./id");
 
 class Datagram {
-  constructor(meta, id, params) {
-    if (!(meta instanceof Meta)) throw new Error("meta");
+  constructor(id, params) {
     if (typeof id !== "number") throw new Error("id");
     if (!Array.isArray(params)) throw new Error("params");
 
     if (id < 0 || id > DG.COUNT) throw new Error(`id '${id}' is out of bounds`);
 
-    this.meta = meta;
     this.id = id;
 
     this.params = [];
@@ -23,8 +20,8 @@ class Datagram {
 }
 
 class WhoAmI extends Datagram {
-  constructor(meta, params) {
-    super(meta, DG.WHO_AM_I, params);
+  constructor(params) {
+    super(DG.WHO_AM_I, params);
   }
 
   username() {
@@ -37,8 +34,8 @@ class WhoAmI extends Datagram {
 }
 
 class LoginFailed extends Datagram {
-  constructor(meta, params) {
-    super(meta, DG.LOGIN_FAILED, params);
+  constructor(params) {
+    super(DG.LOGIN_FAILED, params);
   }
 
   code() {
@@ -55,17 +52,16 @@ datagramFactory.length = DG.COUNT;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.WHO_AM_I] = WhoAmI;
 
-function createDatagram(meta, id, params) {
-  if (!(meta instanceof Meta)) throw new Error("meta");
+function createDatagram(id, params) {
   if (typeof id !== "number") throw new Error("id");
   if (!Array.isArray(params)) throw new Error("params");
 
   const factory = datagramFactory[id];
   if (factory) {
-    return new factory(meta, params);
+    return new factory(params);
   }
 
-  return new Datagram(meta, id, params);
+  return new Datagram(id, params);
 }
 
 class Param {
@@ -109,6 +105,7 @@ class Param {
 
 module.exports = {
   Param,
+  Datagram,
   LoginFailed,
   WhoAmI,
   createDatagram

@@ -4,9 +4,9 @@ const { Socket } = require("net");
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const sinon = require("sinon");
-const { Client } = require("./client");
+const { Client, handleLoginPrompt, handleDatagram } = require("./client");
 const { GuestCredentials } = require("./credentials");
-const { CN, DG, Meta, LoginFailed, WhoAmI, Parser } = require("./protocol");
+const { DG, LoginFailed, WhoAmI } = require("./protocol");
 const { STATE_CONNECTING, STATE_OFFLINE } = require("./state");
 
 describe("Client", () => {
@@ -62,10 +62,12 @@ describe("Client", () => {
     const client = newOfflineClient();
     client.socket = socket;
     client.state.transition(STATE_CONNECTING);
-    client.protocol.onLoginPrompt.emit();
+    handleLoginPrompt(client);
     assert.equal(socket.write.callCount, 3);
     assert.sameMembers(socket.write.getCall(0).args, ["level1=5\n"]);
-    assert.sameMembers(socket.write.getCall(1).args, ["level2settings=100000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000\n"]);
+    assert.sameMembers(socket.write.getCall(1).args, [
+      "level2settings=100000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000\n"
+    ]);
     assert.sameMembers(socket.write.getCall(2).args, ["guest\n"]);
   });
 
@@ -103,7 +105,7 @@ describe("Client", () => {
     const client = newOfflineClient();
     client.stop = sinon.spy();
     client.state.transition(STATE_CONNECTING);
-    client.protocol.onDatagram.emit(new LoginFailed(new Meta(0, ""), []));
+    handleDatagram(client, new LoginFailed([]));
     assert.equal(client.stop.callCount, 1);
   });
 
@@ -196,7 +198,7 @@ function newOnlineClient() {
   const client = new Client("localhost", 1234, new GuestCredentials());
   client.socket = { write: () => {} };
   client.state.transition(STATE_CONNECTING);
-  client.protocol.onLoginPrompt.emit();
-  client.protocol.onDatagram.emit(new WhoAmI(new Meta(CN.S_UNKNOWN, "test"), ["test-user", "gm sh"]));
+  handleLoginPrompt(client);
+  handleDatagram(client, new WhoAmI(["test-user", "gm sh"]));
   return client;
 }

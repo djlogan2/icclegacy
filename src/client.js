@@ -17,12 +17,8 @@ class Client {
     this.port = port;
     this.credentials = credentials;
 
-    this.state = new StateMachine();
-
     this.protocol = new Parser();
-    this.protocol.onLoginPrompt.on(() => handleLoginPrompt(this));
-    this.protocol.onCommand.on(cmd => handleCommand(this, cmd));
-    this.protocol.onDatagram.on(dg => handleDatagram(this, dg));
+    this.state = new StateMachine();
 
     this.enabledDatagrams = [];
     this.enabledDatagrams.length = DG.COUNT;
@@ -60,8 +56,8 @@ class Client {
   stop() {
     this.whoAmI = null;
 
-    this.protocol.reset();
     this.state.transition(STATE_OFFLINE);
+    this.protocol.reset();
 
     if (this.socket) {
       this.socket.destroy();
@@ -124,7 +120,16 @@ function handleSocketData(client, data) {
   if (!(client instanceof Client)) throw new Error("client");
   if (typeof data !== "string") throw new Error("data");
 
-  client.protocol.append(data);
+  const result = client.protocol.append(data);
+  if (result.loginPrompt) {
+    handleLoginPrompt(client);
+  }
+  for (let cmd of result.commands) {
+    handleCommand(client, cmd);
+    for (let dg of cmd.datagrams) {
+      handleDatagram(client, dg);
+    }
+  }
 }
 
 function handleSocketError(client, err) {
@@ -174,4 +179,8 @@ function handleLoginFailed(client, dg) {
   client.stop();
 }
 
-module.exports = { Client };
+module.exports = {
+  Client,
+  handleLoginPrompt,
+  handleDatagram
+};

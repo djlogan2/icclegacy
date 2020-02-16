@@ -1,143 +1,146 @@
 "use strict";
 
-const { createCommand, Meta, UNKNOWN_META } = require("./command");
+const { createCommand, Meta } = require("./command");
 const { createDatagram } = require("./datagram");
-const { EventEmitter } = require("../event");
-
-class Parser {
-  constructor() {
-    this.expectPrompt = true;
-    this.leftover = "";
-    this.pendingDatagrams = [];
-
-    this.onLoginPrompt = new EventEmitter();
-    this.onCommand = new EventEmitter();
-    this.onDatagram = new EventEmitter();
-  }
-
-  reset() {
-    this.expectPrompt = true;
-    this.leftover = "";
-  }
-
-  append(data) {
-    if (typeof data !== "string") throw new Error("data");
-    this.leftover = parse(this, this.leftover + data);
-  }
-}
 
 const CONTROL_Y = String.fromCharCode(0x19);
 const CONTROL_Z = String.fromCharCode(0x1a);
 const LOGIN_PROMPT = "login:";
 
-// parses datastructures and returns leftover.
-function parse(parser, data) {
-  if (!(parser instanceof Parser)) throw new Error("parser");
-  if (typeof data !== "string") throw new Error("data");
-
-  const commandStack = [];
-
-  let position = 0;
-  let parsedUntil = position;
-
-  while (data.length > 6) {
-    if (parser.expectPrompt) {
-      const promptIndex = data.indexOf(LOGIN_PROMPT);
-      if (promptIndex !== -1) {
-        parser.expectPrompt = false;
-        position = promptIndex + LOGIN_PROMPT.length;
-        parsedUntil = position;
-        parser.onLoginPrompt.emit();
-      }
-    }
-
-    const firstIndex = data.indexOf(CONTROL_Y, position);
-    if (firstIndex === -1 || data.length <= firstIndex + 1) {
-      break;
-    }
-
-    switch (data[firstIndex + 1]) {
-      case "[": {
-        if (commandStack.length === 0) {
-          if (position !== firstIndex && !/^\s*$/.test(data.substr(position, firstIndex - position))) {
-            // The command stack is empty and so we are at the root.
-            // No text can appear in the root.
-            throw new Error(`orphan text at the root '${data.substr(firstIndex)}'`);
-          }
-        } else {
-          // Save the skipped data into the command buffer.
-          commandStack[commandStack.length - 1].buffer += data.substr(position, firstIndex - position);
-        }
-        const metaMatch = /(\d+)(?: (.*?))(?: (.*?))?\r?\n/.exec(data.substr(firstIndex + 2));
-        if (metaMatch) {
-          position = firstIndex + 2;
-          position += metaMatch.length;
-
-          const meta = new Meta(parseInt(metaMatch[1]), metaMatch[2], metaMatch[3]);
-          commandStack.push({ meta: meta, buffer: "" });
-        }
-        break;
-      }
-      case "]": {
-        if (commandStack.length === 0) {
-          // It happens when the connection closes.
-          position += 2;
-          break;
-        }
-        const cmdData = commandStack.pop();
-        cmdData.buffer += data.substr(position, firstIndex - position);
-        position = firstIndex + 2;
-        parsedUntil = position;
-
-        const cmd = createCommand(cmdData.meta, cmdData.buffer, parser.pendingDatagrams.slice());
-        parser.onCommand.emit(cmd);
-
-        for (let dg of parser.pendingDatagrams) {
-          parser.onDatagram.emit(dg);
-        }
-        parser.pendingDatagrams = [];
-
-        break;
-      }
-      case "(": {
-        let cmdData;
-        if (commandStack.length === 0) {
-          // Some datagrams are sent outside of commands, such as DG_MSEC.
-          cmdData = { meta: UNKNOWN_META, buffer: "" };
-        } else {
-          cmdData = commandStack[commandStack.length - 1];
-          cmdData.buffer += data.substr(position, firstIndex - position);
-        }
-
-        const endIndex = data.indexOf(CONTROL_Y + ")", firstIndex + 2);
-        if (endIndex < firstIndex + 2) {
-          break;
-        }
-        position = firstIndex + 2;
-
-        let dgIdEnd = data.indexOf(" ", position);
-        if (dgIdEnd === -1) {
-          dgIdEnd = data.indexOf(CONTROL_Y, position);
-        }
-        const dgId = parseInt(data.substr(position, dgIdEnd - position));
-        const params = parseDatagramParams(data, dgIdEnd, endIndex);
-        const datagram = createDatagram(cmdData.meta, dgId, params);
-        parser.pendingDatagrams.push(datagram);
-
-        position = endIndex + 2;
-        break;
-      }
-      default:
-        throw new Error("The incoming stream contains invalid data!");
-    }
-
-    if (position <= firstIndex) {
-      break;
-    }
+class Parser {
+  constructor() {
+    this.expectLoginPrompt = true;
+    this.leftover = "";
   }
 
-  parser.pendingDatagrams = [];
-  return data.substr(parsedUntil);
+  reset() {
+    this.expectLoginPrompt = true;
+    this.leftover = "";
+  }
+
+  append(data) {
+    if (typeof data !== "string") throw new Error("data");
+    data = this.leftover + data;
+
+    const result = {
+      loginPrompt: false,
+      commands: []
+    };
+
+    class CmdData {
+      constructor(meta, datagrams = []) {
+        this.meta = meta;
+        this.content = "";
+        this.datagrams = datagrams;
+      }
+    }
+    const cmdStack = [];
+
+    // Some datagrams are sent outside of commands, such as DG_MSEC.
+    // They are stored here and prepended to the next command.
+    let orphanDatagrams = [];
+
+    let position = 0;
+    let parsedUntil = position;
+
+    while (data.length > 6) {
+      if (this.expectLoginPrompt) {
+        const promptIndex = data.indexOf(LOGIN_PROMPT);
+        if (promptIndex !== -1) {
+          this.expectLoginPrompt = false;
+          result.loginPrompt = true;
+          position = promptIndex + LOGIN_PROMPT.length;
+          parsedUntil = position;
+        }
+      }
+
+      const firstIndex = data.indexOf(CONTROL_Y, position);
+      if (firstIndex === -1 || data.length <= firstIndex + 1) {
+        break;
+      }
+
+      switch (data[firstIndex + 1]) {
+        case "[": {
+          if (cmdStack.length === 0) {
+            if (position !== firstIndex && !/^\s*$/.test(data.substr(position, firstIndex - position))) {
+              // The command stack is empty and so we are at the root.
+              // No text can appear in the root.
+              throw new Error(`orphan text at the root '${data.substr(firstIndex)}'`);
+            }
+          } else {
+            // Save the skipped data into the command.
+            cmdStack[cmdStack.length - 1].content += data.substr(position, firstIndex - position);
+          }
+          const metaMatch = /(\d+)(?: (.*?))(?: (.*?))?\r?\n/.exec(data.substr(firstIndex + 2));
+          if (metaMatch) {
+            position = firstIndex + 2;
+            position += metaMatch[0].length;
+
+            const meta = new Meta(parseInt(metaMatch[1]), metaMatch[2], metaMatch[3]);
+            cmdStack.push(new CmdData(meta, orphanDatagrams));
+            orphanDatagrams = [];
+          }
+          break;
+        }
+        case "]": {
+          if (cmdStack.length === 0) {
+            // It happens when the connection closes.
+            position += 2;
+            break;
+          }
+          const cmdData = cmdStack.pop();
+          cmdData.content += data.substr(position, firstIndex - position);
+          position = firstIndex + 2;
+          parsedUntil = position;
+
+          const cmd = createCommand(cmdData.meta, cmdData.content, cmdData.datagrams);
+          result.commands.push(cmd);
+          break;
+        }
+        case "(": {
+          let cmdData;
+          if (cmdStack.length) {
+            cmdData = cmdStack[cmdStack.length - 1];
+            cmdData.content += data.substr(position, firstIndex - position);
+          }
+
+          const endIndex = data.indexOf(CONTROL_Y + ")", firstIndex + 2);
+          if (endIndex < firstIndex + 2) {
+            break;
+          }
+          position = firstIndex + 2;
+
+          let dgIdEnd = data.indexOf(" ", position);
+          if (dgIdEnd === -1) {
+            dgIdEnd = data.indexOf(CONTROL_Y, position);
+          }
+          const dgId = parseInt(data.substr(position, dgIdEnd - position));
+          const params = parseDatagramParams(data, dgIdEnd, endIndex);
+
+          if (cmdData) {
+            const dg = createDatagram(dgId, params);
+            cmdData.datagrams.push(dg);
+          } else {
+            // Some datagrams are sent outside of commands, such as DG_MSEC.
+            const dg = createDatagram(dgId, params);
+            orphanDatagrams.push(dg);
+          }
+
+          position = endIndex + 2;
+          break;
+        }
+        default:
+          throw new Error("The incoming stream contains invalid data!");
+      }
+
+      if (position <= firstIndex) {
+        break;
+      }
+    }
+
+    this.leftover = data.substr(parsedUntil);
+    return result;
+  }
 }
 
 function parseDatagramParams(data, startIdx, endIdx) {
