@@ -1,7 +1,7 @@
 "use strict";
 
 const { createCommand, Meta, UNKNOWN_META } = require("./command");
-const { Datagram, Param } = require("./datagram");
+const { createDatagram } = require("./datagram");
 
 class Parser {
   constructor() {
@@ -115,7 +115,7 @@ function parse(parser, data) {
         }
         const dgId = parseInt(data.substr(position, dgIdEnd - position));
         const params = parseDatagramParams(data, dgIdEnd, endIndex);
-        const datagram = new Datagram(cmdData.meta, dgId, params);
+        const datagram = createDatagram(cmdData.meta, dgId, params);
         parser.pendingDatagrams.push(datagram);
 
         position = endIndex + 2;

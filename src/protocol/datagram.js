@@ -50,6 +50,24 @@ class LoginFailed extends Datagram {
   }
 }
 
+const datagramFactory = [];
+datagramFactory.length = DG.COUNT;
+datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
+datagramFactory[DG.WHO_AM_I] = WhoAmI;
+
+function createDatagram(meta, id, params) {
+  if (!(meta instanceof Meta)) throw new Error("meta");
+  if (typeof id !== "number") throw new Error("id");
+  if (!Array.isArray(params)) throw new Error("params");
+
+  const factory = datagramFactory[id];
+  if (factory) {
+    return new factory(meta, params);
+  }
+
+  return new Datagram(meta, id, params);
+}
+
 class Param {
   constructor(value) {
     if (typeof value !== "string") throw new Error("value");
@@ -91,7 +109,7 @@ class Param {
 
 module.exports = {
   Param,
-  Datagram,
   LoginFailed,
-  WhoAmI
+  WhoAmI,
+  createDatagram
 };
