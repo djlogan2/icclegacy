@@ -2,6 +2,7 @@
 
 const { createCommand, Meta, UNKNOWN_META } = require("./command");
 const { createDatagram } = require("./datagram");
+const { EventEmitter } = require("../event");
 
 class Parser {
   constructor() {
@@ -9,9 +10,9 @@ class Parser {
     this.leftover = "";
     this.pendingDatagrams = [];
 
-    this.onLoginPrompt = () => {};
-    this.onCommand = _ => {};
-    this.onDatagram = _ => {};
+    this.onLoginPrompt = new EventEmitter();
+    this.onCommand = new EventEmitter();
+    this.onDatagram = new EventEmitter();
   }
 
   append(data) {
@@ -41,7 +42,7 @@ function parse(parser, data) {
         parser.expectPrompt = false;
         position = promptIndex + LOGIN_PROMPT.length;
         parsedUntil = position;
-        parser.onLoginPrompt();
+        parser.onLoginPrompt.emit();
       }
     }
 
@@ -84,10 +85,10 @@ function parse(parser, data) {
         parsedUntil = position;
 
         const cmd = createCommand(cmdData.meta, cmdData.buffer, parser.pendingDatagrams.slice());
-        parser.onCommand(cmd);
+        parser.onCommand.emit(cmd);
 
         for (let dg of parser.pendingDatagrams) {
-          parser.onDatagram(dg);
+          parser.onDatagram.emit(dg);
         }
         parser.pendingDatagrams = [];
 

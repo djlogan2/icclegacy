@@ -36,9 +36,9 @@ class Client {
     }
 
     this.protocol = new Parser();
-    this.protocol.onLoginPrompt = () => handleLoginPrompt(this);
-    this.protocol.onCommand = cmd => handleCommand(this, cmd);
-    this.protocol.onDatagram = dg => handleDatagram(this, dg);
+    this.protocol.onLoginPrompt.on(() => handleLoginPrompt(this));
+    this.protocol.onCommand.on(cmd => handleCommand(this, cmd));
+    this.protocol.onDatagram.on(dg => handleDatagram(this, dg));
 
     this.socket = socket;
     this.socket.setKeepAlive(true);
