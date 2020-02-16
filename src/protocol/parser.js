@@ -168,7 +168,7 @@ function parseDatagramParams(data, startIdx, endIdx) {
           value += data.substr(startIdx, valueLen);
           startIdx += valueLen + 2;
         }
-        params.push(new Param(value));
+        params.push(value);
         break;
       }
       case "{": {
@@ -178,8 +178,7 @@ function parseDatagramParams(data, startIdx, endIdx) {
           // Cannot find the end of the uber quoted parameter.
           throw new Error(`Can't find the end of uber quoted parameter in '${data.substr(startIdx)}'`);
         }
-        const value = data.substr(startIdx, valueLen);
-        params.push(new Param(value));
+        params.push(data.substr(startIdx, valueLen));
         startIdx += valueLen + 1;
         break;
       }
@@ -188,8 +187,7 @@ function parseDatagramParams(data, startIdx, endIdx) {
         if (valueLen === -1) {
           valueLen = endIdx - startIdx;
         }
-        const value = data.substr(startIdx, valueLen);
-        params.push(new Param(value));
+        params.push(data.substr(startIdx, valueLen));
         startIdx += valueLen + 1;
         break;
       }

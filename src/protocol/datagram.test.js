@@ -11,7 +11,7 @@ describe("Datagram", () => {
 
   describe("WhoAmI", () => {
     it("assigns params correctly", () => {
-      const dg = new WhoAmI(meta, [new Param("usr"), new Param("gm sh")]);
+      const dg = new WhoAmI(meta, ["usr", "gm sh"]);
       assert.equal(dg.id, DG.WHO_AM_I);
       assert.equal(dg.username(), "usr");
       assert.sameMembers(dg.titles(), ["gm", "sh"]);
@@ -20,7 +20,7 @@ describe("Datagram", () => {
 
   describe("LoginFailed", () => {
     it("assigns params correctly", () => {
-      const dg = new LoginFailed(meta, [new Param("42"), new Param("test reason")]);
+      const dg = new LoginFailed(meta, ["42", "test reason"]);
       assert.equal(dg.id, DG.LOGIN_FAILED);
       assert.equal(dg.code(), 42);
       assert.equal(dg.explanation(), "test reason");

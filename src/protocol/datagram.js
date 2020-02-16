@@ -13,7 +13,12 @@ class Datagram {
 
     this.meta = meta;
     this.id = id;
-    this.params = params;
+
+    this.params = [];
+    for (let p of params) {
+      if (typeof p !== "string") throw new Error(`param '${p}' string expected`);
+      this.params.push(new Param(p));
+    }
   }
 }
 
