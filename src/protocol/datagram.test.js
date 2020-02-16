@@ -4,15 +4,26 @@ const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const { DG } = require("./id");
 const { Meta } = require("./command");
-const { Param, WhoAmI } = require("./datagram");
+const { Param, LoginFailed, WhoAmI } = require("./datagram");
 
 describe("Datagram", () => {
+  const meta = new Meta(0, "test");
+
   describe("WhoAmI", () => {
     it("assigns params correctly", () => {
-      const dg = new WhoAmI(new Meta(0, "test"), [new Param("usr"), new Param("gm sh")]);
+      const dg = new WhoAmI(meta, [new Param("usr"), new Param("gm sh")]);
       assert.equal(dg.id, DG.WHO_AM_I);
       assert.equal(dg.username(), "usr");
       assert.sameMembers(dg.titles(), ["gm", "sh"]);
+    });
+  });
+
+  describe("LoginFailed", () => {
+    it("assigns params correctly", () => {
+      const dg = new LoginFailed(meta, [new Param("42"), new Param("test reason")]);
+      assert.equal(dg.id, DG.LOGIN_FAILED);
+      assert.equal(dg.code(), 42);
+      assert.equal(dg.explanation(), "test reason");
     });
   });
 

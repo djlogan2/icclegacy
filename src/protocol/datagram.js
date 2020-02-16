@@ -31,6 +31,20 @@ class WhoAmI extends Datagram {
   }
 }
 
+class LoginFailed extends Datagram {
+  constructor(meta, params) {
+    super(meta, DG.LOGIN_FAILED, params);
+  }
+
+  code() {
+    return this.params[0].asInt();
+  }
+
+  explanation() {
+    return this.params[1].asString();
+  }
+}
+
 class Param {
   constructor(value) {
     if (typeof value !== "string") throw new Error("value");
@@ -71,7 +85,8 @@ class Param {
 }
 
 module.exports = {
+  Param,
   Datagram,
-  WhoAmI,
-  Param
+  LoginFailed,
+  WhoAmI
 };
