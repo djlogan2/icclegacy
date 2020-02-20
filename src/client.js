@@ -8,15 +8,7 @@ const { EventEmitter } = require("./event");
 const SERVER_ENCODING = "latin1";
 
 class Client {
-  constructor(host, port, credentials) {
-    if (typeof host !== "string") throw new Error("host");
-    if (typeof port !== "number") throw new Error("port");
-    if (!(credentials instanceof Object)) throw new Error("credentials");
-
-    this.host = host;
-    this.port = port;
-    this.credentials = credentials;
-
+  constructor() {
     this.protocol = new Parser();
     this.state = new StateMachine();
 
@@ -32,14 +24,11 @@ class Client {
     this.onDatagram(DG.LOGIN_FAILED, dg => handleLoginFailed(this, dg));
   }
 
-  start(socket) {
+  async login(socket, host, port, credentials) {
     if (!(socket instanceof Object)) throw new Error("socket");
-
-    if (this.socket) {
-      this.stop();
-    }
-
-    this.state.transition(STATE_CONNECTING);
+    if (typeof host !== "string") throw new Error("host");
+    if (typeof port !== "number") throw new Error("port");
+    if (!(credentials instanceof Object)) throw new Error("credentials");
 
     this.socket = socket;
     this.socket.setKeepAlive(true);
@@ -47,13 +36,26 @@ class Client {
     this.socket.setEncoding(SERVER_ENCODING);
     this.socket.on("data", data => handleSocketData(this, data));
     this.socket.on("error", err => handleSocketError(this, err));
+
+    this.credentials = credentials;
+
+    if (this.state.currentState.active) {
+      this.logout();
+    }
+    this.state.transition(STATE_CONNECTING);
+
     this.socket.connect({
-      host: this.host,
-      port: this.port
+      host: host,
+      port: port
+    });
+
+    return new Promise((resolve, reject) => {
+      this.loginResolve = resolve;
+      this.loginReject = reject;
     });
   }
 
-  stop() {
+  logout() {
     this.whoAmI = null;
 
     this.state.transition(STATE_OFFLINE);
@@ -136,7 +138,8 @@ function handleSocketError(client, err) {
   if (!(client instanceof Client)) throw new Error("client");
   if (!(err instanceof Error)) throw new Error("err");
 
-  client.stop();
+  client.logout();
+  maybeResolveLogin(client, null, err);
 }
 
 function handleLoginPrompt(client) {
@@ -170,13 +173,36 @@ function handleWhoAmI(client, dg) {
 
   client.whoAmI = dg;
   client.state.transition(STATE_LOGGED_IN);
+
+  resolveLogin(client, dg, null);
 }
 
 function handleLoginFailed(client, dg) {
   if (!(client instanceof Client)) throw new Error("client");
   if (!(dg instanceof Object)) throw new Error("dg");
 
-  client.stop();
+  client.logout();
+  resolveLogin(client, null, dg);
+}
+
+function maybeResolveLogin(client, success, failure) {
+  if (client.loginResolve) {
+    resolveLogin(client, success, failure);
+  }
+}
+
+function resolveLogin(client, success, failure) {
+  if (!(client instanceof Client)) throw new Error("client");
+
+  if (success || !failure) {
+    client.loginResolve(success);
+  }
+  if (failure) {
+    client.loginReject(failure);
+  }
+
+  client.loginResolve = null;
+  client.loginReject = null;
 }
 
 module.exports = {
