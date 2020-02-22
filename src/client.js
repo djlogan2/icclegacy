@@ -114,6 +114,10 @@ class Client {
     return promise;
   }
 
+  date() {
+    return this.send("date");
+  }
+
   set2(dg, enable) {
     if (typeof dg !== "number") throw new Error("dg");
     if (typeof enable !== "boolean") throw new Error("enable");

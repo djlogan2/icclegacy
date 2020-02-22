@@ -56,7 +56,7 @@ describe("Integration", function() {
 
     it("can execute command date", async () => {
       const client = await newGuestClient();
-      const cmd = await client.send("date");
+      const cmd = await client.date();
       assert.instanceOf(cmd, Date);
     });
   });

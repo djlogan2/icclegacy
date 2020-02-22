@@ -152,6 +152,13 @@ describe("Client", () => {
       assert.isTrue(client.send.calledOnceWith("set-2 54 0"));
     });
   });
+
+  it("date formats command", async () => {
+    const client = new Client();
+    client.send = sinon.spy();
+    await client.date(DG.UNUSED_54, false);
+    assert.isTrue(client.send.calledOnceWith("date"));
+  });
 });
 
 async function newOnlineClient(socket) {
