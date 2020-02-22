@@ -26,6 +26,12 @@ class Command {
   }
 }
 
+class Date extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+}
+
 const INVALID_GAME_ID = "-1";
 
 class Observe extends Command {
@@ -41,6 +47,7 @@ class Observe extends Command {
 
 const commandFactory = [];
 commandFactory.length = CN.COUNT;
+commandFactory[CN.DATE] = Date;
 commandFactory[CN.OBSERVE] = Observe;
 
 function createCommand(meta, content, datagrams) {
@@ -59,6 +66,7 @@ module.exports = {
   createCommand,
   Command,
   Meta,
+  Date,
   Observe,
   INVALID_GAME_ID,
   UNKNOWN_META

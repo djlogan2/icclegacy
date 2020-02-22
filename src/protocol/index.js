@@ -2,7 +2,7 @@
 
 const { Parser } = require("./parser");
 const { CN, DG } = require("./id");
-const { Command, Meta } = require("./command");
+const { Command, Meta, Date, Observe } = require("./command");
 const { LoginFailed, WhoAmI } = require("./datagram");
 
 module.exports = {
@@ -11,6 +11,8 @@ module.exports = {
   DG,
   Command,
   Meta,
+  Date,
+  Observe,
   LoginFailed,
   WhoAmI
 };

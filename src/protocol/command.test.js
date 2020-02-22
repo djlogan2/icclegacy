@@ -2,7 +2,7 @@
 
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
-const { createCommand, Command, Meta, Observe, INVALID_GAME_ID } = require("./command");
+const { INVALID_GAME_ID, Command, Meta, Date, Observe, createCommand } = require("./command");
 const { CN } = require("./id");
 
 const testMeta = new Meta(999, "test", null);
@@ -20,10 +20,15 @@ describe("Command", () => {
     });
   });
 
-  describe("Command factory", () => {
-    it("can create generic command", () => {
+  describe("Command factory can create", () => {
+    it("S_UNKNOWN", () => {
       const cmd = createCommand(new Meta(CN.S_UNKNOWN, "test"), "");
       assert.instanceOf(cmd, Command);
+    });
+
+    it("DATE", () => {
+      const cmd = createCommand(new Meta(CN.DATE, "test"), "");
+      assert.instanceOf(cmd, Date);
     });
 
     it("can create observe", () => {

@@ -6,7 +6,7 @@ const { assert } = require("chai");
 const { expectThrowsAsync } = require("./test");
 const { Client } = require("./client");
 const { GuestCredentials, UserPasswordCredentials } = require("./credentials");
-const { CN, DG, Command, LoginFailed, WhoAmI } = require("./protocol");
+const { CN, DG, Date, LoginFailed, WhoAmI } = require("./protocol");
 
 const QUEEN_HOST = "queen.chessclub.com";
 const QUEEN_PORT = 5000;
@@ -57,8 +57,7 @@ describe("Integration", function() {
     it("can execute command date", async () => {
       const client = await newGuestClient();
       const cmd = await client.send("date");
-      assert.instanceOf(cmd, Command);
-      assert.equal(cmd.meta.id, CN.DATE);
+      assert.instanceOf(cmd, Date);
     });
   });
 });
