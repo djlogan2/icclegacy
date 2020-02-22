@@ -3,6 +3,7 @@
 const { Socket } = require("net");
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
+const { expectThrowsAsync } = require("./test");
 const { Client } = require("./client");
 const { GuestCredentials, UserPasswordCredentials } = require("./credentials");
 const { DG, LoginFailed, WhoAmI } = require("./protocol");
@@ -50,15 +51,3 @@ describe("Integration", function() {
     });
   });
 });
-
-const expectThrowsAsync = async (method, errorMessage) => {
-  let error = null;
-  try {
-    await method();
-  } catch (e) {
-    error = e;
-  }
-  assert.isDefined(error);
-  assert.isNotNull(error);
-  return error;
-};

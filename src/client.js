@@ -4,11 +4,13 @@ const iconv = require("iconv-lite");
 const { Parser, DG } = require("./protocol");
 const { StateMachine, STATE_CONNECTING, STATE_OFFLINE, STATE_AUTHENTICATING, STATE_LOGGED_IN } = require("./state");
 const { EventEmitter } = require("./event");
+const { Sessions } = require("./sessions");
 
 const SERVER_ENCODING = "latin1";
 
 class Client {
   constructor() {
+    this.sessions = new Sessions();
     this.protocol = new Parser();
     this.state = new StateMachine();
 
@@ -59,6 +61,7 @@ class Client {
     this.whoAmI = null;
 
     this.state.transition(STATE_OFFLINE);
+    this.sessions.errorAll(new Error("client logged out"));
     this.protocol.reset();
 
     if (this.socket) {
@@ -88,33 +91,34 @@ class Client {
     }
   }
 
-  send(cmd, tag = null) {
+  send(cmd) {
     if (typeof cmd !== "string") throw new Error("cmd");
 
     if (!this.state.currentState.active) {
-      return;
+      return Promise.resolve();
     }
 
-    if (tag) {
-      if (!/[a-zA-Z]/.test(tag[0])) {
-        throw new Error(`command tag '${tag}' must start with letter`);
-      }
+    let promise;
+    if (this.state.currentState.loggedIn) {
+      const session = this.sessions.create();
+      promise = session.promise;
+      cmd = "`" + session.id + "`" + cmd;
     } else {
-      if (this.state.currentState.loggedIn) {
-        tag = this.whoAmI.username();
-      }
+      promise = Promise.resolve();
     }
 
-    cmd = (tag ? "`" + tag + "`" : "") + cmd + "\n";
+    cmd += "\n";
     cmd = iconv.decode(Buffer.from(cmd), SERVER_ENCODING);
     this.socket.write(cmd);
+
+    return promise;
   }
 
   set2(dg, enable) {
     if (typeof dg !== "number") throw new Error("dg");
     if (typeof enable !== "boolean") throw new Error("enable");
 
-    this.send(`set-2 ${dg} ${enable ? "1" : "0"}`);
+    return this.send(`set-2 ${dg} ${enable ? "1" : "0"}`);
   }
 }
 
@@ -155,6 +159,10 @@ function handleLoginPrompt(client) {
 function handleCommand(client, cmd) {
   if (!(client instanceof Client)) throw new Error("client");
   if (!(cmd instanceof Object)) throw new Error("cmd");
+
+  if (cmd.meta.tag) {
+    client.sessions.success(cmd.meta.tag);
+  }
 }
 
 function handleDatagram(client, dg) {

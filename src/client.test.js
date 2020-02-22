@@ -24,14 +24,14 @@ describe("Client", () => {
       assert.isTrue(socket.on.calledWith("error", sinon.match.any));
     });
 
-    it("connects to server", async () => {
+    it("connects to server", () => {
       const socket = mockSocket();
       const client = new Client();
       client.login(socket, "localhost", 1234, new GuestCredentials());
       socket.connect.calledOnceWith({ host: "localhost", port: 1234 });
     });
 
-    it("sets state to connecting", async () => {
+    it("sets state to connecting", () => {
       const socket = mockSocket();
       const client = new Client();
       client.login(socket, "localhost", 1234, new GuestCredentials());
@@ -89,7 +89,7 @@ describe("Client", () => {
 
   it("can transition to logged in state", async () => {
     const client = await newOnlineClient(mockSocket());
-    assert.isNotNull(client.whoAmI);
+    assert.exists(client.whoAmI);
     assert.isTrue(client.state.currentState.loggedIn);
   });
 
@@ -121,7 +121,7 @@ describe("Client", () => {
       assert.equal(client.socket.write.callCount, 0);
     });
 
-    it("write given command as is when connecting", () => {
+    it("does not set tag when logging in", () => {
       const client = new Client();
       client.socket = mockSocket();
       client.state.transition(STATE_CONNECTING);
@@ -129,40 +129,26 @@ describe("Client", () => {
       assert.isTrue(client.socket.write.calledOnceWith("foobar\n"));
     });
 
-    it("adds logged user tag when nothing given", async () => {
+    it("sets session tag when logged in", async () => {
       const client = await newOnlineClient(mockSocket());
       client.socket = { write: sinon.spy() };
       client.send("foobar");
-      assert.isTrue(client.socket.write.calledOnceWith("`test-user`foobar\n"));
-    });
-
-    it("uses given tag", async () => {
-      const client = await newOnlineClient(mockSocket());
-      client.socket = { write: sinon.spy() };
-      client.send("foobar", "custom-tag");
-      assert.isTrue(client.socket.write.calledOnceWith("`custom-tag`foobar\n"));
-    });
-
-    it("throws when tag does not start with letter", async () => {
-      const client = await newOnlineClient(mockSocket());
-      for (let l of ["0", "9", "@", "["]) {
-        assert.throws(() => client.send("foobar", l + "tag"));
-      }
+      assert.isTrue(client.socket.write.calledOnceWith("`s0`foobar\n"));
     });
   });
 
   describe("set2", () => {
-    it("formats enable command", () => {
+    it("formats enable command", async () => {
       const client = new Client();
       client.send = sinon.spy();
-      client.set2(DG.UNUSED_54, true);
+      await client.set2(DG.UNUSED_54, true);
       assert.isTrue(client.send.calledOnceWith("set-2 54 1"));
     });
 
-    it("formats disable command", () => {
+    it("formats disable command", async () => {
       const client = new Client();
       client.send = sinon.spy();
-      client.set2(DG.UNUSED_54, false);
+      await client.set2(DG.UNUSED_54, false);
       assert.isTrue(client.send.calledOnceWith("set-2 54 0"));
     });
   });
