@@ -44,6 +44,23 @@ class Finger extends Command {
   }
 }
 
+class List extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+}
+
+class Minus extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+
+  success() {
+    const content = this.content.trimEnd();
+    return /^Removed .*\.$/.test(content) || /^Removing ".*" from the list\.$/.test(content);
+  }
+}
+
 const INVALID_GAME_ID = "-1";
 
 class Observe extends Command {
@@ -63,12 +80,26 @@ class Pgn extends Command {
   }
 }
 
+class Plus extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+
+  success() {
+    const content = this.content.trimEnd();
+    return /^.* added\.$/.test(content) || /^You have been added to .*'s simul list\.$/.test(content) || /^added to .* list$/.test(content);
+  }
+}
+
 const commandFactory = [];
 commandFactory.length = CN.COUNT;
 commandFactory[CN.DATE] = Date;
 commandFactory[CN.FINGER] = Finger;
+commandFactory[CN.LIST] = List;
+commandFactory[CN.MINUS] = Minus;
 commandFactory[CN.OBSERVE] = Observe;
 commandFactory[CN.PGN] = Pgn;
+commandFactory[CN.PLUS] = Plus;
 commandFactory[CN.S_ILLEGAL_MOVE] = IllegalMove;
 
 function createCommand(meta, content, datagrams) {
@@ -90,8 +121,11 @@ module.exports = {
   Date,
   IllegalMove,
   Finger,
+  List,
+  Minus,
   Observe,
   Pgn,
+  Plus,
   INVALID_GAME_ID,
   UNKNOWN_META
 };
