@@ -32,6 +32,18 @@ class Date extends Command {
   }
 }
 
+class IllegalMove extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+}
+
+class Finger extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+}
+
 const INVALID_GAME_ID = "-1";
 
 class Observe extends Command {
@@ -45,10 +57,19 @@ class Observe extends Command {
   }
 }
 
+class Pgn extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+  }
+}
+
 const commandFactory = [];
 commandFactory.length = CN.COUNT;
 commandFactory[CN.DATE] = Date;
+commandFactory[CN.FINGER] = Finger;
 commandFactory[CN.OBSERVE] = Observe;
+commandFactory[CN.PGN] = Pgn;
+commandFactory[CN.S_ILLEGAL_MOVE] = IllegalMove;
 
 function createCommand(meta, content, datagrams) {
   if (!(meta instanceof Meta)) throw new Error("meta");
@@ -67,7 +88,10 @@ module.exports = {
   Command,
   Meta,
   Date,
+  IllegalMove,
+  Finger,
   Observe,
+  Pgn,
   INVALID_GAME_ID,
   UNKNOWN_META
 };

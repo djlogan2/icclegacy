@@ -2,7 +2,7 @@
 
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
-const { INVALID_GAME_ID, Command, Meta, Date, Observe, createCommand } = require("./command");
+const { INVALID_GAME_ID, Command, Meta, Date, IllegalMove, Finger, Observe, Pgn, createCommand } = require("./command");
 const { CN } = require("./id");
 
 const testMeta = new Meta(999, "test", null);
@@ -31,9 +31,24 @@ describe("Command", () => {
       assert.instanceOf(cmd, Date);
     });
 
-    it("can create observe", () => {
+    it("FINGER", () => {
+      const cmd = createCommand(new Meta(CN.FINGER, "test"), "");
+      assert.instanceOf(cmd, Finger);
+    });
+
+    it("OBSERVE", () => {
       const cmd = createCommand(new Meta(CN.OBSERVE, "test"), "");
       assert.instanceOf(cmd, Observe);
+    });
+
+    it("PGN", () => {
+      const cmd = createCommand(new Meta(CN.PGN, "test"), "");
+      assert.instanceOf(cmd, Pgn);
+    });
+
+    it("S_ILLEGAL_MOVE", () => {
+      const cmd = createCommand(new Meta(CN.S_ILLEGAL_MOVE, "test"), "");
+      assert.instanceOf(cmd, IllegalMove);
     });
   });
 });
