@@ -2,13 +2,14 @@
 
 const { Parser } = require("./parser");
 const { CN, DG } = require("./id");
-const { Meta } = require("./command");
+const { Command, Meta } = require("./command");
 const { LoginFailed, WhoAmI } = require("./datagram");
 
 module.exports = {
   Parser,
   CN,
   DG,
+  Command,
   Meta,
   LoginFailed,
   WhoAmI

@@ -161,7 +161,7 @@ function handleCommand(client, cmd) {
   if (!(cmd instanceof Object)) throw new Error("cmd");
 
   if (cmd.meta.tag) {
-    client.sessions.success(cmd.meta.tag);
+    client.sessions.success(cmd.meta.tag, cmd);
   }
 }
 
