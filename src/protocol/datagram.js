@@ -171,10 +171,40 @@ class ChannelQTell extends Datagram {
   }
 }
 
+class Kibitz extends Datagram {
+  static id = DG.KIBITZ;
+
+  constructor(params) {
+    super(Kibitz.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  senderUsername() {
+    return this.params[1].asString();
+  }
+
+  senderTitles() {
+    return this.params[2].asStringList();
+  }
+
+  // Returns enum KibitzType.
+  type() {
+    return this.params[3].asInt();
+  }
+
+  message() {
+    return this.params[4].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[ChannelQTell.id] = ChannelQTell;
+datagramFactory[Kibitz.id] = Kibitz;
 datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
 datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
@@ -197,6 +227,7 @@ module.exports = {
   ChannelTell,
   ChannelQTell,
   Datagram,
+  Kibitz,
   LoginFailed,
   PersonalTell,
   PersonalTellEcho,

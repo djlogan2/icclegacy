@@ -86,6 +86,14 @@ module.exports = {
     UKRAINIAN: "Ukrainian"
   }),
 
+  KibitzType: Object.freeze({
+    /// Targeted to observers.
+    WHISPER: 0,
+
+    /// Targeted to observers and opponent.
+    KIBITZ: 1
+  }),
+
   SeekVisibility: Object.freeze({
     NEVER: 0,
     WHEN_BROWSING_ONLY: 1,

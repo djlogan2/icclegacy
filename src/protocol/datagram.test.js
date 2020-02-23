@@ -3,8 +3,8 @@
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const { DG } = require("./id");
-const { ChannelTell, ChannelQTell, Param, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, WhoAmI } = require("./datagram");
-const { TellType } = require("./const");
+const { ChannelTell, ChannelQTell, Kibitz, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, WhoAmI } = require("./datagram");
+const { KibitzType, TellType } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -75,6 +75,18 @@ describe("Datagram", () => {
       assert.equal(dg.channel(), 42);
       assert.equal(dg.senderUsername(), "test-user");
       assert.sameMembers(dg.senderTitles(), ["gm", "sh"]);
+      assert.equal(dg.message(), "bla bla bla");
+    });
+  });
+
+  describe("Kibitz", () => {
+    it("assigns params correctly", () => {
+      const dg = new Kibitz(["42", "test-user", "gm sh", "1", "bla bla bla"]);
+      assert.equal(dg.id, DG.KIBITZ);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.senderUsername(), "test-user");
+      assert.sameMembers(dg.senderTitles(), ["gm", "sh"]);
+      assert.equal(dg.type(), KibitzType.KIBITZ);
       assert.equal(dg.message(), "bla bla bla");
     });
   });
