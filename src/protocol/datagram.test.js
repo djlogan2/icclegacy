@@ -14,20 +14,24 @@ const {
   GameStarted,
   Kibitz,
   LoginFailed,
+  MyGameChanged,
   MyGameStarted,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  StartedObserving,
   UnArrow,
   UnCircle,
-  WhoAmI
+  WhoAmI,
+  createDatagram
 } = require("./datagram");
 const { KibitzType, MarkerBrush, MarkerType, TellType, Wild } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
     it("assigns params correctly", () => {
-      const dg = new WhoAmI(["usr", "gm sh"]);
+      const dg = createDatagram(DG.WHO_AM_I, ["usr", "gm sh"]);
+      assert.instanceOf(dg, WhoAmI);
       assert.equal(dg.id, DG.WHO_AM_I);
       assert.equal(dg.username(), "usr");
       assert.sameMembers(dg.titles(), ["gm", "sh"]);
@@ -36,7 +40,8 @@ describe("Datagram", () => {
 
   describe("LoginFailed", () => {
     it("assigns params correctly", () => {
-      const dg = new LoginFailed(["42", "test reason"]);
+      const dg = createDatagram(DG.LOGIN_FAILED, ["42", "test reason"]);
+      assert.instanceOf(dg, LoginFailed);
       assert.equal(dg.id, DG.LOGIN_FAILED);
       assert.equal(dg.code(), 42);
       assert.equal(dg.reason(), "test reason");
@@ -45,7 +50,8 @@ describe("Datagram", () => {
 
   describe("PersonalTell", () => {
     it("assigns params correctly", () => {
-      const dg = new PersonalTell(["test-user", "gm sh", "bla bla bla", "3"]);
+      const dg = createDatagram(DG.PERSONAL_TELL, ["test-user", "gm sh", "bla bla bla", "3"]);
+      assert.instanceOf(dg, PersonalTell);
       assert.equal(dg.id, DG.PERSONAL_TELL);
       assert.equal(dg.senderUsername(), "test-user");
       assert.sameMembers(dg.senderTitles(), ["gm", "sh"]);
@@ -56,7 +62,8 @@ describe("Datagram", () => {
 
   describe("PersonalTellEcho", () => {
     it("assigns params correctly", () => {
-      const dg = new PersonalTellEcho(["test-user", "3", "bla bla bla"]);
+      const dg = createDatagram(DG.PERSONAL_TELL_ECHO, ["test-user", "3", "bla bla bla"]);
+      assert.instanceOf(dg, PersonalTellEcho);
       assert.equal(dg.id, DG.PERSONAL_TELL_ECHO);
       assert.equal(dg.senderUsername(), "test-user");
       assert.equal(dg.tellType(), TellType.QTELL);
@@ -66,7 +73,8 @@ describe("Datagram", () => {
 
   describe("PersonalQTell", () => {
     it("assigns params correctly", () => {
-      const dg = new PersonalQTell(["test-user", "gm sh", "bla bla bla"]);
+      const dg = createDatagram(DG.PERSONAL_QTELL, ["test-user", "gm sh", "bla bla bla"]);
+      assert.instanceOf(dg, PersonalQTell);
       assert.equal(dg.id, DG.PERSONAL_QTELL);
       assert.equal(dg.senderUsername(), "test-user");
       assert.sameMembers(dg.senderTitles(), ["gm", "sh"]);
@@ -76,7 +84,8 @@ describe("Datagram", () => {
 
   describe("ChannelTell", () => {
     it("assigns params correctly", () => {
-      const dg = new ChannelTell(["42", "test-user", "gm sh", "bla bla bla", "1"]);
+      const dg = createDatagram(DG.CHANNEL_TELL, ["42", "test-user", "gm sh", "bla bla bla", "1"]);
+      assert.instanceOf(dg, ChannelTell);
       assert.equal(dg.id, DG.CHANNEL_TELL);
       assert.equal(dg.channel(), 42);
       assert.equal(dg.senderUsername(), "test-user");
@@ -88,7 +97,8 @@ describe("Datagram", () => {
 
   describe("ChannelQTell", () => {
     it("assigns params correctly", () => {
-      const dg = new ChannelQTell(["42", "test-user", "gm sh", "bla bla bla"]);
+      const dg = createDatagram(DG.CHANNEL_QTELL, ["42", "test-user", "gm sh", "bla bla bla"]);
+      assert.instanceOf(dg, ChannelQTell);
       assert.equal(dg.id, DG.CHANNEL_QTELL);
       assert.equal(dg.channel(), 42);
       assert.equal(dg.senderUsername(), "test-user");
@@ -99,7 +109,8 @@ describe("Datagram", () => {
 
   describe("Kibitz", () => {
     it("assigns params correctly", () => {
-      const dg = new Kibitz(["42", "test-user", "gm sh", "1", "bla bla bla"]);
+      const dg = createDatagram(DG.KIBITZ, ["42", "test-user", "gm sh", "1", "bla bla bla"]);
+      assert.instanceOf(dg, Kibitz);
       assert.equal(dg.id, DG.KIBITZ);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.senderUsername(), "test-user");
@@ -111,7 +122,8 @@ describe("Datagram", () => {
 
   describe("Arrow", () => {
     it("assigns params correctly", () => {
-      const dg = new Arrow(["42", "test-user", "e2", "e4"]);
+      const dg = createDatagram(DG.ARROW, ["42", "test-user", "e2", "e4"]);
+      assert.instanceOf(dg, Arrow);
       assert.equal(dg.id, DG.ARROW);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
@@ -122,7 +134,8 @@ describe("Datagram", () => {
 
   describe("UnArrow", () => {
     it("assigns params correctly", () => {
-      const dg = new UnArrow(["42", "test-user", "e2", "e4"]);
+      const dg = createDatagram(DG.UNARROW, ["42", "test-user", "e2", "e4"]);
+      assert.instanceOf(dg, UnArrow);
       assert.equal(dg.id, DG.UNARROW);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
@@ -133,7 +146,8 @@ describe("Datagram", () => {
 
   describe("Circle", () => {
     it("assigns params correctly", () => {
-      const dg = new Circle(["42", "test-user", "e2"]);
+      const dg = createDatagram(DG.CIRCLE, ["42", "test-user", "e2"]);
+      assert.instanceOf(dg, Circle);
       assert.equal(dg.id, DG.CIRCLE);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
@@ -143,7 +157,8 @@ describe("Datagram", () => {
 
   describe("UnCircle", () => {
     it("assigns params correctly", () => {
-      const dg = new UnCircle(["42", "test-user", "e2"]);
+      const dg = createDatagram(DG.UNCIRCLE, ["42", "test-user", "e2"]);
+      assert.instanceOf(dg, UnCircle);
       assert.equal(dg.id, DG.UNCIRCLE);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
@@ -153,7 +168,8 @@ describe("Datagram", () => {
 
   describe("BoardInfo", () => {
     it("assigns params correctly", () => {
-      const dg = new BoardInfo(["42", "test-user", "5", "e2", "e4", "6"]);
+      const dg = createDatagram(DG.BOARDINFO, ["42", "test-user", "5", "e2", "e4", "6"]);
+      assert.instanceOf(dg, BoardInfo);
       assert.equal(dg.id, DG.BOARDINFO);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
@@ -166,7 +182,8 @@ describe("Datagram", () => {
 
   describe("GameMessage", () => {
     it("assigns params correctly", () => {
-      const dg = new GameMessage(["42", "foobar"]);
+      const dg = createDatagram(DG.GAME_MESSAGE, ["42", "foobar"]);
+      assert.instanceOf(dg, GameMessage);
       assert.equal(dg.id, DG.GAME_MESSAGE);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.message(), "foobar");
@@ -175,7 +192,8 @@ describe("Datagram", () => {
 
   describe("ExaminersInGame", () => {
     it("assigns params correctly", () => {
-      const dg = new ExaminersInGame(["42", "test-user", "gm sh", "1"]);
+      const dg = createDatagram(DG.EXAMINERS_IN_GAME, ["42", "test-user", "gm sh", "1"]);
+      assert.instanceOf(dg, ExaminersInGame);
       assert.equal(dg.id, DG.EXAMINERS_IN_GAME);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.username(), "test-user");
@@ -186,7 +204,7 @@ describe("Datagram", () => {
 
   describe("GameStarted", () => {
     it("assigns params correctly", () => {
-      const dg = new GameStarted([
+      const dg = createDatagram(DG.GAME_STARTED, [
         "42",
         "white-user",
         "black-user",
@@ -210,6 +228,7 @@ describe("Datagram", () => {
         "tc",
         "1"
       ]);
+      assert.instanceOf(dg, GameStarted);
       assert.equal(dg.id, DG.GAME_STARTED);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.whiteUsername(), "white-user");
@@ -238,7 +257,7 @@ describe("Datagram", () => {
 
   describe("MyGameStarted", () => {
     it("assigns params correctly", () => {
-      const dg = new MyGameStarted([
+      const dg = createDatagram(DG.MY_GAME_STARTED, [
         "42",
         "white-user",
         "black-user",
@@ -262,7 +281,114 @@ describe("Datagram", () => {
         "tc",
         "1"
       ]);
+      assert.instanceOf(dg, MyGameStarted);
       assert.equal(dg.id, DG.MY_GAME_STARTED);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.whiteUsername(), "white-user");
+      assert.equal(dg.blackUsername(), "black-user");
+      assert.equal(dg.wild(), Wild.ATOMIC);
+      assert.equal(dg.ratingCategoryName(), "bul");
+      assert.isTrue(dg.rated());
+      assert.equal(dg.whiteInitial(), 120000);
+      assert.equal(dg.whiteIncrement(), 1000);
+      assert.equal(dg.blackInitial(), 180000);
+      assert.equal(dg.blackIncrement(), 2000);
+      assert.isTrue(dg.playedGame());
+      assert.equal(dg.exString(), "foobar");
+      assert.equal(dg.whiteRating(), 1001);
+      assert.equal(dg.blackRating(), 1002);
+      assert.equal(dg.gameId(), "g42");
+      assert.sameMembers(dg.whiteTitles(), ["gm"]);
+      assert.sameMembers(dg.blackTitles(), ["sh"]);
+      assert.isTrue(dg.irregularLegality());
+      assert.isTrue(dg.irregularSemantics());
+      assert.isTrue(dg.usesPlunkers());
+      assert.equal(dg.fancyTimeControl(), "tc");
+      assert.isTrue(dg.promoteToKing());
+    });
+  });
+
+  describe("MyGameChanged", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_GAME_CHANGE, [
+        "42",
+        "white-user",
+        "black-user",
+        "27",
+        "bul",
+        "1",
+        "2",
+        "1",
+        "3",
+        "2",
+        "1",
+        "foobar",
+        "1001",
+        "1002",
+        "g42",
+        "gm",
+        "sh",
+        "1",
+        "1",
+        "1",
+        "tc",
+        "1"
+      ]);
+      assert.instanceOf(dg, MyGameChanged);
+      assert.equal(dg.id, DG.MY_GAME_CHANGE);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.whiteUsername(), "white-user");
+      assert.equal(dg.blackUsername(), "black-user");
+      assert.equal(dg.wild(), Wild.ATOMIC);
+      assert.equal(dg.ratingCategoryName(), "bul");
+      assert.isTrue(dg.rated());
+      assert.equal(dg.whiteInitial(), 120000);
+      assert.equal(dg.whiteIncrement(), 1000);
+      assert.equal(dg.blackInitial(), 180000);
+      assert.equal(dg.blackIncrement(), 2000);
+      assert.isTrue(dg.playedGame());
+      assert.equal(dg.exString(), "foobar");
+      assert.equal(dg.whiteRating(), 1001);
+      assert.equal(dg.blackRating(), 1002);
+      assert.equal(dg.gameId(), "g42");
+      assert.sameMembers(dg.whiteTitles(), ["gm"]);
+      assert.sameMembers(dg.blackTitles(), ["sh"]);
+      assert.isTrue(dg.irregularLegality());
+      assert.isTrue(dg.irregularSemantics());
+      assert.isTrue(dg.usesPlunkers());
+      assert.equal(dg.fancyTimeControl(), "tc");
+      assert.isTrue(dg.promoteToKing());
+    });
+  });
+
+  describe("StartedObserving", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.STARTED_OBSERVING, [
+        "42",
+        "white-user",
+        "black-user",
+        "27",
+        "bul",
+        "1",
+        "2",
+        "1",
+        "3",
+        "2",
+        "1",
+        "foobar",
+        "1001",
+        "1002",
+        "g42",
+        "gm",
+        "sh",
+        "1",
+        "1",
+        "1",
+        "tc",
+        "1"
+      ]);
+      assert.instanceOf(dg, StartedObserving);
+      assert.equal(dg.id, DG.STARTED_OBSERVING);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.whiteUsername(), "white-user");
       assert.equal(dg.blackUsername(), "black-user");

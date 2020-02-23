@@ -21,10 +21,8 @@ class Datagram {
 }
 
 class WhoAmI extends Datagram {
-  static id = DG.WHO_AM_I;
-
-  constructor(params) {
-    super(WhoAmI.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   username() {
@@ -37,10 +35,8 @@ class WhoAmI extends Datagram {
 }
 
 class LoginFailed extends Datagram {
-  static id = DG.LOGIN_FAILED;
-
-  constructor(params) {
-    super(LoginFailed.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   code() {
@@ -53,10 +49,8 @@ class LoginFailed extends Datagram {
 }
 
 class PersonalTell extends Datagram {
-  static id = DG.PERSONAL_TELL;
-
-  constructor(params) {
-    super(PersonalTell.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   senderUsername() {
@@ -78,10 +72,8 @@ class PersonalTell extends Datagram {
 }
 
 class PersonalTellEcho extends Datagram {
-  static id = DG.PERSONAL_TELL_ECHO;
-
-  constructor(params) {
-    super(PersonalTellEcho.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   senderUsername() {
@@ -99,10 +91,8 @@ class PersonalTellEcho extends Datagram {
 }
 
 class PersonalQTell extends Datagram {
-  static id = DG.PERSONAL_QTELL;
-
-  constructor(params) {
-    super(PersonalQTell.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   senderUsername() {
@@ -119,10 +109,8 @@ class PersonalQTell extends Datagram {
 }
 
 class ChannelTell extends Datagram {
-  static id = DG.CHANNEL_TELL;
-
-  constructor(params) {
-    super(ChannelTell.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   channel() {
@@ -148,10 +136,8 @@ class ChannelTell extends Datagram {
 }
 
 class ChannelQTell extends Datagram {
-  static id = DG.CHANNEL_QTELL;
-
-  constructor(params) {
-    super(ChannelQTell.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   channel() {
@@ -172,10 +158,8 @@ class ChannelQTell extends Datagram {
 }
 
 class Kibitz extends Datagram {
-  static id = DG.KIBITZ;
-
-  constructor(params) {
-    super(Kibitz.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -201,10 +185,8 @@ class Kibitz extends Datagram {
 }
 
 class Arrow extends Datagram {
-  static id = DG.ARROW;
-
-  constructor(params) {
-    super(Arrow.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -224,35 +206,15 @@ class Arrow extends Datagram {
   }
 }
 
-class UnArrow extends Datagram {
-  static id = DG.UNARROW;
-
-  constructor(params) {
-    super(UnArrow.id, params);
-  }
-
-  gameNumber() {
-    return this.params[0].asInt();
-  }
-
-  examiner() {
-    return this.params[1].asString();
-  }
-
-  from() {
-    return this.params[2].asString();
-  }
-
-  to() {
-    return this.params[3].asString();
+class UnArrow extends Arrow {
+  constructor(id, params) {
+    super(id, params);
   }
 }
 
 class Circle extends Datagram {
-  static id = DG.CIRCLE;
-
-  constructor(params) {
-    super(Circle.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -268,31 +230,15 @@ class Circle extends Datagram {
   }
 }
 
-class UnCircle extends Datagram {
-  static id = DG.UNCIRCLE;
-
-  constructor(params) {
-    super(UnCircle.id, params);
-  }
-
-  gameNumber() {
-    return this.params[0].asInt();
-  }
-
-  examiner() {
-    return this.params[1].asString();
-  }
-
-  square() {
-    return this.params[2].asString();
+class UnCircle extends Circle {
+  constructor(id, params) {
+    super(id, params);
   }
 }
 
 class BoardInfo extends Datagram {
-  static id = DG.BOARDINFO;
-
-  constructor(params) {
-    super(BoardInfo.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -323,10 +269,8 @@ class BoardInfo extends Datagram {
 }
 
 class GameMessage extends Datagram {
-  static id = DG.GAME_MESSAGE;
-
-  constructor(params) {
-    super(GameMessage.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -339,10 +283,8 @@ class GameMessage extends Datagram {
 }
 
 class ExaminersInGame extends Datagram {
-  static id = DG.EXAMINERS_IN_GAME;
-
-  constructor(params) {
-    super(ExaminersInGame.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -363,10 +305,8 @@ class ExaminersInGame extends Datagram {
 }
 
 class GameStarted extends Datagram {
-  static id = DG.GAME_STARTED;
-
-  constructor(params) {
-    super(GameStarted.id, params);
+  constructor(id, params) {
+    super(id, params);
   }
 
   gameNumber() {
@@ -459,122 +399,45 @@ class GameStarted extends Datagram {
   }
 }
 
-class MyGameStarted extends Datagram {
-  static id = DG.MY_GAME_STARTED;
-
-  constructor(params) {
-    super(MyGameStarted.id, params);
+class MyGameStarted extends GameStarted {
+  constructor(id, params) {
+    super(id, params);
   }
+}
 
-  gameNumber() {
-    return this.params[0].asInt();
+class MyGameChanged extends MyGameStarted {
+  constructor(id, params) {
+    super(id, params);
   }
+}
 
-  whiteUsername() {
-    return this.params[1].asString();
-  }
-
-  blackUsername() {
-    return this.params[2].asString();
-  }
-
-  // Returns enum Wild.
-  wild() {
-    return this.params[3].asInt();
-  }
-
-  ratingCategoryName() {
-    return this.params[4].asString();
-  }
-
-  rated() {
-    return this.params[5].asBool();
-  }
-
-  whiteInitial() {
-    return this.params[6].asMsFromMinutes();
-  }
-
-  whiteIncrement() {
-    return this.params[7].asMsFromSeconds();
-  }
-
-  blackInitial() {
-    return this.params[8].asMsFromMinutes();
-  }
-
-  blackIncrement() {
-    return this.params[9].asMsFromSeconds();
-  }
-
-  playedGame() {
-    return this.params[10].asBool();
-  }
-
-  exString() {
-    return this.params[11].asString();
-  }
-
-  whiteRating() {
-    return this.params[12].asInt();
-  }
-
-  blackRating() {
-    return this.params[13].asInt();
-  }
-
-  gameId() {
-    return this.params[14].asString();
-  }
-
-  whiteTitles() {
-    return this.params[15].asStringList();
-  }
-
-  blackTitles() {
-    return this.params[16].asStringList();
-  }
-
-  irregularLegality() {
-    return this.params[17].asBool();
-  }
-
-  irregularSemantics() {
-    return this.params[18].asBool();
-  }
-
-  usesPlunkers() {
-    return this.params[19].asBool();
-  }
-
-  fancyTimeControl() {
-    return this.params[20].asString();
-  }
-
-  promoteToKing() {
-    return this.params[21].asBool();
+class StartedObserving extends MyGameStarted {
+  constructor(id, params) {
+    super(id, params);
   }
 }
 
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
-datagramFactory[Arrow.id] = Arrow;
-datagramFactory[BoardInfo.id] = BoardInfo;
-datagramFactory[ChannelTell.id] = ChannelTell;
-datagramFactory[ChannelQTell.id] = ChannelQTell;
-datagramFactory[Circle.id] = Circle;
-datagramFactory[ExaminersInGame.id] = ExaminersInGame;
-datagramFactory[GameMessage.id] = GameMessage;
-datagramFactory[GameStarted.id] = GameStarted;
-datagramFactory[Kibitz.id] = Kibitz;
-datagramFactory[LoginFailed.id] = LoginFailed;
-datagramFactory[MyGameStarted.id] = MyGameStarted;
-datagramFactory[PersonalTell.id] = PersonalTell;
-datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
-datagramFactory[PersonalQTell.id] = PersonalQTell;
-datagramFactory[UnArrow.id] = UnArrow;
-datagramFactory[UnCircle.id] = UnCircle;
-datagramFactory[WhoAmI.id] = WhoAmI;
+datagramFactory[DG.ARROW] = Arrow;
+datagramFactory[DG.BOARDINFO] = BoardInfo;
+datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
+datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
+datagramFactory[DG.CIRCLE] = Circle;
+datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
+datagramFactory[DG.GAME_MESSAGE] = GameMessage;
+datagramFactory[DG.GAME_STARTED] = GameStarted;
+datagramFactory[DG.KIBITZ] = Kibitz;
+datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
+datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
+datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
+datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
+datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
+datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
+datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
+datagramFactory[DG.UNARROW] = UnArrow;
+datagramFactory[DG.UNCIRCLE] = UnCircle;
+datagramFactory[DG.WHO_AM_I] = WhoAmI;
 
 function createDatagram(id, params) {
   if (typeof id !== "number") throw new Error("id");
@@ -582,7 +445,7 @@ function createDatagram(id, params) {
 
   const factory = datagramFactory[id];
   if (factory) {
-    return new factory(params);
+    return new factory(id, params);
   }
 
   return new Datagram(id, params);
@@ -600,10 +463,12 @@ module.exports = {
   GameStarted,
   Kibitz,
   LoginFailed,
+  MyGameChanged,
   MyGameStarted,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  StartedObserving,
   UnArrow,
   UnCircle,
   WhoAmI,

@@ -186,7 +186,7 @@ async function newOnlineClient(socket) {
   const promise = client.login(socket, "localhost", 1234, new GuestCredentials());
 
   handleLoginPrompt(client);
-  handleDatagram(client, new WhoAmI(["test-user", "gm sh"]));
+  handleDatagram(client, new WhoAmI(DG.WHO_AM_I, ["test-user", "gm sh"]));
 
   // Must be resolved already.
   await promise;
