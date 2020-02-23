@@ -9,6 +9,7 @@ const {
   ChannelTell,
   ChannelQTell,
   Circle,
+  GameMessage,
   Kibitz,
   LoginFailed,
   PersonalTell,
@@ -157,6 +158,15 @@ describe("Datagram", () => {
       assert.equal(dg.from(), "e2");
       assert.equal(dg.to(), "e4");
       assert.equal(dg.markerBrush(), MarkerBrush.LIGHT_BLUE);
+    });
+  });
+
+  describe("GameMessage", () => {
+    it("assigns params correctly", () => {
+      const dg = new GameMessage(["42", "foobar"]);
+      assert.equal(dg.id, DG.GAME_MESSAGE);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.message(), "foobar");
     });
   });
 });
