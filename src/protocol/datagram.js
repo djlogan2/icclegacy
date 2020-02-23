@@ -21,8 +21,10 @@ class Datagram {
 }
 
 class WhoAmI extends Datagram {
+  static id = DG.WHO_AM_I;
+
   constructor(params) {
-    super(DG.WHO_AM_I, params);
+    super(WhoAmI.id, params);
   }
 
   username() {
@@ -35,8 +37,10 @@ class WhoAmI extends Datagram {
 }
 
 class LoginFailed extends Datagram {
+  static id = DG.LOGIN_FAILED;
+
   constructor(params) {
-    super(DG.LOGIN_FAILED, params);
+    super(LoginFailed.id, params);
   }
 
   code() {
@@ -48,10 +52,36 @@ class LoginFailed extends Datagram {
   }
 }
 
+class PersonalTell extends Datagram {
+  static id = DG.PERSONAL_TELL;
+
+  constructor(params) {
+    super(PersonalTell.id, params);
+  }
+
+  senderUsername() {
+    return this.params[0].asString();
+  }
+
+  senderTitles() {
+    return this.params[1].asStringList();
+  }
+
+  message() {
+    return this.params[2].asString();
+  }
+
+  // Returns enum TellType.
+  tellType() {
+    return this.params[3].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
-datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
-datagramFactory[DG.WHO_AM_I] = WhoAmI;
+datagramFactory[LoginFailed.id] = LoginFailed;
+datagramFactory[PersonalTell.id] = PersonalTell;
+datagramFactory[WhoAmI.id] = WhoAmI;
 
 function createDatagram(id, params) {
   if (typeof id !== "number") throw new Error("id");
@@ -68,6 +98,7 @@ function createDatagram(id, params) {
 module.exports = {
   Datagram,
   LoginFailed,
+  PersonalTell,
   WhoAmI,
   createDatagram
 };

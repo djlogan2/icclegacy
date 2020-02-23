@@ -101,6 +101,23 @@ module.exports = {
     INVERSE_VIDEO_AND_BOLD_FACE_AND_UNDERLINE: 7
   }),
 
+  TellType: Object.freeze({
+    // The tell is from a game opponent.
+    SAY: 0,
+
+    // The tell is from a specific player.
+    TELL: 1,
+
+    // The tell is from a bughouse partner.
+    PTELL: 2,
+
+    // The tell is from a tournament director.
+    QTELL: 3,
+
+    // The tell is from an admin or helper.
+    ATELL: 4
+  }),
+
   WhisperVisibility: Object.freeze({
     NEVER: 0,
     ALWAYS: 1,

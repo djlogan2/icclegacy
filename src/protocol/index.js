@@ -14,6 +14,7 @@ const {
   HelpLanguage,
   SeekVisibility,
   TellHighlight,
+  TellType,
   WhisperVisibility,
   Wild
 } = require("./const");
@@ -49,6 +50,7 @@ module.exports = {
   HelpLanguage,
   SeekVisibility,
   TellHighlight,
+  TellType,
   WhisperVisibility,
   Wild
 };
