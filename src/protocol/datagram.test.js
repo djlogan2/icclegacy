@@ -24,6 +24,7 @@ const {
   PersonalTellEcho,
   PersonalQTell,
   StartedObserving,
+  StopObserving,
   UnArrow,
   UnCircle,
   WhoAmI,
@@ -460,6 +461,15 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.EXAMINED_GAME_IS_GONE, ["42"]);
       assert.instanceOf(dg, ExaminedGameIsGone);
       assert.equal(dg.id, DG.EXAMINED_GAME_IS_GONE);
+      assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("StopObserving", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.STOP_OBSERVING, ["42"]);
+      assert.instanceOf(dg, StopObserving);
+      assert.equal(dg.id, DG.STOP_OBSERVING);
       assert.equal(dg.gameNumber(), 42);
     });
   });

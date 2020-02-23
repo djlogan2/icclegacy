@@ -377,6 +377,8 @@ class MyGameEnded extends Datagram {
 
 class ExaminedGameIsGone extends MyGameEnded {}
 
+class StopObserving extends MyGameEnded {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -398,6 +400,7 @@ datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
+datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
 datagramFactory[DG.UNARROW] = UnArrow;
 datagramFactory[DG.UNCIRCLE] = UnCircle;
@@ -437,6 +440,7 @@ module.exports = {
   PersonalTellEcho,
   PersonalQTell,
   StartedObserving,
+  StopObserving,
   UnArrow,
   UnCircle,
   WhoAmI,
