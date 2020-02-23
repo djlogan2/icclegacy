@@ -2,7 +2,7 @@
 
 const { Parser } = require("./parser");
 const { CN, DG } = require("./id");
-const { Command, Meta, Date, Finger, IllegalMove, List, Minus, Observe, Pgn, Plus, Vars } = require("./command");
+const { Command, Meta, Date, Finger, IllegalMove, List, Minus, Observe, Pgn, Plus, Vars, YFinger } = require("./command");
 const { Datagram, LoginFailed, WhoAmI } = require("./datagram");
 const {
   AllowKibitzWhilePlaying,
@@ -16,7 +16,7 @@ const {
   TellHighlight,
   WhisperVisibility,
   Wild
-} = require("./enums");
+} = require("./const");
 
 module.exports = {
   Parser,
@@ -35,6 +35,7 @@ module.exports = {
   Pgn,
   Plus,
   Vars,
+  YFinger,
 
   LoginFailed,
   WhoAmI,

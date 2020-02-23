@@ -2,7 +2,7 @@
 
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
-const { INVALID_GAME_ID, Command, Meta, Date, IllegalMove, Finger, List, Minus, Observe, Pgn, Plus, Vars, createCommand } = require("./command");
+const { INVALID_GAME_ID, Command, Meta, Date, IllegalMove, Finger, Glicko, List, Minus, Observe, Pgn, Plus, Vars, YFinger, createCommand } = require("./command");
 const { CN } = require("./id");
 const {
   AllowKibitzWhilePlaying,
@@ -16,7 +16,7 @@ const {
   TellHighlight,
   WhisperVisibility,
   Wild
-} = require("./enums");
+} = require("./const");
 
 const testMeta = new Meta(999, "test", null);
 
@@ -104,8 +104,8 @@ describe("Command", () => {
    interface="BlitzIn 3.09.00.en"`,
         null
       );
+      assert.isFalse(cmd.notFound());
       assert.isTrue(cmd.isMyVars());
-      assert.isTrue(cmd.playerExists());
       assert.isNull(cmd.username());
       assert.isFalse(cmd.rated());
       assert.equal(cmd.wild(), Wild.CHECKERS);
@@ -176,8 +176,8 @@ describe("Command", () => {
    messmail=0 automail=0 mailformat=2 addresspublic=0 namepublic=0 subscribe=1`,
         null
       );
+      assert.isFalse(cmd.notFound());
       assert.isFalse(cmd.isMyVars());
-      assert.isTrue(cmd.playerExists());
       assert.equal(cmd.username(), "tibold");
       assert.isFalse(cmd.rated());
       assert.equal(cmd.wild(), Wild.CHESS);
@@ -252,8 +252,8 @@ describe("Command", () => {
    interface="iPhone iPhone OS 8.1.3 Build 10732"`,
         null
       );
+      assert.isFalse(cmd.notFound());
       assert.isFalse(cmd.isMyVars());
-      assert.isTrue(cmd.playerExists());
       assert.equal(cmd.username(), "Azmaiparashvili");
       assert.isTrue(cmd.rated());
       assert.equal(cmd.wild(), Wild.CHESS);
@@ -328,8 +328,8 @@ describe("Command", () => {
    interface="iPhone iPhone OS 8.1.3 Build 10732"`,
         null
       );
+      assert.isFalse(cmd.notFound());
       assert.isFalse(cmd.isMyVars());
-      assert.isTrue(cmd.playerExists());
       assert.equal(cmd.username(), "Azmaiparashvili");
       assert.isTrue(cmd.rated());
       assert.equal(cmd.wild(), Wild.CHESS);
@@ -388,10 +388,199 @@ describe("Command", () => {
     it("unexisting player", () => {
       ///"nodechessclient" does not match any player's name exactly.
       const cmd = new Vars(testMeta, `"test-user" does not match any player's name exactly.`, null);
+      assert.isTrue(cmd.notFound());
       assert.isFalse(cmd.isMyVars());
-      assert.isFalse(cmd.playerExists());
       assert.isNull(cmd.username());
       assert.isFalse(cmd.rated());
+    });
+  });
+
+  describe("YFinger can parse", () => {
+    it("existing player", () => {
+      const cmd = new YFinger(
+        testMeta,
+        `Name Asido
+OnFor 4056
+Idle 0
+BulRat 1024
+BulNeed 8
+BulWin 0
+BulLoss 11
+BulDraw 0
+BliRat 623
+BliNeed 2
+BliWin 3
+BliLoss 44
+BliDraw 0
+BliBest 700 (02 Apr 2014)
+StaRat 1009
+StaNeed 6
+StaWin 0
+StaLoss 1
+StaDraw 0
+5-mRat 1262
+5-mNeed 8
+5-mWin 0
+5-mLoss 2
+5-mDraw 0
+1-mRat 445
+1-mNeed 8
+1-mWin 0
+1-mLoss 23
+1-mDraw 0
+1-mBest 451 (23 Oct 2013)
+15-Rat 1181
+15-Need 4
+15-Win 0
+15-Loss 1
+15-Draw 0
+CorRat 1691
+CorWin 1
+CorLoss 0
+CorDraw 0
+3-mRat 663
+3-mNeed 8
+3-mWin 0
+3-mLoss 4
+3-mDraw 0
+CheRat 821
+CheNeed 8
+CheWin 0
+CheLoss 1
+CheDraw 0
+Glicko  750 (146)
+Hours 517.41
+Percent 3.65
+Exempt yes
+Note 1 
+Note 2 
+Note 3 
+Note 4 
+Note 5 
+Note 6 
+Note 7 
+Note 8 
+Note 9 1
+Note 10 
+Address asido4@gmail.com`,
+        null
+      );
+
+      assert.isFalse(cmd.notFound());
+      assert.equal(cmd.name(), "Asido");
+      assert.equal(cmd.onFor(), 4056000);
+      assert.equal(cmd.idleFor(), 0);
+      assert.deepEqual(cmd.glicko(), new Glicko(750, 146));
+      assert.equal(cmd.totalOnline(), 1862675000);
+      assert.equal(cmd.onlinePercentageSinceRegistration(), 3.65);
+      assert.isTrue(cmd.isExempt());
+      assert.equal(cmd.email(), "asido4@gmail.com");
+      assert.sameMembers(cmd.notes(), ["1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 1", "10 "]);
+      assert.sameDeepMembers(cmd.ratingStats(), [
+        {
+          name: "Bul",
+          current: 1024,
+          need: 8,
+          wins: 0,
+          losses: 11,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "Bli",
+          current: 623,
+          need: 2,
+          wins: 3,
+          losses: 44,
+          draws: 0,
+          bestScore: {
+            score: 700,
+            timestamp: 1396411200000
+          }
+        },
+        {
+          name: "Sta",
+          current: 1009,
+          need: 6,
+          wins: 0,
+          losses: 1,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "5-m",
+          current: 1262,
+          need: 8,
+          wins: 0,
+          losses: 2,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "1-m",
+          current: 445,
+          need: 8,
+          wins: 0,
+          losses: 23,
+          draws: 0,
+          bestScore: {
+            score: 451,
+            timestamp: 1382500800000
+          }
+        },
+        {
+          name: "15-",
+          current: 1181,
+          need: 4,
+          wins: 0,
+          losses: 1,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "Cor",
+          current: 1691,
+          need: 0,
+          wins: 1,
+          losses: 0,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "3-m",
+          current: 663,
+          need: 8,
+          wins: 0,
+          losses: 4,
+          draws: 0,
+          bestScore: null
+        },
+        {
+          name: "Che",
+          current: 821,
+          need: 8,
+          wins: 0,
+          losses: 1,
+          draws: 0,
+          bestScore: null
+        }
+      ]);
+    });
+
+    it("unexisting player", () => {
+      ///"nodechessclient" does not match any player's name exactly.
+      const cmd = new YFinger(testMeta, `"ashkdfngqw43" does not match any player's name exactly.`, null);
+      assert.isTrue(cmd.notFound());
+      assert.isNull(cmd.name());
+      assert.isNull(cmd.onFor());
+      assert.isNull(cmd.idleFor());
+      assert.isNull(cmd.glicko());
+      assert.isNull(cmd.totalOnline());
+      assert.isNull(cmd.onlinePercentageSinceRegistration());
+      assert.isNull(cmd.isExempt());
+      assert.isNull(cmd.email());
+      assert.sameMembers(cmd.notes(), []);
+      assert.sameMembers(cmd.ratingStats(), []);
     });
   });
 
@@ -444,6 +633,11 @@ describe("Command", () => {
     it("VARS", () => {
       const cmd = createCommand(new Meta(CN.VARS, "test"), "");
       assert.instanceOf(cmd, Vars);
+    });
+
+    it("YFINGER", () => {
+      const cmd = createCommand(new Meta(CN.YFINGER, "test"), "");
+      assert.instanceOf(cmd, YFinger);
     });
   });
 });

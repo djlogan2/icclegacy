@@ -1,4 +1,6 @@
 module.exports = {
+  SERVER_TIMEZONE: "America/New_York",
+
   AllowKibitzWhilePlaying: Object.freeze({
     // Never - kibitzes will be converted to whispers.
     NEVER: 0,

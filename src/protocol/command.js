@@ -1,8 +1,9 @@
 "use strict";
 
+const { DateTime } = require("luxon");
 const { CN } = require("./id");
 const { Field } = require("./field");
-const { HelpLanguage } = require("./enums");
+const { SERVER_TIMEZONE, HelpLanguage } = require("./const");
 
 class Meta {
   constructor(id, sender, tag) {
@@ -99,13 +100,13 @@ class Vars extends Command {
     this.fields = new VarsFields(this.content);
   }
 
+  notFound() {
+    return this.content.indexOf("does not match any player's name exactly.") !== -1;
+  }
+
   // It is set to true if the command target is yourself.
   isMyVars() {
     return this.content.startsWith("Here are the values of your variables:");
-  }
-
-  playerExists() {
-    return this.content.indexOf("does not match any player's name exactly.") === -1;
   }
 
   // Command target username, which is set when the command targets another player.
@@ -568,6 +569,243 @@ function parseVars(content) {
   return fields;
 }
 
+class YFinger extends Command {
+  constructor(meta, content, datagrams) {
+    super(meta, content, datagrams);
+    this.parser = new YFingerParser(this.content);
+  }
+
+  notFound() {
+    this.parser.ensureParsed();
+    return this.parser.notFound;
+  }
+
+  name() {
+    this.parser.ensureParsed();
+    return this.parser.name;
+  }
+
+  totalOnline() {
+    this.parser.ensureParsed();
+    return this.parser.totalOnline;
+  }
+
+  onlinePercentageSinceRegistration() {
+    this.parser.ensureParsed();
+    return this.parser.onlinePercentageSinceRegistration;
+  }
+
+  left() {
+    this.parser.ensureParsed();
+    return this.parser.left;
+  }
+
+  onFor() {
+    this.parser.ensureParsed();
+    return this.parser.onFor;
+  }
+
+  idleFor() {
+    this.parser.ensureParsed();
+    return this.parser.idleFor;
+  }
+
+  playsWith() {
+    this.parser.ensureParsed();
+    return this.parser.playsWith;
+  }
+
+  exams() {
+    this.parser.ensureParsed();
+    return this.parser.exams;
+  }
+
+  observes() {
+    this.parser.ensureParsed();
+    return this.parser.observes;
+  }
+
+  isRegistered() {
+    this.parser.ensureParsed();
+    return this.parser.isRegistered;
+  }
+
+  isExempt() {
+    this.parser.ensureParsed();
+    return this.parser.isExempt;
+  }
+
+  expiresOn() {
+    this.parser.ensureParsed();
+    return this.parser.expiresOn;
+  }
+
+  email() {
+    this.parser.ensureParsed();
+    return this.parser.email;
+  }
+
+  notes() {
+    this.parser.ensureParsed();
+    return this.parser.notes;
+  }
+
+  glicko() {
+    this.parser.ensureParsed();
+    return this.parser.glicko;
+  }
+
+  ratingStats() {
+    this.parser.ensureParsed();
+    return Object.values(this.parser.ratingStats);
+  }
+}
+
+class YFingerParser {
+  constructor(content) {
+    this.content = content;
+    this.parsed = false;
+
+    this.notFound = false;
+    this.name = null;
+    this.totalOnline = null;
+    this.onlinePercentageSinceRegistration = null;
+    this.left = null;
+    this.onFor = null;
+    this.idleFor = null;
+    this.playsWith = null;
+    this.exams = null;
+    this.observes = null;
+    this.isRegistered = null;
+    this.isExempt = null;
+    this.expiresOn = null;
+    this.email = null;
+    this.notes = [];
+    this.glicko = null;
+    this.ratingStats = {};
+  }
+
+  ensureParsed() {
+    if (this.parsed) {
+      return;
+    }
+    this.parsed = true;
+
+    if (this.content.indexOf("does not match any player's name exactly.") !== -1) {
+      this.notFound = true;
+      return;
+    }
+
+    for (let line of this.content.trim().split("\n")) {
+      if (line.startsWith("Name")) {
+        this.name = line.substr(5);
+      } else if (line.startsWith("Hours")) {
+        const val = parseFloat(line.substr(6));
+        const hours = Math.floor(val);
+        const minutes = Math.floor((val - hours) * 60);
+        const seconds = Math.floor((val - hours - minutes / 60.0) * 60 * 60);
+        this.totalOnline = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
+      } else if (line.startsWith("Percent")) {
+        this.onlinePercentageSinceRegistration = parseFloat(line.substr(8));
+      } else if (line.startsWith("Left")) {
+        const date = DateTime.fromFormat(line.substr(5), "HH:mm dd MMM yyyy", { zone: SERVER_TIMEZONE });
+        this.left = Date.parse(date.toMillis());
+      } else if (line.startsWith("OnFor")) {
+        this.onFor = parseInt(line.substr(5)) * 1000;
+      } else if (line.startsWith("Idle")) {
+        this.idleFor = parseInt(line.substr(5)) * 1000;
+      } else if (line.startsWith("Plays")) {
+        this.playsWith = line.substr(6);
+      } else if (line.startsWith("Exams")) {
+        this.exams = line.substr(6);
+      } else if (line.startsWith("Obs")) {
+        this.observes = line.substr(4);
+      } else if (line.startsWith("Reg")) {
+        this.isRegistered = line.substr(4) === "yes";
+      } else if (line.startsWith("Exempt")) {
+        this.isExempt = line.substr(7) === "yes";
+      } else if (line.startsWith("Expir")) {
+        const date = DateTime.fromFormat(line.substr(6), "dd MMM yyyy", { zone: SERVER_TIMEZONE });
+        this.expiresOn = Date.parse(date.toMillis());
+      } else if (line.startsWith("Address")) {
+        this.email = line.substr(8);
+      } else if (line.startsWith("Note")) {
+        this.notes.push(line.substr(5));
+      } else if (line.startsWith("Glicko")) {
+        const val = line.substr(7).trim();
+        const pair = val.split(" ", 2);
+        const score = parseInt(pair[0]);
+        const error = parseInt(pair[1].substr(1, pair[1].length - 2));
+        this.glicko = new Glicko(score, error);
+      }
+      // Keep Contains() checks at the bottom to avoid unexpected matches.
+      else if (line.indexOf("Rat") !== -1) {
+        this.getRatingStat(line.substr(0, 3)).current = parseInt(line.substr(7));
+      } else if (line.indexOf("Need") !== -1) {
+        this.getRatingStat(line.substr(0, 3)).need = parseInt(line.substr(8));
+      } else if (line.indexOf("Win") !== -1) {
+        this.getRatingStat(line.substr(0, 3)).wins = parseInt(line.substr(7));
+      } else if (line.indexOf("Loss") !== -1) {
+        this.getRatingStat(line.substr(0, 3)).losses = parseInt(line.substr(8));
+      } else if (line.indexOf("Draw") !== -1) {
+        this.getRatingStat(line.substr(0, 3)).draws = parseInt(line.substr(8));
+      } else if (line.indexOf("Best") !== -1) {
+        const name = line.substr(0, 3);
+        const val = line.substr(8);
+
+        // Value example: 700 (02 Apr 2014)
+        const match = /(\d+) \((\d+ [a-zA-Z]+ \d+)\)/.exec(val);
+        const score = parseInt(match[1]);
+        const date = DateTime.fromFormat(match[2], "dd MMM yyyy", { zone: SERVER_TIMEZONE });
+        this.getRatingStat(name).bestScore = new BestScore(score, date.toMillis());
+      }
+    }
+  }
+
+  getRatingStat(name) {
+    if (typeof name !== "string") throw new Error("name");
+
+    if (!this.ratingStats[name]) {
+      this.ratingStats[name] = new RatingStat(name);
+    }
+    return this.ratingStats[name];
+  }
+}
+
+class Glicko {
+  constructor(score, error) {
+    if (typeof score !== "number") throw new Error("score");
+    if (typeof error !== "number") throw new Error("error");
+
+    this.score = score;
+    this.error = error;
+  }
+}
+
+class RatingStat {
+  constructor(name) {
+    if (typeof name !== "string") throw new Error("name");
+
+    this.name = name;
+    this.current = 0;
+    this.need = 0;
+    this.wins = 0;
+    this.losses = 0;
+    this.draws = 0;
+    this.bestScore = null;
+  }
+}
+
+class BestScore {
+  constructor(score, timestamp) {
+    if (typeof score !== "number") throw new Error("score");
+    if (typeof timestamp !== "number") throw new Error("timestamp");
+
+    this.score = score;
+    this.timestamp = timestamp;
+  }
+}
+
 const commandFactory = [];
 commandFactory.length = CN.COUNT;
 commandFactory[CN.DATE] = Date;
@@ -580,6 +818,7 @@ commandFactory[CN.PLUS] = Plus;
 commandFactory[CN.S_ILLEGAL_MOVE] = IllegalMove;
 commandFactory[CN.VARS0] = Vars;
 commandFactory[CN.VARS] = Vars;
+commandFactory[CN.YFINGER] = YFinger;
 
 function createCommand(meta, content, datagrams) {
   if (!(meta instanceof Meta)) throw new Error("meta");
@@ -594,18 +833,22 @@ function createCommand(meta, content, datagrams) {
 }
 
 module.exports = {
-  createCommand,
+  INVALID_GAME_ID,
+  UNKNOWN_META,
+  BestScore,
   Command,
-  Meta,
   Date,
   IllegalMove,
   Finger,
+  Glicko,
   List,
+  Meta,
   Minus,
   Observe,
   Pgn,
   Plus,
+  RatingStat,
   Vars,
-  INVALID_GAME_ID,
-  UNKNOWN_META
+  YFinger,
+  createCommand
 };

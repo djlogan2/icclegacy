@@ -83,8 +83,8 @@ describe("Integration", function() {
       it("unexisting players", async () => {
         const client = await clientP;
         const cmd = await client.vars(UNEXISTING_USERNAME);
+        assert.isTrue(cmd.notFound());
         assert.instanceOf(cmd, Vars);
-        assert.isFalse(cmd.playerExists());
       });
     });
   });
