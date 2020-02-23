@@ -268,6 +268,26 @@ class Circle extends Datagram {
   }
 }
 
+class UnCircle extends Datagram {
+  static id = DG.UNCIRCLE;
+
+  constructor(params) {
+    super(UnCircle.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  examiner() {
+    return this.params[1].asString();
+  }
+
+  square() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
@@ -280,6 +300,7 @@ datagramFactory[PersonalTell.id] = PersonalTell;
 datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
 datagramFactory[PersonalQTell.id] = PersonalQTell;
 datagramFactory[UnArrow.id] = UnArrow;
+datagramFactory[UnCircle.id] = UnCircle;
 datagramFactory[WhoAmI.id] = WhoAmI;
 
 function createDatagram(id, params) {
@@ -306,6 +327,7 @@ module.exports = {
   PersonalTellEcho,
   PersonalQTell,
   UnArrow,
+  UnCircle,
   WhoAmI,
   createDatagram
 };
