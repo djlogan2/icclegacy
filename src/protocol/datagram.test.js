@@ -3,7 +3,7 @@
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const { DG } = require("./id");
-const { Arrow, ChannelTell, ChannelQTell, Kibitz, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, UnArrow, WhoAmI } = require("./datagram");
+const { Arrow, ChannelTell, ChannelQTell, Circle, Kibitz, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, UnArrow, WhoAmI } = require("./datagram");
 const { KibitzType, TellType } = require("./const");
 
 describe("Datagram", () => {
@@ -110,6 +110,16 @@ describe("Datagram", () => {
       assert.equal(dg.examiner(), "test-user");
       assert.equal(dg.from(), "e2");
       assert.equal(dg.to(), "e4");
+    });
+  });
+
+  describe("Circle", () => {
+    it("assigns params correctly", () => {
+      const dg = new Circle(["42", "test-user", "e2"]);
+      assert.equal(dg.id, DG.CIRCLE);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.examiner(), "test-user");
+      assert.equal(dg.square(), "e2");
     });
   });
 });

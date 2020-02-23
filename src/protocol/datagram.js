@@ -248,11 +248,32 @@ class UnArrow extends Datagram {
   }
 }
 
+class Circle extends Datagram {
+  static id = DG.CIRCLE;
+
+  constructor(params) {
+    super(Circle.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  examiner() {
+    return this.params[1].asString();
+  }
+
+  square() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
 datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[ChannelQTell.id] = ChannelQTell;
+datagramFactory[Circle.id] = Circle;
 datagramFactory[Kibitz.id] = Kibitz;
 datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
@@ -277,6 +298,7 @@ module.exports = {
   Arrow,
   ChannelTell,
   ChannelQTell,
+  Circle,
   Datagram,
   Kibitz,
   LoginFailed,
