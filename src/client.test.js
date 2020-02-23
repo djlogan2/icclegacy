@@ -153,11 +153,29 @@ describe("Client", () => {
     });
   });
 
-  it("date formats command", async () => {
-    const client = new Client();
-    client.send = sinon.spy();
-    await client.date(DG.UNUSED_54, false);
-    assert.isTrue(client.send.calledOnceWith("date"));
+  describe("can format command", () => {
+    it("date", async () => {
+      const client = new Client();
+      client.send = sinon.spy();
+      await client.date(DG.UNUSED_54, false);
+      assert.isTrue(client.send.calledOnceWith("date"));
+    });
+
+    describe("vars", () => {
+      it("without player", async () => {
+        const client = new Client();
+        client.send = sinon.spy();
+        await client.vars();
+        assert.isTrue(client.send.calledOnceWith("vars"));
+      });
+
+      it("with player", async () => {
+        const client = new Client();
+        client.send = sinon.spy();
+        await client.vars("test-user");
+        assert.isTrue(client.send.calledOnceWith("vars test-user"));
+      });
+    });
   });
 });
 

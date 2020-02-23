@@ -6,10 +6,12 @@ const { assert } = require("chai");
 const { expectThrowsAsync } = require("./test");
 const { Client } = require("./client");
 const { GuestCredentials, UserPasswordCredentials } = require("./credentials");
-const { CN, DG, Date, LoginFailed, WhoAmI } = require("./protocol");
+const { CN, DG, Date, Vars, LoginFailed, WhoAmI } = require("./protocol");
 
 const QUEEN_HOST = "queen.chessclub.com";
 const QUEEN_PORT = 5000;
+
+const UNEXISTING_USERNAME = "nodechessclient";
 
 describe("Integration", function() {
   this.timeout(10000);
@@ -24,7 +26,7 @@ describe("Integration", function() {
 
     it("can fail to login", async () => {
       const client = new Client();
-      const credentials = new UserPasswordCredentials("nodechessclient", "p@s5w0rD");
+      const credentials = new UserPasswordCredentials(UNEXISTING_USERNAME, "p@s5w0rD");
       const err = await expectThrowsAsync(() => client.login(new Socket(), QUEEN_HOST, QUEEN_PORT, credentials));
       assert.instanceOf(err, LoginFailed);
     });
@@ -54,10 +56,36 @@ describe("Integration", function() {
       client1.logout();
     });
 
-    it("can execute command date", async () => {
-      const client = await newGuestClient();
-      const cmd = await client.date();
-      assert.instanceOf(cmd, Date);
+    describe("can interpret command", () => {
+      const clientP = newGuestClient();
+
+      it("date", async () => {
+        const client = await clientP;
+        const cmd = await client.date();
+        assert.instanceOf(cmd, Date);
+      });
+
+      it("me", async () => {
+        const client = await clientP;
+        const cmd = await client.vars();
+        assert.instanceOf(cmd, Vars);
+        assert.isTrue(cmd.isMyVars());
+      });
+
+      it("other", async () => {
+        const client = await clientP;
+        const cmd = await client.vars("asido");
+        assert.instanceOf(cmd, Vars);
+        assert.isFalse(cmd.isMyVars());
+        assert.equal(cmd.username(), "Asido");
+      });
+
+      it("unexisting players", async () => {
+        const client = await clientP;
+        const cmd = await client.vars(UNEXISTING_USERNAME);
+        assert.instanceOf(cmd, Vars);
+        assert.isFalse(cmd.playerExists());
+      });
     });
   });
 });

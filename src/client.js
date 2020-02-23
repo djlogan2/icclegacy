@@ -124,6 +124,11 @@ class Client {
 
     return this.send(`set-2 ${dg} ${enable ? "1" : "0"}`);
   }
+
+  vars(player) {
+    if (player && typeof player !== "string") throw new Error("player");
+    return this.send("vars" + (player ? " " + player : ""));
+  }
 }
 
 function handleSocketData(client, data) {

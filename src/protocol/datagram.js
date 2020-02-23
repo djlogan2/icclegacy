@@ -1,6 +1,7 @@
 "use strict";
 
 const { DG } = require("./id");
+const { Field } = require("./field");
 
 class Datagram {
   constructor(id, params) {
@@ -14,7 +15,7 @@ class Datagram {
     this.params = [];
     for (let p of params) {
       if (typeof p !== "string") throw new Error(`param '${p}' string expected`);
-      this.params.push(new Param(p));
+      this.params.push(new Field(p));
     }
   }
 }
@@ -64,47 +65,7 @@ function createDatagram(id, params) {
   return new Datagram(id, params);
 }
 
-class Param {
-  constructor(value) {
-    if (typeof value !== "string") throw new Error("value");
-    this.value = value;
-  }
-
-  asString() {
-    return this.value;
-  }
-
-  asStringList() {
-    return /^\s*$/.test(this.value) ? [] : this.value.split(" ");
-  }
-
-  asBool() {
-    return this.value === "1";
-  }
-
-  asInt() {
-    return parseInt(this.value);
-  }
-
-  asMsFromMs() {
-    return this.asInt();
-  }
-
-  asMsFromSeconds() {
-    return this.asInt() * 1000;
-  }
-
-  asMsFromMinutes() {
-    return this.asInt() * 1000 * 60;
-  }
-
-  asColor() {
-    return this.value === "-1" ? null : this.value === "1" ? "w" : "b";
-  }
-}
-
 module.exports = {
-  Param,
   Datagram,
   LoginFailed,
   WhoAmI,
