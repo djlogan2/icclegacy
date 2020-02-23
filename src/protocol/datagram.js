@@ -224,6 +224,30 @@ class Arrow extends Datagram {
   }
 }
 
+class UnArrow extends Datagram {
+  static id = DG.UNARROW;
+
+  constructor(params) {
+    super(UnArrow.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  examiner() {
+    return this.params[1].asString();
+  }
+
+  from() {
+    return this.params[2].asString();
+  }
+
+  to() {
+    return this.params[3].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
@@ -234,6 +258,7 @@ datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
 datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
 datagramFactory[PersonalQTell.id] = PersonalQTell;
+datagramFactory[UnArrow.id] = UnArrow;
 datagramFactory[WhoAmI.id] = WhoAmI;
 
 function createDatagram(id, params) {
@@ -258,6 +283,7 @@ module.exports = {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  UnArrow,
   WhoAmI,
   createDatagram
 };
