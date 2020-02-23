@@ -9,6 +9,7 @@ const {
   ChannelTell,
   ChannelQTell,
   Circle,
+  ExaminedGameIsGone,
   ExaminersInGame,
   GameMessage,
   GameResult,
@@ -450,6 +451,15 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.MY_GAME_ENDED, ["42"]);
       assert.instanceOf(dg, MyGameEnded);
       assert.equal(dg.id, DG.MY_GAME_ENDED);
+      assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("ExaminedGameIsGone", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.EXAMINED_GAME_IS_GONE, ["42"]);
+      assert.instanceOf(dg, ExaminedGameIsGone);
+      assert.equal(dg.id, DG.EXAMINED_GAME_IS_GONE);
       assert.equal(dg.gameNumber(), 42);
     });
   });

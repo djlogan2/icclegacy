@@ -375,6 +375,8 @@ class MyGameEnded extends Datagram {
   }
 }
 
+class ExaminedGameIsGone extends MyGameEnded {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -382,6 +384,7 @@ datagramFactory[DG.BOARDINFO] = BoardInfo;
 datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
 datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
+datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
@@ -419,6 +422,7 @@ module.exports = {
   ChannelQTell,
   Circle,
   Datagram,
+  ExaminedGameIsGone,
   ExaminersInGame,
   GameMessage,
   GameResult,
