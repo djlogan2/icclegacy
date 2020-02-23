@@ -3,7 +3,7 @@
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const { DG } = require("./id");
-const { Param, LoginFailed, PersonalTell, PersonalTellEcho, WhoAmI } = require("./datagram");
+const { Param, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, WhoAmI } = require("./datagram");
 const { TellType } = require("./const");
 
 describe("Datagram", () => {
@@ -42,6 +42,16 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.PERSONAL_TELL_ECHO);
       assert.equal(dg.senderUsername(), "test-user");
       assert.equal(dg.tellType(), TellType.QTELL);
+      assert.equal(dg.message(), "bla bla bla");
+    });
+  });
+
+  describe("PersonalQTell", () => {
+    it("assigns params correctly", () => {
+      const dg = new PersonalQTell(["test-user", "gm sh", "bla bla bla"]);
+      assert.equal(dg.id, DG.PERSONAL_QTELL);
+      assert.equal(dg.senderUsername(), "test-user");
+      assert.sameMembers(dg.senderTitles(), ["gm", "sh"]);
       assert.equal(dg.message(), "bla bla bla");
     });
   });
