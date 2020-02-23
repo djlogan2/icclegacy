@@ -403,6 +403,28 @@ class MyRelationToGame extends Datagram {
   }
 }
 
+class TourneyGameStarted extends Datagram {
+  eventLabel() {
+    return this.params[0].asString();
+  }
+
+  black() {
+    return this.params[1].asString();
+  }
+
+  white() {
+    return this.params[2].asString();
+  }
+
+  gameId() {
+    return this.params[3].asString();
+  }
+
+  gameNumber() {
+    return this.params[4].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -427,6 +449,7 @@ datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
+datagramFactory[DG.TOURNEY_GAME_STARTED] = TourneyGameStarted;
 datagramFactory[DG.UNARROW] = UnArrow;
 datagramFactory[DG.UNCIRCLE] = UnCircle;
 datagramFactory[DG.WHO_AM_I] = WhoAmI;
@@ -467,6 +490,7 @@ module.exports = {
   PersonalQTell,
   StartedObserving,
   StopObserving,
+  TourneyGameStarted,
   UnArrow,
   UnCircle,
   WhoAmI,

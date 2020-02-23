@@ -26,6 +26,7 @@ const {
   PersonalQTell,
   StartedObserving,
   StopObserving,
+  TourneyGameStarted,
   UnArrow,
   UnCircle,
   WhoAmI,
@@ -485,6 +486,19 @@ describe("Datagram", () => {
       assert.isFalse(dg.isPlaying());
       assert.isFalse(dg.isPlayingSimul());
       assert.isFalse(dg.isObserving());
+    });
+  });
+
+  describe("TourneyGameStarted", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.TOURNEY_GAME_STARTED, ["foobar", "black-user", "white-user", "g42", "42"]);
+      assert.instanceOf(dg, TourneyGameStarted);
+      assert.equal(dg.id, DG.TOURNEY_GAME_STARTED);
+      assert.equal(dg.eventLabel(), "foobar");
+      assert.equal(dg.black(), "black-user");
+      assert.equal(dg.white(), "white-user");
+      assert.equal(dg.gameId(), "g42");
+      assert.equal(dg.gameNumber(), 42);
     });
   });
 });
