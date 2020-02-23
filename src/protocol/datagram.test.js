@@ -3,8 +3,22 @@
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const { DG } = require("./id");
-const { Arrow, ChannelTell, ChannelQTell, Circle, Kibitz, LoginFailed, PersonalTell, PersonalTellEcho, PersonalQTell, UnArrow, UnCircle, WhoAmI } = require("./datagram");
-const { KibitzType, TellType } = require("./const");
+const {
+  Arrow,
+  BoardInfo,
+  ChannelTell,
+  ChannelQTell,
+  Circle,
+  Kibitz,
+  LoginFailed,
+  PersonalTell,
+  PersonalTellEcho,
+  PersonalQTell,
+  UnArrow,
+  UnCircle,
+  WhoAmI
+} = require("./datagram");
+const { KibitzType, MarkerBrush, MarkerType, TellType } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -130,6 +144,19 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.examiner(), "test-user");
       assert.equal(dg.square(), "e2");
+    });
+  });
+
+  describe("BoardInfo", () => {
+    it("assigns params correctly", () => {
+      const dg = new BoardInfo(["42", "test-user", "5", "e2", "e4", "6"]);
+      assert.equal(dg.id, DG.BOARDINFO);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.examiner(), "test-user");
+      assert.equal(dg.markerType(), MarkerType.RECTANGLE);
+      assert.equal(dg.from(), "e2");
+      assert.equal(dg.to(), "e4");
+      assert.equal(dg.markerBrush(), MarkerBrush.LIGHT_BLUE);
     });
   });
 });

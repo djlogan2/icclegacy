@@ -288,9 +288,44 @@ class UnCircle extends Datagram {
   }
 }
 
+class BoardInfo extends Datagram {
+  static id = DG.BOARDINFO;
+
+  constructor(params) {
+    super(BoardInfo.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  examiner() {
+    return this.params[1].asString();
+  }
+
+  // Returns enum MarkerType.
+  markerType() {
+    return this.params[2].asInt();
+  }
+
+  from() {
+    return this.params[3].asString();
+  }
+
+  to() {
+    return this.params[4].asString();
+  }
+
+  // Returns enum MarkerBrush.
+  markerBrush() {
+    return this.params[5].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
+datagramFactory[BoardInfo.id] = BoardInfo;
 datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[ChannelQTell.id] = ChannelQTell;
 datagramFactory[Circle.id] = Circle;
@@ -317,6 +352,7 @@ function createDatagram(id, params) {
 
 module.exports = {
   Arrow,
+  BoardInfo,
   ChannelTell,
   ChannelQTell,
   Circle,

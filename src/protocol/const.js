@@ -94,6 +94,31 @@ module.exports = {
     KIBITZ: 1
   }),
 
+  MarkerBrush: Object.freeze({
+    BLACK: 0,
+    RED: 1,
+    ORANGE: 2,
+    YELLOW: 3,
+    LIGHT_GREEN: 4,
+    DARK_GREEN: 5,
+    LIGHT_BLUE: 6,
+    DARK_BLUE: 7,
+    PINK: 8,
+    WHITE: 9
+  }),
+
+  MarkerType: Object.freeze({
+    // Marker actions
+    CLEAR_ALL: 0,
+    UNDO: 1,
+    // Market Types
+    ARROW: 4,
+    RECTANGLE: 5,
+    HIGHLIGHT: 6,
+    THROBBING_PIECE: 7,
+    GHOST_PIECE: 8
+  }),
+
   SeekVisibility: Object.freeze({
     NEVER: 0,
     WHEN_BROWSING_ONLY: 1,
