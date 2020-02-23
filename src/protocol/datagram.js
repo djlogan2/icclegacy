@@ -21,10 +21,6 @@ class Datagram {
 }
 
 class WhoAmI extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   username() {
     return this.params[0].asString();
   }
@@ -35,10 +31,6 @@ class WhoAmI extends Datagram {
 }
 
 class LoginFailed extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   code() {
     return this.params[0].asInt();
   }
@@ -49,10 +41,6 @@ class LoginFailed extends Datagram {
 }
 
 class PersonalTell extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   senderUsername() {
     return this.params[0].asString();
   }
@@ -72,10 +60,6 @@ class PersonalTell extends Datagram {
 }
 
 class PersonalTellEcho extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   senderUsername() {
     return this.params[0].asString();
   }
@@ -91,10 +75,6 @@ class PersonalTellEcho extends Datagram {
 }
 
 class PersonalQTell extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   senderUsername() {
     return this.params[0].asString();
   }
@@ -109,10 +89,6 @@ class PersonalQTell extends Datagram {
 }
 
 class ChannelTell extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   channel() {
     return this.params[0].asInt();
   }
@@ -136,10 +112,6 @@ class ChannelTell extends Datagram {
 }
 
 class ChannelQTell extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   channel() {
     return this.params[0].asInt();
   }
@@ -158,10 +130,6 @@ class ChannelQTell extends Datagram {
 }
 
 class Kibitz extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -185,10 +153,6 @@ class Kibitz extends Datagram {
 }
 
 class Arrow extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -206,17 +170,9 @@ class Arrow extends Datagram {
   }
 }
 
-class UnArrow extends Arrow {
-  constructor(id, params) {
-    super(id, params);
-  }
-}
+class UnArrow extends Arrow {}
 
 class Circle extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -230,17 +186,9 @@ class Circle extends Datagram {
   }
 }
 
-class UnCircle extends Circle {
-  constructor(id, params) {
-    super(id, params);
-  }
-}
+class UnCircle extends Circle {}
 
 class BoardInfo extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -269,10 +217,6 @@ class BoardInfo extends Datagram {
 }
 
 class GameMessage extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -283,10 +227,6 @@ class GameMessage extends Datagram {
 }
 
 class ExaminersInGame extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -305,10 +245,6 @@ class ExaminersInGame extends Datagram {
 }
 
 class GameStarted extends Datagram {
-  constructor(id, params) {
-    super(id, params);
-  }
-
   gameNumber() {
     return this.params[0].asInt();
   }
@@ -399,23 +335,11 @@ class GameStarted extends Datagram {
   }
 }
 
-class MyGameStarted extends GameStarted {
-  constructor(id, params) {
-    super(id, params);
-  }
-}
+class MyGameStarted extends GameStarted {}
 
-class MyGameChanged extends MyGameStarted {
-  constructor(id, params) {
-    super(id, params);
-  }
-}
+class MyGameChanged extends MyGameStarted {}
 
-class StartedObserving extends MyGameStarted {
-  constructor(id, params) {
-    super(id, params);
-  }
-}
+class StartedObserving extends MyGameStarted {}
 
 class GameResult extends Datagram {
   gameNumber() {
@@ -443,6 +367,8 @@ class GameResult extends Datagram {
   }
 }
 
+class MyGameResult extends GameResult {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -457,6 +383,7 @@ datagramFactory[DG.GAME_STARTED] = GameStarted;
 datagramFactory[DG.KIBITZ] = Kibitz;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
+datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
@@ -492,6 +419,7 @@ module.exports = {
   Kibitz,
   LoginFailed,
   MyGameChanged,
+  MyGameResult,
   MyGameStarted,
   PersonalTell,
   PersonalTellEcho,

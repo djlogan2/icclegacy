@@ -16,6 +16,7 @@ const {
   Kibitz,
   LoginFailed,
   MyGameChanged,
+  MyGameResult,
   MyGameStarted,
   PersonalTell,
   PersonalTellEcho,
@@ -420,6 +421,20 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.GAME_RESULT, ["42", "1", "a", "b", "c", "d"]);
       assert.instanceOf(dg, GameResult);
       assert.equal(dg.id, DG.GAME_RESULT);
+      assert.equal(dg.gameNumber(), 42);
+      assert.isTrue(dg.becomeExamined());
+      assert.equal(dg.resultCode(), "a");
+      assert.equal(dg.scoreString(), "b");
+      assert.equal(dg.description(), "c");
+      assert.equal(dg.eco(), "d");
+    });
+  });
+
+  describe("MyGameResult", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_GAME_RESULT, ["42", "1", "a", "b", "c", "d"]);
+      assert.instanceOf(dg, MyGameResult);
+      assert.equal(dg.id, DG.MY_GAME_RESULT);
       assert.equal(dg.gameNumber(), 42);
       assert.isTrue(dg.becomeExamined());
       assert.equal(dg.resultCode(), "a");
