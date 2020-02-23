@@ -379,6 +379,30 @@ class ExaminedGameIsGone extends MyGameEnded {}
 
 class StopObserving extends MyGameEnded {}
 
+class MyRelationToGame extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  isLeaving() {
+    return this.params[1].asString() === "X";
+  }
+
+  isPlaying() {
+    const val = this.params[1].asString();
+    return val === "PW" || val === "PB" || this.isPlayingSimul();
+  }
+
+  isPlayingSimul() {
+    const val = this.params[1].asString();
+    return val === "SW" || val === "SB";
+  }
+
+  isObserving() {
+    return this.params[1].asString() === "O";
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -397,6 +421,7 @@ datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
+datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
@@ -436,6 +461,7 @@ module.exports = {
   MyGameEnded,
   MyGameResult,
   MyGameStarted,
+  MyRelationToGame,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,

@@ -20,6 +20,7 @@ const {
   MyGameEnded,
   MyGameResult,
   MyGameStarted,
+  MyRelationToGame,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
@@ -471,6 +472,19 @@ describe("Datagram", () => {
       assert.instanceOf(dg, StopObserving);
       assert.equal(dg.id, DG.STOP_OBSERVING);
       assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("MyRelationToGame", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_RELATION_TO_GAME, ["42", "X"]);
+      assert.instanceOf(dg, MyRelationToGame);
+      assert.equal(dg.id, DG.MY_RELATION_TO_GAME);
+      assert.equal(dg.gameNumber(), 42);
+      assert.isTrue(dg.isLeaving());
+      assert.isFalse(dg.isPlaying());
+      assert.isFalse(dg.isPlayingSimul());
+      assert.isFalse(dg.isObserving());
     });
   });
 });
