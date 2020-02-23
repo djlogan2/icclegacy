@@ -338,6 +338,30 @@ class GameMessage extends Datagram {
   }
 }
 
+class ExaminersInGame extends Datagram {
+  static id = DG.EXAMINERS_IN_GAME;
+
+  constructor(params) {
+    super(ExaminersInGame.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  username() {
+    return this.params[1].asString();
+  }
+
+  titles() {
+    return this.params[2].asStringList();
+  }
+
+  joined() {
+    return this.params[3].asBool();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
@@ -345,6 +369,7 @@ datagramFactory[BoardInfo.id] = BoardInfo;
 datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[ChannelQTell.id] = ChannelQTell;
 datagramFactory[Circle.id] = Circle;
+datagramFactory[ExaminersInGame.id] = ExaminersInGame;
 datagramFactory[GameMessage.id] = GameMessage;
 datagramFactory[Kibitz.id] = Kibitz;
 datagramFactory[LoginFailed.id] = LoginFailed;
@@ -374,6 +399,7 @@ module.exports = {
   ChannelQTell,
   Circle,
   Datagram,
+  ExaminersInGame,
   GameMessage,
   Kibitz,
   LoginFailed,

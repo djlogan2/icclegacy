@@ -9,6 +9,7 @@ const {
   ChannelTell,
   ChannelQTell,
   Circle,
+  ExaminersInGame,
   GameMessage,
   Kibitz,
   LoginFailed,
@@ -167,6 +168,17 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.GAME_MESSAGE);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.message(), "foobar");
+    });
+  });
+
+  describe("ExaminersInGame", () => {
+    it("assigns params correctly", () => {
+      const dg = new ExaminersInGame(["42", "test-user", "gm sh", "1"]);
+      assert.equal(dg.id, DG.EXAMINERS_IN_GAME);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.username(), "test-user");
+      assert.sameMembers(dg.titles(), ["gm", "sh"]);
+      assert.isTrue(dg.joined());
     });
   });
 });
