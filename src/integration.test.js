@@ -6,7 +6,7 @@ const { assert } = require("chai");
 const { expectThrowsAsync } = require("./test");
 const { Client } = require("./client");
 const { GuestCredentials, UserPasswordCredentials } = require("./credentials");
-const { CN, DG, Date, Vars, LoginFailed, WhoAmI } = require("./protocol");
+const { Date, Vars, LoginFailed, WhoAmI } = require("./protocol");
 
 const QUEEN_HOST = "queen.chessclub.com";
 const QUEEN_PORT = 5000;
