@@ -1,3 +1,5 @@
+"use strict";
+
 class Field {
   constructor(value) {
     if (typeof value !== "string") throw new Error("value");

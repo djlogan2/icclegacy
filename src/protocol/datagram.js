@@ -118,8 +118,38 @@ class PersonalQTell extends Datagram {
   }
 }
 
+class ChannelTell extends Datagram {
+  static id = DG.CHANNEL_TELL;
+
+  constructor(params) {
+    super(ChannelTell.id, params);
+  }
+
+  channel() {
+    return this.params[0].asInt();
+  }
+
+  senderUsername() {
+    return this.params[1].asString();
+  }
+
+  senderTitles() {
+    return this.params[2].asStringList();
+  }
+
+  message() {
+    return this.params[3].asString();
+  }
+
+  // Returns enum TellType.
+  tellType() {
+    return this.params[4].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
+datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
 datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
@@ -139,6 +169,7 @@ function createDatagram(id, params) {
 }
 
 module.exports = {
+  ChannelTell,
   Datagram,
   LoginFailed,
   PersonalTell,
