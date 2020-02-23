@@ -16,6 +16,7 @@ const {
   Kibitz,
   LoginFailed,
   MyGameChanged,
+  MyGameEnded,
   MyGameResult,
   MyGameStarted,
   PersonalTell,
@@ -441,6 +442,15 @@ describe("Datagram", () => {
       assert.equal(dg.scoreString(), "b");
       assert.equal(dg.description(), "c");
       assert.equal(dg.eco(), "d");
+    });
+  });
+
+  describe("MyGameEnded", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_GAME_ENDED, ["42"]);
+      assert.instanceOf(dg, MyGameEnded);
+      assert.equal(dg.id, DG.MY_GAME_ENDED);
+      assert.equal(dg.gameNumber(), 42);
     });
   });
 });

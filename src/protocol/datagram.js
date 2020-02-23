@@ -369,6 +369,12 @@ class GameResult extends Datagram {
 
 class MyGameResult extends GameResult {}
 
+class MyGameEnded extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -383,6 +389,7 @@ datagramFactory[DG.GAME_STARTED] = GameStarted;
 datagramFactory[DG.KIBITZ] = Kibitz;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
+datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
@@ -419,6 +426,7 @@ module.exports = {
   Kibitz,
   LoginFailed,
   MyGameChanged,
+  MyGameEnded,
   MyGameResult,
   MyGameStarted,
   PersonalTell,
