@@ -417,6 +417,32 @@ class StartedObserving extends MyGameStarted {
   }
 }
 
+class GameResult extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  becomeExamined() {
+    return this.params[1].asBool();
+  }
+
+  resultCode() {
+    return this.params[2].asString();
+  }
+
+  scoreString() {
+    return this.params[3].asString();
+  }
+
+  description() {
+    return this.params[4].asString();
+  }
+
+  eco() {
+    return this.params[5].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -426,6 +452,7 @@ datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
+datagramFactory[DG.GAME_RESULT] = GameResult;
 datagramFactory[DG.GAME_STARTED] = GameStarted;
 datagramFactory[DG.KIBITZ] = Kibitz;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
@@ -460,6 +487,7 @@ module.exports = {
   Datagram,
   ExaminersInGame,
   GameMessage,
+  GameResult,
   GameStarted,
   Kibitz,
   LoginFailed,

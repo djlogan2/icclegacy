@@ -11,6 +11,7 @@ const {
   Circle,
   ExaminersInGame,
   GameMessage,
+  GameResult,
   GameStarted,
   Kibitz,
   LoginFailed,
@@ -411,6 +412,20 @@ describe("Datagram", () => {
       assert.isTrue(dg.usesPlunkers());
       assert.equal(dg.fancyTimeControl(), "tc");
       assert.isTrue(dg.promoteToKing());
+    });
+  });
+
+  describe("GameResult", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.GAME_RESULT, ["42", "1", "a", "b", "c", "d"]);
+      assert.instanceOf(dg, GameResult);
+      assert.equal(dg.id, DG.GAME_RESULT);
+      assert.equal(dg.gameNumber(), 42);
+      assert.isTrue(dg.becomeExamined());
+      assert.equal(dg.resultCode(), "a");
+      assert.equal(dg.scoreString(), "b");
+      assert.equal(dg.description(), "c");
+      assert.equal(dg.eco(), "d");
     });
   });
 });
