@@ -362,6 +362,103 @@ class ExaminersInGame extends Datagram {
   }
 }
 
+class GameStarted extends Datagram {
+  static id = DG.GAME_STARTED;
+
+  constructor(params) {
+    super(GameStarted.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  whiteUsername() {
+    return this.params[1].asString();
+  }
+
+  blackUsername() {
+    return this.params[2].asString();
+  }
+
+  // Returns enum Wild.
+  wild() {
+    return this.params[3].asInt();
+  }
+
+  ratingCategoryName() {
+    return this.params[4].asString();
+  }
+
+  rated() {
+    return this.params[5].asBool();
+  }
+
+  whiteInitial() {
+    return this.params[6].asMsFromMinutes();
+  }
+
+  whiteIncrement() {
+    return this.params[7].asMsFromSeconds();
+  }
+
+  blackInitial() {
+    return this.params[8].asMsFromMinutes();
+  }
+
+  blackIncrement() {
+    return this.params[9].asMsFromSeconds();
+  }
+
+  playedGame() {
+    return this.params[10].asBool();
+  }
+
+  exString() {
+    return this.params[11].asString();
+  }
+
+  whiteRating() {
+    return this.params[12].asInt();
+  }
+
+  blackRating() {
+    return this.params[13].asInt();
+  }
+
+  gameId() {
+    return this.params[14].asString();
+  }
+
+  whiteTitles() {
+    return this.params[15].asStringList();
+  }
+
+  blackTitles() {
+    return this.params[16].asStringList();
+  }
+
+  irregularLegality() {
+    return this.params[17].asBool();
+  }
+
+  irregularSemantics() {
+    return this.params[18].asBool();
+  }
+
+  usesPlunkers() {
+    return this.params[19].asBool();
+  }
+
+  fancyTimeControl() {
+    return this.params[20].asString();
+  }
+
+  promoteToKing() {
+    return this.params[21].asBool();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[Arrow.id] = Arrow;
@@ -371,6 +468,7 @@ datagramFactory[ChannelQTell.id] = ChannelQTell;
 datagramFactory[Circle.id] = Circle;
 datagramFactory[ExaminersInGame.id] = ExaminersInGame;
 datagramFactory[GameMessage.id] = GameMessage;
+datagramFactory[GameStarted.id] = GameStarted;
 datagramFactory[Kibitz.id] = Kibitz;
 datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
@@ -401,6 +499,7 @@ module.exports = {
   Datagram,
   ExaminersInGame,
   GameMessage,
+  GameStarted,
   Kibitz,
   LoginFailed,
   PersonalTell,
