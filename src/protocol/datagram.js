@@ -77,10 +77,32 @@ class PersonalTell extends Datagram {
   }
 }
 
+class PersonalTellEcho extends Datagram {
+  static id = DG.PERSONAL_TELL_ECHO;
+
+  constructor(params) {
+    super(PersonalTellEcho.id, params);
+  }
+
+  senderUsername() {
+    return this.params[0].asString();
+  }
+
+  // Returns enum TellType.
+  tellType() {
+    return this.params[1].asInt();
+  }
+
+  message() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[LoginFailed.id] = LoginFailed;
 datagramFactory[PersonalTell.id] = PersonalTell;
+datagramFactory[PersonalTellEcho.id] = PersonalTellEcho;
 datagramFactory[WhoAmI.id] = WhoAmI;
 
 function createDatagram(id, params) {
@@ -99,6 +121,7 @@ module.exports = {
   Datagram,
   LoginFailed,
   PersonalTell,
+  PersonalTellEcho,
   WhoAmI,
   createDatagram
 };
