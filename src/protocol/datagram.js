@@ -200,8 +200,33 @@ class Kibitz extends Datagram {
   }
 }
 
+class Arrow extends Datagram {
+  static id = DG.ARROW;
+
+  constructor(params) {
+    super(Arrow.id, params);
+  }
+
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  examiner() {
+    return this.params[1].asString();
+  }
+
+  from() {
+    return this.params[2].asString();
+  }
+
+  to() {
+    return this.params[3].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
+datagramFactory[Arrow.id] = Arrow;
 datagramFactory[ChannelTell.id] = ChannelTell;
 datagramFactory[ChannelQTell.id] = ChannelQTell;
 datagramFactory[Kibitz.id] = Kibitz;
@@ -224,6 +249,7 @@ function createDatagram(id, params) {
 }
 
 module.exports = {
+  Arrow,
   ChannelTell,
   ChannelQTell,
   Datagram,
