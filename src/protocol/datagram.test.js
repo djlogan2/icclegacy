@@ -14,6 +14,7 @@ const {
   GameStarted,
   Kibitz,
   LoginFailed,
+  MyGameStarted,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
@@ -210,6 +211,58 @@ describe("Datagram", () => {
         "1"
       ]);
       assert.equal(dg.id, DG.GAME_STARTED);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.whiteUsername(), "white-user");
+      assert.equal(dg.blackUsername(), "black-user");
+      assert.equal(dg.wild(), Wild.ATOMIC);
+      assert.equal(dg.ratingCategoryName(), "bul");
+      assert.isTrue(dg.rated());
+      assert.equal(dg.whiteInitial(), 120000);
+      assert.equal(dg.whiteIncrement(), 1000);
+      assert.equal(dg.blackInitial(), 180000);
+      assert.equal(dg.blackIncrement(), 2000);
+      assert.isTrue(dg.playedGame());
+      assert.equal(dg.exString(), "foobar");
+      assert.equal(dg.whiteRating(), 1001);
+      assert.equal(dg.blackRating(), 1002);
+      assert.equal(dg.gameId(), "g42");
+      assert.sameMembers(dg.whiteTitles(), ["gm"]);
+      assert.sameMembers(dg.blackTitles(), ["sh"]);
+      assert.isTrue(dg.irregularLegality());
+      assert.isTrue(dg.irregularSemantics());
+      assert.isTrue(dg.usesPlunkers());
+      assert.equal(dg.fancyTimeControl(), "tc");
+      assert.isTrue(dg.promoteToKing());
+    });
+  });
+
+  describe("MyGameStarted", () => {
+    it("assigns params correctly", () => {
+      const dg = new MyGameStarted([
+        "42",
+        "white-user",
+        "black-user",
+        "27",
+        "bul",
+        "1",
+        "2",
+        "1",
+        "3",
+        "2",
+        "1",
+        "foobar",
+        "1001",
+        "1002",
+        "g42",
+        "gm",
+        "sh",
+        "1",
+        "1",
+        "1",
+        "tc",
+        "1"
+      ]);
+      assert.equal(dg.id, DG.MY_GAME_STARTED);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.whiteUsername(), "white-user");
       assert.equal(dg.blackUsername(), "black-user");
