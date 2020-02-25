@@ -24,6 +24,8 @@ const {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PositionBegin,
+  PositionBegin2,
   StartedObserving,
   StopObserving,
   TourneyGameEnded,
@@ -513,6 +515,28 @@ describe("Datagram", () => {
       assert.equal(dg.white(), "white-user");
       assert.equal(dg.gameId(), "g42");
       assert.equal(dg.scoreString(), "42");
+    });
+  });
+
+  describe("PositionBegin", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.POSITION_BEGIN, ["42", "fen-string", "42"]);
+      assert.instanceOf(dg, PositionBegin);
+      assert.equal(dg.id, DG.POSITION_BEGIN);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.initialFen(), "fen-string");
+      assert.equal(dg.numberOfMovesToFollow(), 42);
+    });
+  });
+
+  describe("PositionBegin2", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.POSITION_BEGIN2, ["42", "fen-string", "42"]);
+      assert.instanceOf(dg, PositionBegin2);
+      assert.equal(dg.id, DG.POSITION_BEGIN2);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.initialFen(), "fen-string");
+      assert.equal(dg.numberOfMovesToFollow(), 42);
     });
   });
 });

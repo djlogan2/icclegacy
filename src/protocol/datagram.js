@@ -447,6 +447,22 @@ class TourneyGameEnded extends Datagram {
   }
 }
 
+class PositionBegin extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  initialFen() {
+    return this.params[1].asString();
+  }
+
+  numberOfMovesToFollow() {
+    return this.params[2].asInt();
+  }
+}
+
+class PositionBegin2 extends PositionBegin {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -469,6 +485,8 @@ datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
+datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
+datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
 datagramFactory[DG.TOURNEY_GAME_ENDED] = TourneyGameEnded;
@@ -511,6 +529,8 @@ module.exports = {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PositionBegin,
+  PositionBegin2,
   StartedObserving,
   StopObserving,
   TourneyGameEnded,
