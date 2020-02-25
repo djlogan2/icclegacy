@@ -27,6 +27,7 @@ const {
   MyGameStarted,
   MyRelationToGame,
   MyTurn,
+  OffersInMyGame,
   PastMoves,
   PersonalTell,
   PersonalTellEcho,
@@ -653,6 +654,38 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.whiteClock(), 10000);
       assert.equal(dg.blackClock(), 20000);
+    });
+  });
+
+  describe("OffersInMyGame", () => {
+    it("all true", () => {
+      const dg = createDatagram(DG.OFFERS_IN_MY_GAME, ["42", "1", "1", "1", "1", "1", "1", "1", "1"]);
+      assert.instanceOf(dg, OffersInMyGame);
+      assert.equal(dg.id, DG.OFFERS_IN_MY_GAME);
+      assert.equal(dg.gameNumber(), 42);
+      assert.isTrue(dg.whiteDraw());
+      assert.isTrue(dg.blackDraw());
+      assert.isTrue(dg.whiteAdjourn());
+      assert.isTrue(dg.blackAdjourn());
+      assert.isTrue(dg.whiteAbort());
+      assert.isTrue(dg.blackAbort());
+      assert.isTrue(dg.whiteTakeback());
+      assert.isTrue(dg.blackTakeback());
+    });
+
+    it("all false", () => {
+      const dg = createDatagram(DG.OFFERS_IN_MY_GAME, ["42", "0", "0", "0", "0", "0", "0", "0", "0"]);
+      assert.instanceOf(dg, OffersInMyGame);
+      assert.equal(dg.id, DG.OFFERS_IN_MY_GAME);
+      assert.equal(dg.gameNumber(), 42);
+      assert.isFalse(dg.whiteDraw());
+      assert.isFalse(dg.blackDraw());
+      assert.isFalse(dg.whiteAdjourn());
+      assert.isFalse(dg.blackAdjourn());
+      assert.isFalse(dg.whiteAbort());
+      assert.isFalse(dg.blackAbort());
+      assert.isFalse(dg.whiteTakeback());
+      assert.isFalse(dg.blackTakeback());
     });
   });
 });

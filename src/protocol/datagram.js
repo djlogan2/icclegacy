@@ -576,6 +576,44 @@ class SetClock extends Datagram {
   }
 }
 
+class OffersInMyGame extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  whiteDraw() {
+    return this.params[1].asBool();
+  }
+
+  blackDraw() {
+    return this.params[2].asBool();
+  }
+
+  whiteAdjourn() {
+    return this.params[3].asBool();
+  }
+
+  blackAdjourn() {
+    return this.params[4].asBool();
+  }
+
+  whiteAbort() {
+    return this.params[5].asBool();
+  }
+
+  blackAbort() {
+    return this.params[6].asBool();
+  }
+
+  whiteTakeback() {
+    return this.params[7].asBool();
+  }
+
+  blackTakeback() {
+    return this.params[8].asBool();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -601,6 +639,7 @@ datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.MY_TURN] = MyTurn;
+datagramFactory[DG.OFFERS_IN_MY_GAME] = OffersInMyGame;
 datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
@@ -655,6 +694,7 @@ module.exports = {
   MyGameStarted,
   MyRelationToGame,
   MyTurn,
+  OffersInMyGame,
   PastMoves,
   PersonalTell,
   PersonalTellEcho,
