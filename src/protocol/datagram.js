@@ -535,6 +535,33 @@ class Flip extends Datagram {
   }
 }
 
+class MSec extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  color() {
+    // The value matches enum Color.
+    return this.params[1].asString();
+  }
+
+  timeLeft() {
+    return this.params[2].asMsFromMs();
+  }
+
+  run() {
+    return this.params[3].asBool();
+  }
+
+  freeTimeToMove() {
+    return this.params.length >= 6 ? this.params[4].asMsFromMs() : 0;
+  }
+
+  minMoveTime() {
+    return this.params.length >= 6 ? this.params[5].asMsFromMs() : 0;
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -553,6 +580,7 @@ datagramFactory[DG.GAME_STARTED] = GameStarted;
 datagramFactory[DG.ILLEGAL_MOVE] = IllegalMove;
 datagramFactory[DG.KIBITZ] = Kibitz;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
+datagramFactory[DG.MSEC] = MSec;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
@@ -605,6 +633,7 @@ module.exports = {
   IllegalMove,
   Kibitz,
   LoginFailed,
+  MSec,
   MyGameChanged,
   MyGameEnded,
   MyGameResult,

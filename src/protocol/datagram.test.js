@@ -20,6 +20,7 @@ const {
   IllegalMove,
   Kibitz,
   LoginFailed,
+  MSec,
   MyGameChanged,
   MyGameEnded,
   MyGameResult,
@@ -626,6 +627,20 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.FLIP);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.flipTo(), Color.WHITE);
+    });
+  });
+
+  describe("MSec", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MSEC, ["42", "w", "42000", "1", "42", "82"]);
+      assert.instanceOf(dg, MSec);
+      assert.equal(dg.id, DG.MSEC);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.color(), Color.WHITE);
+      assert.equal(dg.timeLeft(), 42000);
+      assert.isTrue(dg.run());
+      assert.equal(dg.freeTimeToMove(), 42);
+      assert.equal(dg.minMoveTime(), 82);
     });
   });
 });
