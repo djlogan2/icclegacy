@@ -38,6 +38,7 @@ const {
   PoolLeft,
   PositionBegin,
   PositionBegin2,
+  Refresh,
   SendMoves,
   SetClock,
   StartedObserving,
@@ -730,6 +731,15 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.FEN);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.fen(), "some-fen");
+    });
+  });
+
+  describe("Refresh", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.REFRESH, ["42"]);
+      assert.instanceOf(dg, Refresh);
+      assert.equal(dg.id, DG.REFRESH);
+      assert.equal(dg.gameNumber(), 42);
     });
   });
 });

@@ -652,6 +652,12 @@ class Fen extends Datagram {
   }
 }
 
+class Refresh extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -688,6 +694,7 @@ datagramFactory[DG.POOL_JOINED] = PoolJoined;
 datagramFactory[DG.POOL_LEFT] = PoolLeft;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
+datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
@@ -747,6 +754,7 @@ module.exports = {
   PoolLeft,
   PositionBegin,
   PositionBegin2,
+  Refresh,
   SendMoves,
   SetClock,
   StartedObserving,
