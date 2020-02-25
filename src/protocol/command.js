@@ -29,35 +29,15 @@ class Command {
   }
 }
 
-class Date extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-}
+class Date extends Command {}
 
-class IllegalMove extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-}
+class IllegalMove extends Command {}
 
-class Finger extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-}
+class Finger extends Command {}
 
-class List extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-}
+class List extends Command {}
 
 class Minus extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-
   success() {
     const content = this.content.trimEnd();
     return /^Removed .*\.$/.test(content) || /^Removing ".*" from the list\.$/.test(content);
@@ -67,27 +47,15 @@ class Minus extends Command {
 const INVALID_GAME_ID = "-1";
 
 class Observe extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-
   get gameId() {
     const match = / (\d+)\./.exec(this.content);
     return match ? match[1] : INVALID_GAME_ID;
   }
 }
 
-class Pgn extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-}
+class Pgn extends Command {}
 
 class Plus extends Command {
-  constructor(meta, content, datagrams) {
-    super(meta, content, datagrams);
-  }
-
   success() {
     const content = this.content.trimEnd();
     return /^.* added\.$/.test(content) || /^You have been added to .*'s simul list\.$/.test(content) || /^added to .* list$/.test(content);
