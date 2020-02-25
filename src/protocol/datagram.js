@@ -642,6 +642,16 @@ class PoolJoined extends PoolDatagram {}
 
 class PoolLeft extends PoolDatagram {}
 
+class Fen extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  fen() {
+    return this.params[1].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -653,6 +663,7 @@ datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
+datagramFactory[DG.FEN] = Fen;
 datagramFactory[DG.FLIP] = Flip;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
@@ -712,6 +723,7 @@ module.exports = {
   ExaminedGameIsGone,
   ExaminersInGame,
   Flip,
+  Fen,
   GameMessage,
   GameResult,
   GameStarted,

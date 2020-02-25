@@ -13,6 +13,7 @@ const {
   DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
+  Fen,
   Flip,
   GameMessage,
   GameResult,
@@ -719,6 +720,16 @@ describe("Datagram", () => {
       assert.instanceOf(dg, PoolLeft);
       assert.equal(dg.id, DG.POOL_LEFT);
       assert.equal(dg.name(), "pool-name");
+    });
+  });
+
+  describe("Fen", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.FEN, ["42", "some-fen"]);
+      assert.instanceOf(dg, Fen);
+      assert.equal(dg.id, DG.FEN);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.fen(), "some-fen");
     });
   });
 });
