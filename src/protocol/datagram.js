@@ -517,6 +517,12 @@ class MyTurn extends Datagram {
   }
 }
 
+class DisablePremove extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -525,6 +531,7 @@ datagramFactory[DG.BOARDINFO] = BoardInfo;
 datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
 datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
+datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
@@ -575,6 +582,7 @@ module.exports = {
   ChannelQTell,
   Circle,
   Datagram,
+  DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
   GameMessage,

@@ -10,6 +10,7 @@ const {
   ChannelTell,
   ChannelQTell,
   Circle,
+  DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
   GameMessage,
@@ -604,6 +605,15 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.MY_TURN, ["42"]);
       assert.instanceOf(dg, MyTurn);
       assert.equal(dg.id, DG.MY_TURN);
+      assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("DisablePremove", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.DISABLE_PREMOVE, ["42"]);
+      assert.instanceOf(dg, DisablePremove);
+      assert.equal(dg.id, DG.DISABLE_PREMOVE);
       assert.equal(dg.gameNumber(), 42);
     });
   });
