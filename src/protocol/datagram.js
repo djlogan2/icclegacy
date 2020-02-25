@@ -2,6 +2,7 @@
 
 const { DG } = require("./id");
 const { Field } = require("./field");
+const { Color } = require("./const");
 
 class Datagram {
   constructor(id, params) {
@@ -523,6 +524,17 @@ class DisablePremove extends Datagram {
   }
 }
 
+class Flip extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  flipTo() {
+    // Fucked up - the color notation for this datagram is inverse of everywhere else.
+    return this.params[1].asInt() === 1 ? Color.BLACK : Color.WHITE;
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -534,6 +546,7 @@ datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
+datagramFactory[DG.FLIP] = Flip;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
 datagramFactory[DG.GAME_STARTED] = GameStarted;
@@ -585,6 +598,7 @@ module.exports = {
   DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
+  Flip,
   GameMessage,
   GameResult,
   GameStarted,

@@ -1,5 +1,7 @@
 "use strict";
 
+const { Color } = require("./const");
+
 class Field {
   constructor(value) {
     if (typeof value !== "string") throw new Error("value");
@@ -35,7 +37,7 @@ class Field {
   }
 
   asColor() {
-    return this.value === "-1" ? null : this.value === "1" ? "w" : "b";
+    return this.value === "-1" ? null : this.value === "1" ? Color.WHITE : Color.BLACK;
   }
 }
 

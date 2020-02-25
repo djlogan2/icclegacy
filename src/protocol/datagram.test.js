@@ -13,6 +13,7 @@ const {
   DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
+  Flip,
   GameMessage,
   GameResult,
   GameStarted,
@@ -42,7 +43,7 @@ const {
   WhoAmI,
   createDatagram
 } = require("./datagram");
-const { KibitzType, MarkerBrush, MarkerType, MoveVariation, TellType, Wild } = require("./const");
+const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, TellType, Wild } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -615,6 +616,16 @@ describe("Datagram", () => {
       assert.instanceOf(dg, DisablePremove);
       assert.equal(dg.id, DG.DISABLE_PREMOVE);
       assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("Flip", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.FLIP, ["42", "0"]);
+      assert.instanceOf(dg, Flip);
+      assert.equal(dg.id, DG.FLIP);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.flipTo(), Color.WHITE);
     });
   });
 });

@@ -3,6 +3,11 @@
 module.exports = {
   SERVER_TIMEZONE: "America/New_York",
 
+  Color: Object.freeze({
+    WHITE: "w",
+    BLACK: "b"
+  }),
+
   AllowKibitzWhilePlaying: Object.freeze({
     // Never - kibitzes will be converted to whispers.
     NEVER: 0,
