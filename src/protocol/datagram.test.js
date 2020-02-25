@@ -2,7 +2,7 @@
 
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
-const { DG } = require("./id");
+const { CN, DG } = require("./id");
 const {
   Arrow,
   Backward,
@@ -15,6 +15,7 @@ const {
   Error,
   ExaminedGameIsGone,
   ExaminersInGame,
+  Fail,
   Fen,
   Field,
   Flip,
@@ -797,6 +798,16 @@ describe("Datagram", () => {
       assert.equal(dg.language(), "english");
       assert.equal(dg.message(), "some-msg");
       assert.equal(dg.url(), "http://foobar");
+    });
+  });
+
+  describe("Fail", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.FAIL, ["101", "some-msg"]);
+      assert.instanceOf(dg, Fail);
+      assert.equal(dg.id, DG.FAIL);
+      assert.equal(dg.failedCommand(), CN.TELL);
+      assert.equal(dg.message(), "some-msg");
     });
   });
 });

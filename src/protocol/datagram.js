@@ -99,6 +99,17 @@ class Error extends Datagram {
   }
 }
 
+class Fail extends Datagram {
+  // Returns enum CN.
+  failedCommand() {
+    return this.params[0].asInt();
+  }
+
+  message() {
+    return this.params[1].asString();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -729,6 +740,7 @@ datagramFactory[DG.END_PROFILE] = EndProfile;
 datagramFactory[DG.ERROR] = Error;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
+datagramFactory[DG.FAIL] = Fail;
 datagramFactory[DG.FEN] = Fen;
 datagramFactory[DG.FIELD] = Field;
 datagramFactory[DG.FLIP] = Flip;
@@ -794,6 +806,7 @@ module.exports = {
   Error,
   ExaminedGameIsGone,
   ExaminersInGame,
+  Fail,
   Fen,
   Flip,
   Field,
