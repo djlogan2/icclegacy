@@ -14,6 +14,7 @@ const {
   GameMessage,
   GameResult,
   GameStarted,
+  IllegalMove,
   Kibitz,
   LoginFailed,
   MyGameChanged,
@@ -561,6 +562,17 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.move(), "e2e4");
       assert.equal(dg.variation(), MoveVariation.EXAMINE);
+    });
+  });
+
+  describe("IllegalMove", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.ILLEGAL_MOVE, ["42", "e2e4", "foobar"]);
+      assert.instanceOf(dg, IllegalMove);
+      assert.equal(dg.id, DG.ILLEGAL_MOVE);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.move(), "e2e4");
+      assert.equal(dg.reason(), "foobar");
     });
   });
 });

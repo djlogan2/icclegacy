@@ -485,6 +485,20 @@ class SendMoves extends Datagram {
 
 class PastMoves extends SendMoves {}
 
+class IllegalMove extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  move() {
+    return this.params[1].asString();
+  }
+
+  reason() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -497,6 +511,7 @@ datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
 datagramFactory[DG.GAME_STARTED] = GameStarted;
+datagramFactory[DG.ILLEGAL_MOVE] = IllegalMove;
 datagramFactory[DG.KIBITZ] = Kibitz;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
@@ -543,6 +558,7 @@ module.exports = {
   GameMessage,
   GameResult,
   GameStarted,
+  IllegalMove,
   Kibitz,
   LoginFailed,
   MyGameChanged,
