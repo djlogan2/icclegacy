@@ -483,6 +483,8 @@ class SendMoves extends Datagram {
   }
 }
 
+class PastMoves extends SendMoves {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -502,6 +504,7 @@ datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
+datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
@@ -547,6 +550,7 @@ module.exports = {
   MyGameResult,
   MyGameStarted,
   MyRelationToGame,
+  PastMoves,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,

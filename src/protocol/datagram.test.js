@@ -21,6 +21,7 @@ const {
   MyGameResult,
   MyGameStarted,
   MyRelationToGame,
+  PastMoves,
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
@@ -546,6 +547,17 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.SEND_MOVES, ["42", "e2e4", "3"]);
       assert.instanceOf(dg, SendMoves);
       assert.equal(dg.id, DG.SEND_MOVES);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.move(), "e2e4");
+      assert.equal(dg.variation(), MoveVariation.EXAMINE);
+    });
+  });
+
+  describe("PastMoves", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PAST_MOVE, ["42", "e2e4", "3"]);
+      assert.instanceOf(dg, PastMoves);
+      assert.equal(dg.id, DG.PAST_MOVE);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.move(), "e2e4");
       assert.equal(dg.variation(), MoveVariation.EXAMINE);
