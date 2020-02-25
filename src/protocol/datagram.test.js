@@ -14,6 +14,7 @@ const {
   ExaminedGameIsGone,
   ExaminersInGame,
   Fen,
+  Field,
   Flip,
   GameMessage,
   GameResult,
@@ -740,6 +741,17 @@ describe("Datagram", () => {
       assert.instanceOf(dg, Refresh);
       assert.equal(dg.id, DG.REFRESH);
       assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("Field", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.FIELD, ["some-user", "some-key", "some-value"]);
+      assert.instanceOf(dg, Field);
+      assert.equal(dg.id, DG.FIELD);
+      assert.equal(dg.username(), "some-user");
+      assert.equal(dg.key(), "some-key");
+      assert.equal(dg.value(), "some-value");
     });
   });
 });

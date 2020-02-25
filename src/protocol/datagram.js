@@ -41,6 +41,20 @@ class LoginFailed extends Datagram {
   }
 }
 
+class Field extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  key() {
+    return this.params[1].asString();
+  }
+
+  value() {
+    return this.params[2].asString();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -670,6 +684,7 @@ datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.FEN] = Fen;
+datagramFactory[DG.FIELD] = Field;
 datagramFactory[DG.FLIP] = Flip;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
@@ -729,8 +744,9 @@ module.exports = {
   DisablePremove,
   ExaminedGameIsGone,
   ExaminersInGame,
-  Flip,
   Fen,
+  Flip,
+  Field,
   GameMessage,
   GameResult,
   GameStarted,
