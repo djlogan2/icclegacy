@@ -44,6 +44,7 @@ const {
   Refresh,
   SendMoves,
   SetClock,
+  Sound,
   StartedObserving,
   StopObserving,
   Takeback,
@@ -774,6 +775,15 @@ describe("Datagram", () => {
       assert.instanceOf(dg, EndProfile);
       assert.equal(dg.id, DG.END_PROFILE);
       assert.equal(dg.username(), "some-user");
+    });
+  });
+
+  describe("Sound", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.SOUND, ["42"]);
+      assert.instanceOf(dg, Sound);
+      assert.equal(dg.id, DG.SOUND);
+      assert.equal(dg.code(), 42);
     });
   });
 });

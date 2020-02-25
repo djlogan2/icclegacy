@@ -75,6 +75,12 @@ class EndProfile extends Datagram {
   }
 }
 
+class Sound extends Datagram {
+  code() {
+    return this.params[0].asInt();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -734,6 +740,7 @@ datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
+datagramFactory[DG.SOUND] = Sound;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
 datagramFactory[DG.TAKEBACK] = Takeback;
@@ -797,6 +804,7 @@ module.exports = {
   Refresh,
   SendMoves,
   SetClock,
+  Sound,
   StartedObserving,
   StopObserving,
   Takeback,
