@@ -119,6 +119,16 @@ module.exports = {
     GHOST_PIECE: 8
   }),
 
+  MoveVariation: Object.freeze({
+    INITIAL: 0,
+    PLAYED: 1,
+    FORWARD: 2,
+    EXAMINE: 3,
+    OVERWRITE: 4, // Not yet implemented
+    MAINLINE: 5, // Not yet implemented
+    SIDELINE: 6 // Not yet implemented
+  }),
+
   SeekVisibility: Object.freeze({
     NEVER: 0,
     WHEN_BROWSING_ONLY: 1,

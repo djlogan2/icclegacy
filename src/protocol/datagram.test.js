@@ -26,6 +26,7 @@ const {
   PersonalQTell,
   PositionBegin,
   PositionBegin2,
+  SendMoves,
   StartedObserving,
   StopObserving,
   TourneyGameEnded,
@@ -35,7 +36,7 @@ const {
   WhoAmI,
   createDatagram
 } = require("./datagram");
-const { KibitzType, MarkerBrush, MarkerType, TellType, Wild } = require("./const");
+const { KibitzType, MarkerBrush, MarkerType, MoveVariation, TellType, Wild } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -537,6 +538,17 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.initialFen(), "fen-string");
       assert.equal(dg.numberOfMovesToFollow(), 42);
+    });
+  });
+
+  describe("SendMoves", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.SEND_MOVES, ["42", "e2e4", "3"]);
+      assert.instanceOf(dg, SendMoves);
+      assert.equal(dg.id, DG.SEND_MOVES);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.move(), "e2e4");
+      assert.equal(dg.variation(), MoveVariation.EXAMINE);
     });
   });
 });

@@ -463,6 +463,26 @@ class PositionBegin extends Datagram {
 
 class PositionBegin2 extends PositionBegin {}
 
+// CAUTION: This datagram is highly configurable.
+// It will arrive with the defined properties with a specific datagram configuration only.
+// The configuration is:
+//  Enable  datagrams: MoveSmith
+//  Disable datagrams: MoveAlgebraic, MoveTime, MoveClock
+class SendMoves extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  move() {
+    return this.params[1].asString();
+  }
+
+  // Returns enum MoveVariation.
+  variation() {
+    return this.params[2].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -487,6 +507,7 @@ datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
+datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
 datagramFactory[DG.TOURNEY_GAME_ENDED] = TourneyGameEnded;
@@ -531,6 +552,7 @@ module.exports = {
   PersonalQTell,
   PositionBegin,
   PositionBegin2,
+  SendMoves,
   StartedObserving,
   StopObserving,
   TourneyGameEnded,
