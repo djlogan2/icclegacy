@@ -12,6 +12,7 @@ const {
   Circle,
   DisablePremove,
   EndProfile,
+  Error,
   ExaminedGameIsGone,
   ExaminersInGame,
   Fen,
@@ -784,6 +785,18 @@ describe("Datagram", () => {
       assert.instanceOf(dg, Sound);
       assert.equal(dg.id, DG.SOUND);
       assert.equal(dg.code(), 42);
+    });
+  });
+
+  describe("Error", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.ERROR, ["42", "english", "some-msg", "http://foobar"]);
+      assert.instanceOf(dg, Error);
+      assert.equal(dg.id, DG.ERROR);
+      assert.equal(dg.code(), 42);
+      assert.equal(dg.language(), "english");
+      assert.equal(dg.message(), "some-msg");
+      assert.equal(dg.url(), "http://foobar");
     });
   });
 });

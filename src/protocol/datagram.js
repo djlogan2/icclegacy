@@ -81,6 +81,24 @@ class Sound extends Datagram {
   }
 }
 
+class Error extends Datagram {
+  code() {
+    return this.params[0].asInt();
+  }
+
+  language() {
+    return this.params[1].asString();
+  }
+
+  message() {
+    return this.params[2].asString();
+  }
+
+  url() {
+    return this.params[3].asString();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -708,6 +726,7 @@ datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.END_PROFILE] = EndProfile;
+datagramFactory[DG.ERROR] = Error;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.FEN] = Fen;
@@ -772,6 +791,7 @@ module.exports = {
   Datagram,
   DisablePremove,
   EndProfile,
+  Error,
   ExaminedGameIsGone,
   ExaminersInGame,
   Fen,
