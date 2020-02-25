@@ -32,6 +32,7 @@ const {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PlayersInMyGame,
   PositionBegin,
   PositionBegin2,
   SendMoves,
@@ -686,6 +687,18 @@ describe("Datagram", () => {
       assert.isFalse(dg.blackAbort());
       assert.isFalse(dg.whiteTakeback());
       assert.isFalse(dg.blackTakeback());
+    });
+  });
+
+  describe("PlayersInMyGame", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PLAYERS_IN_MY_GAME, ["42", "some-handle", "some-role", "some-kib"]);
+      assert.instanceOf(dg, PlayersInMyGame);
+      assert.equal(dg.id, DG.PLAYERS_IN_MY_GAME);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.handle(), "some-handle");
+      assert.equal(dg.role(), "some-role");
+      assert.equal(dg.kib(), "some-kib");
     });
   });
 });

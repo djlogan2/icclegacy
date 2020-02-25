@@ -614,6 +614,24 @@ class OffersInMyGame extends Datagram {
   }
 }
 
+class PlayersInMyGame extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  handle() {
+    return this.params[1].asString();
+  }
+
+  role() {
+    return this.params[2].asString();
+  }
+
+  kib() {
+    return this.params[3].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -644,6 +662,7 @@ datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
+datagramFactory[DG.PLAYERS_IN_MY_GAME] = PlayersInMyGame;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
@@ -699,6 +718,7 @@ module.exports = {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PlayersInMyGame,
   PositionBegin,
   PositionBegin2,
   SendMoves,
