@@ -632,6 +632,16 @@ class PlayersInMyGame extends Datagram {
   }
 }
 
+class PoolDatagram extends Datagram {
+  name() {
+    return this.params[0].asString();
+  }
+}
+
+class PoolJoined extends PoolDatagram {}
+
+class PoolLeft extends PoolDatagram {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -663,6 +673,8 @@ datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.PLAYERS_IN_MY_GAME] = PlayersInMyGame;
+datagramFactory[DG.POOL_JOINED] = PoolJoined;
+datagramFactory[DG.POOL_LEFT] = PoolLeft;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
@@ -719,6 +731,8 @@ module.exports = {
   PersonalTellEcho,
   PersonalQTell,
   PlayersInMyGame,
+  PoolJoined,
+  PoolLeft,
   PositionBegin,
   PositionBegin2,
   SendMoves,

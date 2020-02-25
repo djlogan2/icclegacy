@@ -33,6 +33,8 @@ const {
   PersonalTellEcho,
   PersonalQTell,
   PlayersInMyGame,
+  PoolJoined,
+  PoolLeft,
   PositionBegin,
   PositionBegin2,
   SendMoves,
@@ -699,6 +701,24 @@ describe("Datagram", () => {
       assert.equal(dg.handle(), "some-handle");
       assert.equal(dg.role(), "some-role");
       assert.equal(dg.kib(), "some-kib");
+    });
+  });
+
+  describe("PoolJoined", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.POOL_JOINED, ["pool-name"]);
+      assert.instanceOf(dg, PoolJoined);
+      assert.equal(dg.id, DG.POOL_JOINED);
+      assert.equal(dg.name(), "pool-name");
+    });
+  });
+
+  describe("PoolLeft", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.POOL_LEFT, ["pool-name"]);
+      assert.instanceOf(dg, PoolLeft);
+      assert.equal(dg.id, DG.POOL_LEFT);
+      assert.equal(dg.name(), "pool-name");
     });
   });
 });
