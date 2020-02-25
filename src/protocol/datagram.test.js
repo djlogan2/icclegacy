@@ -24,6 +24,11 @@ const {
   GameStarted,
   IllegalMove,
   Kibitz,
+  ListAdded,
+  ListEnd,
+  ListHead,
+  ListItem,
+  ListRemoved,
   LoginFailed,
   MSec,
   MyGameChanged,
@@ -808,6 +813,68 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.FAIL);
       assert.equal(dg.failedCommand(), CN.TELL);
       assert.equal(dg.message(), "some-msg");
+    });
+  });
+
+  describe("ListItem", () => {
+    it("with params", () => {
+      const dg = createDatagram(DG.LIST_ITEM, ["param-1", "42", "1", "2", "2020-02-25T12:04:11Z", "1"]);
+      assert.instanceOf(dg, ListItem);
+      assert.equal(dg.id, DG.LIST_ITEM);
+      assert.isTrue(dg.hasParams());
+      assert.equal(dg.stringParam(0), "param-1");
+      assert.equal(dg.intParam(1), 42);
+      assert.equal(dg.boolParam(2), true);
+      assert.equal(dg.durationParam(3), 2000);
+      assert.equal(dg.timestampParam(4), 1582632251000);
+      assert.equal(dg.colorParam(5), Color.WHITE);
+    });
+
+    it("without params", () => {
+      const dg = createDatagram(DG.LIST_ITEM, []);
+      assert.instanceOf(dg, ListItem);
+      assert.equal(dg.id, DG.LIST_ITEM);
+      assert.isFalse(dg.hasParams());
+    });
+  });
+
+  describe("ListHead", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.LIST_HEAD, ["some-name", "some-owner"]);
+      assert.instanceOf(dg, ListHead);
+      assert.equal(dg.id, DG.LIST_HEAD);
+      assert.equal(dg.listName(), "some-name");
+      assert.equal(dg.listOwner(), "some-owner");
+    });
+  });
+
+  describe("ListEnd", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.LIST_END, []);
+      assert.instanceOf(dg, ListEnd);
+      assert.equal(dg.id, DG.LIST_END);
+    });
+  });
+
+  describe("ListAdded", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.LIST_ADDED, ["some-name", "some-owner", "some-param"]);
+      assert.instanceOf(dg, ListAdded);
+      assert.equal(dg.id, DG.LIST_ADDED);
+      assert.equal(dg.listName(), "some-name");
+      assert.equal(dg.listOwner(), "some-owner");
+      assert.equal(dg.stringParam(0), "some-param");
+    });
+  });
+
+  describe("ListRemoved", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.LIST_REMOVED, ["some-name", "some-owner", "some-param"]);
+      assert.instanceOf(dg, ListRemoved);
+      assert.equal(dg.id, DG.LIST_REMOVED);
+      assert.equal(dg.listName(), "some-name");
+      assert.equal(dg.listOwner(), "some-owner");
+      assert.equal(dg.stringParam(0), "some-param");
     });
   });
 });

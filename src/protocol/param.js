@@ -1,6 +1,7 @@
 "use strict";
 
-const { Color } = require("./const");
+const { DateTime } = require("luxon");
+const { SERVER_TIMEZONE, Color } = require("./const");
 
 class Param {
   constructor(value) {
@@ -34,6 +35,10 @@ class Param {
 
   asMsFromMinutes() {
     return this.asInt() * 1000 * 60;
+  }
+
+  asEpochFromISO8601() {
+    return DateTime.fromISO(this.asString(), { zone: SERVER_TIMEZONE }).toMillis();
   }
 
   asColor() {

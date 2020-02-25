@@ -140,6 +140,23 @@ describe("Param", () => {
     });
   });
 
+  describe("can format epoch from ISO-8601", () => {
+    it("without timezone", () => {
+      const p = new Param("2019-04-04T12:12:07");
+      assert.equal(p.asEpochFromISO8601(), 1554394327000);
+    });
+
+    it("with timezone", () => {
+      const p = new Param("2019-04-04T12:12:07+03:00");
+      assert.equal(p.asEpochFromISO8601(), 1554369127000);
+    });
+
+    it("invalid is NaN", () => {
+      const p = new Param("foobar");
+      assert.isNaN(p.asEpochFromISO8601());
+    });
+  });
+
   describe("can format color", () => {
     it("white", () => {
       const p = new Param("1");

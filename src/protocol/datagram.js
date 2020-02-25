@@ -110,6 +110,82 @@ class Fail extends Datagram {
   }
 }
 
+class ListHead extends Datagram {
+  // One of the following: alias, message, channel, adjourned, history, library, games, notify, censor.
+  listName() {
+    return this.params[0].asString();
+  }
+
+  listOwner() {
+    return this.params[1].asString();
+  }
+}
+
+class ListEnd extends Datagram {}
+
+class ListItem extends Datagram {
+  constructor(id, params) {
+    super(id, params);
+
+    this.paramOffset = 0;
+  }
+
+  hasParams() {
+    return this.params.length > this.paramOffset;
+  }
+
+  stringParam(atIndex) {
+    return getListItemParam(this, atIndex).asString();
+  }
+
+  intParam(atIndex) {
+    return getListItemParam(this, atIndex).asInt();
+  }
+
+  boolParam(atIndex) {
+    return getListItemParam(this, atIndex).asBool();
+  }
+
+  durationParam(atIndex) {
+    return getListItemParam(this, atIndex).asMsFromSeconds();
+  }
+
+  timestampParam(atIndex) {
+    return getListItemParam(this, atIndex).asEpochFromISO8601();
+  }
+
+  colorParam(atIndex) {
+    return getListItemParam(this, atIndex).asColor();
+  }
+}
+
+class ListModified extends ListItem {
+  constructor(id, params) {
+    super(id, params);
+    super.paramOffset = 2;
+  }
+
+  // One of the following: alias, message, channel, adjourned, history, library, games, notify, censor.
+  listName() {
+    return this.params[0].asString();
+  }
+
+  listOwner() {
+    return this.params[1].asString();
+  }
+}
+
+class ListAdded extends ListModified {}
+
+class ListRemoved extends ListModified {}
+
+function getListItemParam(dg, atIndex) {
+  if (!(dg instanceof ListItem)) throw new Error("dg");
+  if (typeof atIndex !== "number") throw new Error("atIndex");
+
+  return dg.params[dg.paramOffset + atIndex];
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -749,6 +825,11 @@ datagramFactory[DG.GAME_RESULT] = GameResult;
 datagramFactory[DG.GAME_STARTED] = GameStarted;
 datagramFactory[DG.ILLEGAL_MOVE] = IllegalMove;
 datagramFactory[DG.KIBITZ] = Kibitz;
+datagramFactory[DG.LIST_ADDED] = ListAdded;
+datagramFactory[DG.LIST_END] = ListEnd;
+datagramFactory[DG.LIST_HEAD] = ListHead;
+datagramFactory[DG.LIST_ITEM] = ListItem;
+datagramFactory[DG.LIST_REMOVED] = ListRemoved;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MSEC] = MSec;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
@@ -815,6 +896,11 @@ module.exports = {
   GameStarted,
   IllegalMove,
   Kibitz,
+  ListAdded,
+  ListEnd,
+  ListHead,
+  ListItem,
+  ListRemoved,
   LoginFailed,
   MSec,
   MyGameChanged,
