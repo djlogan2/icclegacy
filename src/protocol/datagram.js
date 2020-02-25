@@ -69,6 +69,12 @@ class Note extends Datagram {
   }
 }
 
+class EndProfile extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -695,6 +701,7 @@ datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
 datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
+datagramFactory[DG.END_PROFILE] = EndProfile;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
 datagramFactory[DG.EXAMINERS_IN_GAME] = ExaminersInGame;
 datagramFactory[DG.FEN] = Fen;
@@ -757,6 +764,7 @@ module.exports = {
   Circle,
   Datagram,
   DisablePremove,
+  EndProfile,
   ExaminedGameIsGone,
   ExaminersInGame,
   Fen,

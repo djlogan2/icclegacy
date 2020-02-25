@@ -11,6 +11,7 @@ const {
   ChannelQTell,
   Circle,
   DisablePremove,
+  EndProfile,
   ExaminedGameIsGone,
   ExaminersInGame,
   Fen,
@@ -764,6 +765,15 @@ describe("Datagram", () => {
       assert.equal(dg.username(), "some-user");
       assert.equal(dg.index(), 42);
       assert.equal(dg.text(), "some-text");
+    });
+  });
+
+  describe("EndProfile", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.END_PROFILE, ["some-user"]);
+      assert.instanceOf(dg, EndProfile);
+      assert.equal(dg.id, DG.END_PROFILE);
+      assert.equal(dg.username(), "some-user");
     });
   });
 });
