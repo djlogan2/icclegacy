@@ -32,6 +32,7 @@ const {
   SendMoves,
   StartedObserving,
   StopObserving,
+  Takeback,
   TourneyGameEnded,
   TourneyGameStarted,
   UnArrow,
@@ -582,6 +583,16 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.BACKWARD, ["42", "3"]);
       assert.instanceOf(dg, Backward);
       assert.equal(dg.id, DG.BACKWARD);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.count(), 3);
+    });
+  });
+
+  describe("Takeback", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.TAKEBACK, ["42", "3"]);
+      assert.instanceOf(dg, Takeback);
+      assert.equal(dg.id, DG.TAKEBACK);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.count(), 3);
     });

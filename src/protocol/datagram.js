@@ -509,6 +509,8 @@ class Backward extends Datagram {
   }
 }
 
+class Takeback extends Backward {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -539,6 +541,7 @@ datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
+datagramFactory[DG.TAKEBACK] = Takeback;
 datagramFactory[DG.TOURNEY_GAME_ENDED] = TourneyGameEnded;
 datagramFactory[DG.TOURNEY_GAME_STARTED] = TourneyGameStarted;
 datagramFactory[DG.UNARROW] = UnArrow;
@@ -587,6 +590,7 @@ module.exports = {
   SendMoves,
   StartedObserving,
   StopObserving,
+  Takeback,
   TourneyGameEnded,
   TourneyGameStarted,
   UnArrow,
