@@ -55,6 +55,20 @@ class Field extends Datagram {
   }
 }
 
+class Note extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  index() {
+    return this.params[1].asInt();
+  }
+
+  text() {
+    return this.params[2].asString();
+  }
+}
+
 class PersonalTell extends Datagram {
   senderUsername() {
     return this.params[0].asString();
@@ -699,6 +713,7 @@ datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.MY_TURN] = MyTurn;
+datagramFactory[DG.NOTE] = Note;
 datagramFactory[DG.OFFERS_IN_MY_GAME] = OffersInMyGame;
 datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
@@ -760,6 +775,7 @@ module.exports = {
   MyGameStarted,
   MyRelationToGame,
   MyTurn,
+  Note,
   OffersInMyGame,
   PastMoves,
   PersonalTell,

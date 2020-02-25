@@ -29,6 +29,7 @@ const {
   MyGameStarted,
   MyRelationToGame,
   MyTurn,
+  Note,
   OffersInMyGame,
   PastMoves,
   PersonalTell,
@@ -752,6 +753,17 @@ describe("Datagram", () => {
       assert.equal(dg.username(), "some-user");
       assert.equal(dg.key(), "some-key");
       assert.equal(dg.value(), "some-value");
+    });
+  });
+
+  describe("Note", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.NOTE, ["some-user", "42", "some-text"]);
+      assert.instanceOf(dg, Note);
+      assert.equal(dg.id, DG.NOTE);
+      assert.equal(dg.username(), "some-user");
+      assert.equal(dg.index(), 42);
+      assert.equal(dg.text(), "some-text");
     });
   });
 });
