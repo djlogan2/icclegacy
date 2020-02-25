@@ -499,9 +499,20 @@ class IllegalMove extends Datagram {
   }
 }
 
+class Backward extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  count() {
+    return this.params[1].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
+datagramFactory[DG.BACKWARD] = Backward;
 datagramFactory[DG.BOARDINFO] = BoardInfo;
 datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
 datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
@@ -548,6 +559,7 @@ function createDatagram(id, params) {
 
 module.exports = {
   Arrow,
+  Backward,
   BoardInfo,
   ChannelTell,
   ChannelQTell,
