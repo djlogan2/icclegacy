@@ -34,6 +34,7 @@ const {
   PositionBegin,
   PositionBegin2,
   SendMoves,
+  SetClock,
   StartedObserving,
   StopObserving,
   Takeback,
@@ -632,15 +633,26 @@ describe("Datagram", () => {
 
   describe("MSec", () => {
     it("assigns params correctly", () => {
-      const dg = createDatagram(DG.MSEC, ["42", "w", "42000", "1", "42", "82"]);
+      const dg = createDatagram(DG.MSEC, ["42", "w", "42000", "1", "80", "82"]);
       assert.instanceOf(dg, MSec);
       assert.equal(dg.id, DG.MSEC);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.color(), Color.WHITE);
       assert.equal(dg.timeLeft(), 42000);
       assert.isTrue(dg.run());
-      assert.equal(dg.freeTimeToMove(), 42);
+      assert.equal(dg.freeTimeToMove(), 80);
       assert.equal(dg.minMoveTime(), 82);
+    });
+  });
+
+  describe("SetClock", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.SET_CLOCK, ["42", "10", "20"]);
+      assert.instanceOf(dg, SetClock);
+      assert.equal(dg.id, DG.SET_CLOCK);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.whiteClock(), 10000);
+      assert.equal(dg.blackClock(), 20000);
     });
   });
 });

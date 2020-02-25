@@ -562,6 +562,20 @@ class MSec extends Datagram {
   }
 }
 
+class SetClock extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  whiteClock() {
+    return this.params[1].asMsFromSeconds();
+  }
+
+  blackClock() {
+    return this.params[2].asMsFromSeconds();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -594,6 +608,7 @@ datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
+datagramFactory[DG.SET_CLOCK] = SetClock;
 datagramFactory[DG.STOP_OBSERVING] = StopObserving;
 datagramFactory[DG.STARTED_OBSERVING] = StartedObserving;
 datagramFactory[DG.TAKEBACK] = Takeback;
@@ -647,6 +662,7 @@ module.exports = {
   PositionBegin,
   PositionBegin2,
   SendMoves,
+  SetClock,
   StartedObserving,
   StopObserving,
   Takeback,
