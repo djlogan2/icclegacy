@@ -2,7 +2,7 @@
 
 const { Color } = require("./const");
 
-class Field {
+class Param {
   constructor(value) {
     if (typeof value !== "string") throw new Error("value");
     this.value = value;
@@ -41,4 +41,4 @@ class Field {
   }
 }
 
-module.exports = { Field };
+module.exports = { Param };

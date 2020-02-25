@@ -2,7 +2,7 @@
 
 const { DateTime } = require("luxon");
 const { CN } = require("./id");
-const { Field } = require("./field");
+const { Param } = require("./param");
 const { SERVER_TIMEZONE, HelpLanguage } = require("./const");
 
 class Meta {
@@ -65,7 +65,7 @@ class Plus extends Command {
 class Vars extends Command {
   constructor(meta, content, datagrams) {
     super(meta, content, datagrams);
-    this.fields = new VarsFields(this.content);
+    this.params = new VarsParams(this.content);
   }
 
   notFound() {
@@ -86,278 +86,278 @@ class Vars extends Command {
 
   // When you issue a "match" or "seek" command without parameters, this rated value will be used instead.
   rated() {
-    return this.fields.get("rated", "0").asBool();
+    return this.params.get("rated", "0").asBool();
   }
 
   // When you issue a "match" or "seek" command without parameters, this wild value will be used instead.
   // Returns enum Wild.
   wild() {
-    return this.fields.get("wild", "0").asInt();
+    return this.params.get("wild", "0").asInt();
   }
 
   // When you issue a "match" or "seek" command without parameters, this game time value will be used instead.
   time() {
-    return this.fields.get("time", "0").asMsFromMinutes();
+    return this.params.get("time", "0").asMsFromMinutes();
   }
 
   // When you issue a "match" or "seek" command without parameters, this time increment value will be used instead.
   increment() {
-    return this.fields.get("inc", "0").asMsFromSeconds();
+    return this.params.get("inc", "0").asMsFromSeconds();
   }
 
   // Do I want a disconnector to lose the game?
   noEscape() {
-    return this.fields.get("noescape", "0").asBool();
+    return this.params.get("noescape", "0").asBool();
   }
 
   // Do I allow takebacks?  If set to 1, you will not even see requests for takebacks from your opponent.
   noTakeback() {
-    return this.fields.get("notakeback", "0").asBool();
+    return this.params.get("notakeback", "0").asBool();
   }
 
   // Default minimum rating you seek when you issue a seeking command.
   minSeek() {
-    return this.fields.get("minseek", "0").asInt();
+    return this.params.get("minseek", "0").asInt();
   }
 
   // Default maximum rating you seek when you issue a seeking command.
   maxSeek() {
-    return this.fields.get("maxseek", "9999").asInt();
+    return this.params.get("maxseek", "9999").asInt();
   }
 
   // If set the game will not start automatically once opponent is found, but will ask for confirmation instead.
   manualAccept() {
-    return this.fields.get("manualaccept", "0").asBool();
+    return this.params.get("manualaccept", "0").asBool();
   }
 
   // Am I open to challenges?
   open() {
-    return this.fields.get("open", "1").asBool();
+    return this.params.get("open", "1").asBool();
   }
 
   // Am I open to challenges with ratedness different from my own rated variable?
   ropen() {
-    return this.fields.get("ropen", "1").asBool();
+    return this.params.get("ropen", "1").asBool();
   }
 
   // Am I open to challenges with wildness different from my own wild variable?
   wopen() {
-    return this.fields.get("wopen", "1").asBool();
+    return this.params.get("wopen", "1").asBool();
   }
 
   // Am I open to correspondence games?
   ccopen() {
-    return this.fields.get("ccopen", "0").asBool();
+    return this.params.get("ccopen", "0").asBool();
   }
 
   // Do I see "seeking" messages?
   // Returns enum SeekVisibility.
   seek() {
-    return this.fields.get("seek", "0").asInt();
+    return this.params.get("seek", "0").asInt();
   }
 
   // Whether to use your seek filter.
   useFormula() {
-    return this.fields.get("useformula", "1").asBool();
+    return this.params.get("useformula", "1").asBool();
   }
 
   // Controls which seek offers you will see.
   sfilter() {
-    return new SeekFilter(this.fields.get("sfilter", "").asString());
+    return new SeekFilter(this.params.get("sfilter", "").asString());
   }
 
   // An extra variable you can use in your formula.
   mood() {
-    return this.fields.get("mood", "0").asInt();
+    return this.params.get("mood", "0").asInt();
   }
 
   // If set, all challengers must satisfy it.
   formula() {
-    return this.fields.get("formula", "").asString();
+    return this.params.get("formula", "").asString();
   }
 
   // Will I hear shouts?
   shout() {
-    return this.fields.get("shout", "0").asBool();
+    return this.params.get("shout", "0").asBool();
   }
 
   // Will I hear important shouts?
   sshout() {
-    return this.fields.get("sshout", "0").asBool();
+    return this.params.get("sshout", "0").asBool();
   }
 
   // Will I hear kibitzes and whispers?
   // Returns enum WhisperVisibility.
   kib() {
-    return this.fields.get("kib", "1").asInt();
+    return this.params.get("kib", "1").asInt();
   }
 
   // Controls chat with anonymous users.  To carry on a conversation with an anonymous user,
   // both parties must have tell set to true.
   tell() {
-    return this.fields.get("tell", "0").asBool();
+    return this.params.get("tell", "0").asBool();
   }
 
   // Will I be informed when each player enters and leaves the server? (admin only)
   pin() {
-    return this.fields.get("pin", "0").asBool();
+    return this.params.get("pin", "0").asBool();
   }
 
   // Will I be informed of the start and end of each game? (admin only)
   gin() {
-    return this.fields.get("gin", "0").asBool();
+    return this.params.get("gin", "0").asBool();
   }
 
   // Determines what you see while in a game.
   // Returns enum GameQuietnessLevel.
   quietplay() {
-    return this.fields.get("quietplay", "0").asInt();
+    return this.params.get("quietplay", "0").asInt();
   }
 
   // Controls if you see offensive language or not.
   tol() {
-    return this.fields.get("tol", "4").asInt();
+    return this.params.get("tol", "4").asInt();
   }
 
   // Your busy level.
   // Returns enum BusyLevel.
   busy() {
-    return this.fields.get("busy", "0").asInt();
+    return this.params.get("busy", "0").asInt();
   }
 
   // Controls the manner in which the board will be displayed to me.
   style() {
-    return this.fields.get("style", "0").asInt();
+    return this.params.get("style", "0").asInt();
   }
 
   // Line breaking and who display assume this screen width.
   width() {
-    return this.fields.get("width", "0").asInt();
+    return this.params.get("width", "0").asInt();
   }
 
   // If set, lines of text will wrap on your screen.
   wrap() {
-    return this.fields.get("wrap", "0").asBool();
+    return this.params.get("wrap", "0").asBool();
   }
 
   // Number of lines in your screen used by a simple pager.
   height() {
-    return this.fields.get("height", "0").asInt();
+    return this.params.get("height", "0").asInt();
   }
 
   // If set it will suppress the ICC prompt "aics%".
   prompt() {
-    return this.fields.get("prompt", "1").asBool();
+    return this.params.get("prompt", "1").asBool();
   }
 
   // Highlights various things, such as the names of players talking to you, etc.  Works on VT100 and xterms.
   highlight() {
-    return this.fields.get("highlight", "0").asInt();
+    return this.params.get("highlight", "0").asInt();
   }
 
   // Highlights various things, such as the names of players talking to you, etc.  Works on VT100 and xterms.
   // Returns enum BellRule.
   bell() {
-    return this.fields.get("bell", "0").asInt();
+    return this.params.get("bell", "0").asInt();
   }
 
   // Use the old-fashioned challenge indicator, for obsolete computers.
   oldmatch() {
-    return this.fields.get("oldmatch", "0").asBool();
+    return this.params.get("oldmatch", "0").asBool();
   }
 
   // Should I automatically enter examine mode upon the end of my game?
   examine() {
-    return this.fields.get("examine", "1").asBool();
+    return this.params.get("examine", "1").asBool();
   }
 
   // Controls automatic unobserve behavior.
   // Returns enum AutoUnobserve.
   unobserve() {
-    return this.fields.get("unobserve", "0").asInt();
+    return this.params.get("unobserve", "0").asInt();
   }
 
   // If set the server checks how much time you and your opponent have left. If one player has run out, that player
   // forfeits on time (even if it is you!). If both players have run out, the game is drawn.
   autoflag() {
-    return this.fields.get("autoflag", "1").asBool();
+    return this.params.get("autoflag", "1").asBool();
   }
 
   // Default parameters used for "who" command, when no parameters are given.
   who() {
-    return this.fields.get("who", "0").asString();
+    return this.params.get("who", "0").asString();
   }
 
   // Default parameters used for "players" command, when no parameters are given.
   players() {
-    return this.fields.get("players", "0").asString();
+    return this.params.get("players", "0").asString();
   }
 
   // Help language.
   // Returns enum HelpLanguage.
   lang() {
-    const val = this.fields.get("lang", "").asString();
+    const val = this.params.get("lang", "").asString();
     return val !== "" ? val : HelpLanguage.ENGLISH;
   }
 
   // If set, you see ICC help files in your web browser.
   webhelp() {
-    return this.fields.get("webhelp", "1").asBool();
+    return this.params.get("webhelp", "1").asBool();
   }
 
   // Returns enum AllowKibitzWhilePlaying.
   allowkib() {
-    return this.fields.get("allowkib", "2").asInt();
+    return this.params.get("allowkib", "2").asInt();
   }
 
   // If set, a pstat command is automatically issued when you start a game to display
   // your record against the opponent.
   pstat() {
-    return this.fields.get("pstat", "0").asBool();
+    return this.params.get("pstat", "0").asBool();
   }
 
   // If set, your ICC messages will be emailed to you automatically!
   messmail() {
-    return this.fields.get("messmail", "0").asBool();
+    return this.params.get("messmail", "0").asBool();
   }
 
   // Will my games automatically be mailed to me upon completion?
   automail() {
-    return this.fields.get("automail", "0").asBool();
+    return this.params.get("automail", "0").asBool();
   }
 
   // Default parameters used for "players" command, when no parameters are given.
   // Returns enum GameMailFormat.
   mailformat() {
-    return this.fields.get("mailformat", "2").asInt();
+    return this.params.get("mailformat", "2").asInt();
   }
 
   // Whether your email address will be shown when people finger you, and your email will be shown
   // when your messages are mailed to another ICC member, so they can reply by email.
   addresspublic() {
-    return this.fields.get("addresspublic", "0").asBool();
+    return this.params.get("addresspublic", "0").asBool();
   }
 
   // If set, your real name that you gave when you registered will be shown when someone fingers you.
   namepublic() {
-    return this.fields.get("namepublic", "0").asBool();
+    return this.params.get("namepublic", "0").asBool();
   }
 
   // Whether you want automatically get ICC news items emailed to you.
   subscribe() {
-    return this.fields.get("subscribe", "1").asBool();
+    return this.params.get("subscribe", "1").asBool();
   }
 
   // A set of channels the player is in.
   channels() {
     const channels = [];
-    const ids = this.fields
+    const ids = this.params
       .get("channels", "")
       .asString()
       .trim();
     if (ids.length) {
       for (let id of ids.split(" ")) {
-        channels.push(new Field(id).asInt());
+        channels.push(new Param(id).asInt());
       }
     }
     return channels;
@@ -365,7 +365,7 @@ class Vars extends Command {
 
   // Says what interface you are using.
   interface() {
-    return this.fields.get("interface", "").asString();
+    return this.params.get("interface", "").asString();
   }
 }
 
@@ -457,7 +457,7 @@ class SeekFilter {
   }
 }
 
-class VarsFields {
+class VarsParams {
   constructor(content) {
     if (typeof content !== "string") throw new Error("content");
 
@@ -474,7 +474,7 @@ class VarsFields {
     }
 
     const val = this.parsedObj[name];
-    return val ? val : new Field(defaultVal);
+    return val ? val : new Param(defaultVal);
   }
 }
 
@@ -499,7 +499,7 @@ function parseVars(content) {
     // Channels field spans an entire line - start with it.
     const match = /Channels?: ((\d+\s?)*)/.exec(line);
     if (match) {
-      fields["channels"] = new Field(match[1]);
+      fields["channels"] = new Param(match[1]);
       continue;
     }
 
@@ -526,7 +526,7 @@ function parseVars(content) {
       }
 
       const value = line.substr(valueStartIdx, valueEndIdx - valueStartIdx);
-      fields[name] = new Field(value);
+      fields[name] = new Param(value);
 
       if (line.length) {
         line = line.substr(valueEndIdx + (line[0] === `"` ? 1 : 0)).trimStart();

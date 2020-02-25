@@ -1,7 +1,7 @@
 "use strict";
 
 const { DG } = require("./id");
-const { Field } = require("./field");
+const { Param } = require("./param");
 const { Color } = require("./const");
 
 class Datagram {
@@ -16,7 +16,7 @@ class Datagram {
     this.params = [];
     for (let p of params) {
       if (typeof p !== "string") throw new Error(`param '${p}' string expected`);
-      this.params.push(new Field(p));
+      this.params.push(new Param(p));
     }
   }
 }
