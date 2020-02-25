@@ -511,6 +511,12 @@ class Backward extends Datagram {
 
 class Takeback extends Backward {}
 
+class MyTurn extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -532,6 +538,7 @@ datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
+datagramFactory[DG.MY_TURN] = MyTurn;
 datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
@@ -581,6 +588,7 @@ module.exports = {
   MyGameResult,
   MyGameStarted,
   MyRelationToGame,
+  MyTurn,
   PastMoves,
   PersonalTell,
   PersonalTellEcho,

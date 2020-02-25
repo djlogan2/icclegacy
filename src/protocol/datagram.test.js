@@ -23,6 +23,7 @@ const {
   MyGameResult,
   MyGameStarted,
   MyRelationToGame,
+  MyTurn,
   PastMoves,
   PersonalTell,
   PersonalTellEcho,
@@ -595,6 +596,15 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.TAKEBACK);
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.count(), 3);
+    });
+  });
+
+  describe("MyTurn", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_TURN, ["42"]);
+      assert.instanceOf(dg, MyTurn);
+      assert.equal(dg.id, DG.MY_TURN);
+      assert.equal(dg.gameNumber(), 42);
     });
   });
 });
