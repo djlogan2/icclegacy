@@ -899,6 +899,12 @@ class MatchRemoved extends Datagram {
   }
 }
 
+class LogPgn extends Datagram {
+  pgn() {
+    return this.params.map(p => p.asString()).join("\n");
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -926,6 +932,7 @@ datagramFactory[DG.LIST_END] = ListEnd;
 datagramFactory[DG.LIST_HEAD] = ListHead;
 datagramFactory[DG.LIST_ITEM] = ListItem;
 datagramFactory[DG.LIST_REMOVED] = ListRemoved;
+datagramFactory[DG.LOG_PGN] = LogPgn;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MATCH] = Match;
 datagramFactory[DG.MATCH_REMOVED] = MatchRemoved;
@@ -999,6 +1006,7 @@ module.exports = {
   ListHead,
   ListItem,
   ListRemoved,
+  LogPgn,
   LoginFailed,
   Match,
   MatchRemoved,

@@ -29,6 +29,7 @@ const {
   ListHead,
   ListItem,
   ListRemoved,
+  LogPgn,
   LoginFailed,
   Match,
   MatchRemoved,
@@ -937,6 +938,15 @@ describe("Datagram", () => {
       assert.equal(dg.senderName(), "sender-name");
       assert.equal(dg.receiverName(), "receiver-name");
       assert.equal(dg.reason(), "foobar");
+    });
+  });
+
+  describe("LogPgn", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.LOG_PGN, [`[Event "F/S Return Match"]`, `[Site "Belgrade, Serbia JUG"]`, ` `, `1. e4 e5 2. Nf3 Nc6 3. Bb5 a6`]);
+      assert.instanceOf(dg, LogPgn);
+      assert.equal(dg.id, DG.LOG_PGN);
+      assert.equal(dg.pgn(), `[Event "F/S Return Match"]\n[Site "Belgrade, Serbia JUG"]\n \n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6`);
     });
   });
 });
