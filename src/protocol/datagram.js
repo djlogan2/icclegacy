@@ -905,6 +905,20 @@ class LogPgn extends Datagram {
   }
 }
 
+class PgnTag extends Datagram {
+  gameNumber() {
+    return this.params[0].asInt();
+  }
+
+  name() {
+    return this.params[1].asString();
+  }
+
+  value() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -949,6 +963,7 @@ datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
+datagramFactory[DG.PGN_TAG] = PgnTag;
 datagramFactory[DG.PLAYERS_IN_MY_GAME] = PlayersInMyGame;
 datagramFactory[DG.POOL_JOINED] = PoolJoined;
 datagramFactory[DG.POOL_LEFT] = PoolLeft;
@@ -1023,6 +1038,7 @@ module.exports = {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PgnTag,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,

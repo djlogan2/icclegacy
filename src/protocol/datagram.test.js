@@ -46,6 +46,7 @@ const {
   PersonalTell,
   PersonalTellEcho,
   PersonalQTell,
+  PgnTag,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,
@@ -947,6 +948,17 @@ describe("Datagram", () => {
       assert.instanceOf(dg, LogPgn);
       assert.equal(dg.id, DG.LOG_PGN);
       assert.equal(dg.pgn(), `[Event "F/S Return Match"]\n[Site "Belgrade, Serbia JUG"]\n \n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6`);
+    });
+  });
+
+  describe("PgnTag", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PGN_TAG, ["42", "tag-name", "tag-value"]);
+      assert.instanceOf(dg, PgnTag);
+      assert.equal(dg.id, DG.PGN_TAG);
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.name(), "tag-name");
+      assert.equal(dg.value(), "tag-value");
     });
   });
 });
