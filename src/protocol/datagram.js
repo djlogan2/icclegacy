@@ -803,6 +803,88 @@ class Refresh extends Datagram {
   }
 }
 
+class Match extends Datagram {
+  senderName() {
+    return this.params[0].asString();
+  }
+
+  senderRating() {
+    return this.params[1].asInt();
+  }
+
+  senderRatingType() {
+    return this.params[2].asInt();
+  }
+
+  senderTitles() {
+    return this.params[3].asStringList();
+  }
+
+  receiverName() {
+    return this.params[4].asString();
+  }
+
+  receiverRating() {
+    return this.params[5].asInt();
+  }
+
+  receiverRatingType() {
+    return this.params[6].asInt();
+  }
+
+  receiverTitles() {
+    return this.params[7].asStringList();
+  }
+
+  wildNumber() {
+    return this.params[8].asInt();
+  }
+
+  ratingCategoryName() {
+    return this.params[9].asString();
+  }
+
+  isRated() {
+    return this.params[10].asBool();
+  }
+
+  isAdjourned() {
+    return this.params[11].asBool();
+  }
+
+  senderInitialTime() {
+    return this.params[12].asMsFromMinutes();
+  }
+
+  senderIncrement() {
+    return this.params[13].asMsFromSeconds();
+  }
+
+  receiverInitialTime() {
+    return this.params[14].asMsFromMinutes();
+  }
+
+  receiverIncrement() {
+    return this.params[15].asMsFromSeconds();
+  }
+
+  requestedColor() {
+    return this.params[16].asColor();
+  }
+
+  assessLoss() {
+    return this.params.length > 17 ? this.params[17].asInt() : 0;
+  }
+
+  assessDraw() {
+    return this.params.length > 18 ? this.params[18].asInt() : 0;
+  }
+
+  assessWin() {
+    return this.params.length > 19 ? this.params[19].asInt() : 0;
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -831,6 +913,7 @@ datagramFactory[DG.LIST_HEAD] = ListHead;
 datagramFactory[DG.LIST_ITEM] = ListItem;
 datagramFactory[DG.LIST_REMOVED] = ListRemoved;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
+datagramFactory[DG.MATCH] = Match;
 datagramFactory[DG.MSEC] = MSec;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
@@ -902,6 +985,7 @@ module.exports = {
   ListItem,
   ListRemoved,
   LoginFailed,
+  Match,
   MSec,
   MyGameChanged,
   MyGameEnded,

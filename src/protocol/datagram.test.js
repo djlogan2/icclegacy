@@ -30,6 +30,7 @@ const {
   ListItem,
   ListRemoved,
   LoginFailed,
+  Match,
   MSec,
   MyGameChanged,
   MyGameEnded,
@@ -875,6 +876,55 @@ describe("Datagram", () => {
       assert.equal(dg.listName(), "some-name");
       assert.equal(dg.listOwner(), "some-owner");
       assert.equal(dg.stringParam(0), "some-param");
+    });
+  });
+
+  describe("Match", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MATCH, [
+        "sender-name",
+        "1000",
+        "1",
+        "sh",
+        "receiver-name",
+        "2000",
+        "2",
+        "gm",
+        "2",
+        "rat-cat",
+        "1",
+        "1",
+        "1",
+        "10",
+        "2",
+        "20",
+        "1",
+        "1",
+        "2",
+        "3"
+      ]);
+      assert.instanceOf(dg, Match);
+      assert.equal(dg.id, DG.MATCH);
+      assert.equal(dg.senderName(), "sender-name");
+      assert.equal(dg.senderRating(), 1000);
+      assert.equal(dg.senderRatingType(), 1);
+      assert.sameMembers(dg.senderTitles(), ["sh"]);
+      assert.equal(dg.receiverName(), "receiver-name");
+      assert.equal(dg.receiverRating(), 2000);
+      assert.equal(dg.receiverRatingType(), 2);
+      assert.sameMembers(dg.receiverTitles(), ["gm"]);
+      assert.equal(dg.wildNumber(), 2);
+      assert.equal(dg.ratingCategoryName(), "rat-cat");
+      assert.isTrue(dg.isRated());
+      assert.isTrue(dg.isAdjourned());
+      assert.equal(dg.senderInitialTime(), 60000);
+      assert.equal(dg.senderIncrement(), 10000);
+      assert.equal(dg.receiverInitialTime(), 120000);
+      assert.equal(dg.receiverIncrement(), 20000);
+      assert.equal(dg.requestedColor(), Color.WHITE);
+      assert.equal(dg.assessLoss(), 1);
+      assert.equal(dg.assessDraw(), 2);
+      assert.equal(dg.assessWin(), 3);
     });
   });
 });
