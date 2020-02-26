@@ -31,6 +31,7 @@ const {
   ListRemoved,
   LoginFailed,
   Match,
+  MatchRemoved,
   MSec,
   MyGameChanged,
   MyGameEnded,
@@ -925,6 +926,17 @@ describe("Datagram", () => {
       assert.equal(dg.assessLoss(), 1);
       assert.equal(dg.assessDraw(), 2);
       assert.equal(dg.assessWin(), 3);
+    });
+  });
+
+  describe("MatchRemoved", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MATCH_REMOVED, ["sender-name", "receiver-name", "foobar"]);
+      assert.instanceOf(dg, MatchRemoved);
+      assert.equal(dg.id, DG.MATCH_REMOVED);
+      assert.equal(dg.senderName(), "sender-name");
+      assert.equal(dg.receiverName(), "receiver-name");
+      assert.equal(dg.reason(), "foobar");
     });
   });
 });

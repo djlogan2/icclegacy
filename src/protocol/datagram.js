@@ -885,6 +885,20 @@ class Match extends Datagram {
   }
 }
 
+class MatchRemoved extends Datagram {
+  senderName() {
+    return this.params[0].asString();
+  }
+
+  receiverName() {
+    return this.params[1].asString();
+  }
+
+  reason() {
+    return this.params[2].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -914,6 +928,7 @@ datagramFactory[DG.LIST_ITEM] = ListItem;
 datagramFactory[DG.LIST_REMOVED] = ListRemoved;
 datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MATCH] = Match;
+datagramFactory[DG.MATCH_REMOVED] = MatchRemoved;
 datagramFactory[DG.MSEC] = MSec;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
@@ -986,6 +1001,7 @@ module.exports = {
   ListRemoved,
   LoginFailed,
   Match,
+  MatchRemoved,
   MSec,
   MyGameChanged,
   MyGameEnded,
