@@ -1061,6 +1061,48 @@ class WildKey extends Datagram {
   }
 }
 
+class Rating extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  ratingCategoryIndex() {
+    return this.params[1].asInt();
+  }
+
+  ratingRank() {
+    return this.params[2].asInt();
+  }
+
+  ratingScore() {
+    return this.params[3].asInt();
+  }
+
+  needsGames() {
+    return this.params[4].asInt();
+  }
+
+  totalWins() {
+    return this.params[5].asInt();
+  }
+
+  totalDraws() {
+    return this.params[6].asInt();
+  }
+
+  totalLosses() {
+    return this.params[7].asInt();
+  }
+
+  bestRatingScore() {
+    return this.params[8].asInt();
+  }
+
+  bestRatingDate() {
+    return this.params[9].asEpochFromISO8601();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1122,6 +1164,7 @@ datagramFactory[DG.POOL_LEFT] = PoolLeft;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.PSTAT2] = PStat2;
+datagramFactory[DG.RATING] = Rating;
 datagramFactory[DG.RATING_TYPE_KEY] = RatingTypeKey;
 datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
@@ -1210,6 +1253,7 @@ module.exports = {
   PositionBegin,
   PositionBegin2,
   PStat2,
+  Rating,
   RatingTypeKey,
   Refresh,
   SendMoves,

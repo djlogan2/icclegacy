@@ -63,6 +63,7 @@ const {
   PositionBegin,
   PositionBegin2,
   PStat2,
+  Rating,
   RatingTypeKey,
   Refresh,
   SendMoves,
@@ -1106,6 +1107,24 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.WILD_KEY);
       assert.equal(dg.index(), "1");
       assert.equal(dg.wildName(), "some-wild");
+    });
+  });
+
+  describe("Rating", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.RATING, ["some-user", "1", "2", "3", "4", "5", "6", "7", "8", "2020-02-25T12:04:11Z"]);
+      assert.instanceOf(dg, Rating);
+      assert.equal(dg.id, DG.RATING);
+      assert.equal(dg.username(), "some-user");
+      assert.equal(dg.ratingCategoryIndex(), 1);
+      assert.equal(dg.ratingRank(), 2);
+      assert.equal(dg.ratingScore(), 3);
+      assert.equal(dg.needsGames(), 4);
+      assert.equal(dg.totalWins(), 5);
+      assert.equal(dg.totalDraws(), 6);
+      assert.equal(dg.totalLosses(), 7);
+      assert.equal(dg.bestRatingScore(), 8);
+      assert.equal(dg.bestRatingDate(), 1582632251000);
     });
   });
 });
