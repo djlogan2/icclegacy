@@ -140,6 +140,14 @@ module.exports = {
     ESTABLISHED: 2
   }),
 
+  SeekRemovedReason: Object.freeze({
+    SeekerLeft: 1,
+    SeekerPlaying: 2,
+    SeekerRemovedAd: 3,
+    SeekerReplacedAd: 4,
+    SeekerNotAvailable: 5
+  }),
+
   SeekVisibility: Object.freeze({
     NEVER: 0,
     WHEN_BROWSING_ONLY: 1,

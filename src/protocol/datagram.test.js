@@ -69,6 +69,7 @@ const {
   RatingTypeKey,
   Refresh,
   Seek,
+  SeekRemoved,
   SendMoves,
   SetClock,
   Sound,
@@ -83,7 +84,7 @@ const {
   WildKey,
   createDatagram
 } = require("./datagram");
-const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, ProvisionalStatus, TellType, Wild } = require("./const");
+const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, ProvisionalStatus, SeekRemovedReason, TellType, Wild } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -1170,6 +1171,16 @@ describe("Datagram", () => {
       assert.equal(dg.maxRating(), 2000);
       assert.isTrue(dg.autoAccept());
       assert.isTrue(dg.checksFormula());
+    });
+  });
+
+  describe("SeekRemoved", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.SEEK_REMOVED, ["1", "2"]);
+      assert.instanceOf(dg, SeekRemoved);
+      assert.equal(dg.id, DG.SEEK_REMOVED);
+      assert.equal(dg.index(), 1);
+      assert.equal(dg.reason(), SeekRemovedReason.SeekerPlaying);
     });
   });
 });

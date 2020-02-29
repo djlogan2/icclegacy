@@ -1183,6 +1183,17 @@ class Seek extends Datagram {
   }
 }
 
+class SeekRemoved extends Datagram {
+  index() {
+    return this.params[0].asInt();
+  }
+
+  // Returns enum SeekRemovedReason.
+  reason() {
+    return this.params[1].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1250,6 +1261,7 @@ datagramFactory[DG.RATING] = Rating;
 datagramFactory[DG.RATING_TYPE_KEY] = RatingTypeKey;
 datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEEK] = Seek;
+datagramFactory[DG.SEEK_REMOVED] = SeekRemoved;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
 datagramFactory[DG.SOUND] = Sound;
@@ -1342,6 +1354,7 @@ module.exports = {
   RatingTypeKey,
   Refresh,
   Seek,
+  SeekRemoved,
   SendMoves,
   SetClock,
   Sound,
