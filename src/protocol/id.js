@@ -603,7 +603,7 @@ module.exports = {
     THREEMINUTE: 149,
     FORTYFIVEMINUTE: 150,
     CHESS960: 151,
-    FCOUNTRY: 152,
+    COUNTRY: 152,
     FEATURES: 153,
     ERROR: 154,
     GROUP_INFO: 155,

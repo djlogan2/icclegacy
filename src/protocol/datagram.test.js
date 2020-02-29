@@ -10,6 +10,7 @@ const {
   ChannelTell,
   ChannelQTell,
   Circle,
+  Country,
   DisablePremove,
   EndProfile,
   Error,
@@ -34,6 +35,7 @@ const {
   Match,
   MatchRemoved,
   MSec,
+  Mugshot,
   MyGameChanged,
   MyGameEnded,
   MyGameResult,
@@ -1021,6 +1023,28 @@ describe("Datagram", () => {
       assert.equal(dg.id, DG.NOTIFY_STATE);
       assert.equal(dg.username(), "some-player");
       assert.equal(dg.status(), "foobar");
+      assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("Country", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.COUNTRY, ["some-player", "42", "dk"]);
+      assert.instanceOf(dg, Country);
+      assert.equal(dg.id, DG.COUNTRY);
+      assert.equal(dg.username(), "some-player");
+      assert.equal(dg.gameNumber(), 42);
+      assert.equal(dg.countryFlag(), "dk");
+    });
+  });
+
+  describe("Mugshot", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MUGSHOT, ["some-player", "http://", "42"]);
+      assert.instanceOf(dg, Mugshot);
+      assert.equal(dg.id, DG.MUGSHOT);
+      assert.equal(dg.username(), "some-player");
+      assert.equal(dg.url(), "http://");
       assert.equal(dg.gameNumber(), 42);
     });
   });

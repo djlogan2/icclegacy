@@ -967,6 +967,34 @@ class MyNotifyList extends Datagram {
   }
 }
 
+class Country extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  gameNumber() {
+    return this.params[1].asInt();
+  }
+
+  countryFlag() {
+    return this.params[2].asString();
+  }
+}
+
+class Mugshot extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  url() {
+    return this.params[1].asString();
+  }
+
+  gameNumber() {
+    return this.params[2].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -975,6 +1003,7 @@ datagramFactory[DG.BOARDINFO] = BoardInfo;
 datagramFactory[DG.CHANNEL_TELL] = ChannelTell;
 datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
+datagramFactory[DG.COUNTRY] = Country;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
 datagramFactory[DG.END_PROFILE] = EndProfile;
 datagramFactory[DG.ERROR] = Error;
@@ -999,6 +1028,7 @@ datagramFactory[DG.LOGIN_FAILED] = LoginFailed;
 datagramFactory[DG.MATCH] = Match;
 datagramFactory[DG.MATCH_REMOVED] = MatchRemoved;
 datagramFactory[DG.MSEC] = MSec;
+datagramFactory[DG.MUGSHOT] = Mugshot;
 datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
@@ -1055,6 +1085,7 @@ module.exports = {
   ChannelTell,
   ChannelQTell,
   Circle,
+  Country,
   Datagram,
   DisablePremove,
   EndProfile,
@@ -1080,6 +1111,7 @@ module.exports = {
   Match,
   MatchRemoved,
   MSec,
+  Mugshot,
   MyGameChanged,
   MyGameEnded,
   MyGameResult,
