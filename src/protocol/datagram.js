@@ -1033,6 +1033,24 @@ class PStat2 extends Datagram {
   }
 }
 
+class RatingTypeKey extends Datagram {
+  index() {
+    return this.params[0].asInt();
+  }
+
+  ratingName() {
+    return this.params[1].asString();
+  }
+}
+
+class MyRating extends Datagram {
+  ratings() {
+    return this.params.map(p => p.asInt());
+  }
+}
+
+class NewMyRating extends MyRating {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1072,8 +1090,10 @@ datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_NOTIFY_LIST] = MyNotifyList;
+datagramFactory[DG.MY_RATING] = MyRating;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.MY_TURN] = MyTurn;
+datagramFactory[DG.NEW_MY_RATING] = NewMyRating;
 datagramFactory[DG.NOTE] = Note;
 datagramFactory[DG.NOTIFY_ARRIVED] = NotifyArrived;
 datagramFactory[DG.NOTIFY_LEFT] = NotifyLeft;
@@ -1092,6 +1112,7 @@ datagramFactory[DG.POOL_LEFT] = PoolLeft;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
 datagramFactory[DG.PSTAT2] = PStat2;
+datagramFactory[DG.RATING_TYPE_KEY] = RatingTypeKey;
 datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
@@ -1156,8 +1177,10 @@ module.exports = {
   MyGameResult,
   MyGameStarted,
   MyNotifyList,
+  MyRating,
   MyRelationToGame,
   MyTurn,
+  NewMyRating,
   Note,
   NotifyArrived,
   NotifyLeft,
@@ -1176,6 +1199,7 @@ module.exports = {
   PositionBegin,
   PositionBegin2,
   PStat2,
+  RatingTypeKey,
   Refresh,
   SendMoves,
   SetClock,

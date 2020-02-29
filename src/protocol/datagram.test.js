@@ -41,8 +41,10 @@ const {
   MyGameResult,
   MyGameStarted,
   MyNotifyList,
+  MyRating,
   MyRelationToGame,
   MyTurn,
+  NewMyRating,
   Note,
   NotifyArrived,
   NotifyLeft,
@@ -61,6 +63,7 @@ const {
   PositionBegin,
   PositionBegin2,
   PStat2,
+  RatingTypeKey,
   Refresh,
   SendMoves,
   SetClock,
@@ -1064,6 +1067,34 @@ describe("Datagram", () => {
       assert.equal(dg.winsAsBlack(), 4);
       assert.equal(dg.lossesAsBlack(), 5);
       assert.equal(dg.drawsAsBlack(), 6);
+    });
+  });
+
+  describe("RatingTypeKey", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.RATING_TYPE_KEY, ["1", "some-rating"]);
+      assert.instanceOf(dg, RatingTypeKey);
+      assert.equal(dg.id, DG.RATING_TYPE_KEY);
+      assert.equal(dg.index(), 1);
+      assert.equal(dg.ratingName(), "some-rating");
+    });
+  });
+
+  describe("MyRating", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_RATING, ["1", "2", "3", "4"]);
+      assert.instanceOf(dg, MyRating);
+      assert.equal(dg.id, DG.MY_RATING);
+      assert.sameMembers(dg.ratings(), [1, 2, 3, 4]);
+    });
+  });
+
+  describe("NewMyRating", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.NEW_MY_RATING, ["1", "2", "3", "4"]);
+      assert.instanceOf(dg, NewMyRating);
+      assert.equal(dg.id, DG.NEW_MY_RATING);
+      assert.sameMembers(dg.ratings(), [1, 2, 3, 4]);
     });
   });
 });
