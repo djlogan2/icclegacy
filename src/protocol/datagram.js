@@ -995,6 +995,44 @@ class Mugshot extends Datagram {
   }
 }
 
+class PStat2 extends Datagram {
+  ratingIndex() {
+    return this.params[0].asInt();
+  }
+
+  username1() {
+    return this.params[1].asString();
+  }
+
+  username2() {
+    return this.params[2].asString();
+  }
+
+  winsAsWhite() {
+    return this.params[3].asInt();
+  }
+
+  lossesAsWhite() {
+    return this.params[4].asInt();
+  }
+
+  drawsAsWhite() {
+    return this.params[5].asInt();
+  }
+
+  winsAsBlack() {
+    return this.params[6].asInt();
+  }
+
+  lossesAsBlack() {
+    return this.params[7].asInt();
+  }
+
+  drawsAsBlack() {
+    return this.params[8].asInt();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1053,6 +1091,7 @@ datagramFactory[DG.POOL_JOINED] = PoolJoined;
 datagramFactory[DG.POOL_LEFT] = PoolLeft;
 datagramFactory[DG.POSITION_BEGIN] = PositionBegin;
 datagramFactory[DG.POSITION_BEGIN2] = PositionBegin2;
+datagramFactory[DG.PSTAT2] = PStat2;
 datagramFactory[DG.REFRESH] = Refresh;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
@@ -1136,6 +1175,7 @@ module.exports = {
   PoolLeft,
   PositionBegin,
   PositionBegin2,
+  PStat2,
   Refresh,
   SendMoves,
   SetClock,

@@ -60,6 +60,7 @@ const {
   PoolLeft,
   PositionBegin,
   PositionBegin2,
+  PStat2,
   Refresh,
   SendMoves,
   SetClock,
@@ -1046,6 +1047,23 @@ describe("Datagram", () => {
       assert.equal(dg.username(), "some-player");
       assert.equal(dg.url(), "http://");
       assert.equal(dg.gameNumber(), 42);
+    });
+  });
+
+  describe("PStat2", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PSTAT2, ["42", "some-player-1", "some-player-2", "1", "2", "3", "4", "5", "6"]);
+      assert.instanceOf(dg, PStat2);
+      assert.equal(dg.id, DG.PSTAT2);
+      assert.equal(dg.ratingIndex(), 42);
+      assert.equal(dg.username1(), "some-player-1");
+      assert.equal(dg.username2(), "some-player-2");
+      assert.equal(dg.winsAsWhite(), 1);
+      assert.equal(dg.lossesAsWhite(), 2);
+      assert.equal(dg.drawsAsWhite(), 3);
+      assert.equal(dg.winsAsBlack(), 4);
+      assert.equal(dg.lossesAsBlack(), 5);
+      assert.equal(dg.drawsAsBlack(), 6);
     });
   });
 });
