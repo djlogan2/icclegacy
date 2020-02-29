@@ -68,6 +68,7 @@ const {
   Rating,
   RatingTypeKey,
   Refresh,
+  Seek,
   SendMoves,
   SetClock,
   Sound,
@@ -82,7 +83,7 @@ const {
   WildKey,
   createDatagram
 } = require("./datagram");
-const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, TellType, Wild } = require("./const");
+const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, ProvisionalStatus, TellType, Wild } = require("./const");
 
 describe("Datagram", () => {
   describe("WhoAmI", () => {
@@ -1146,6 +1147,29 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.DUMMY_RESPONSE, ["some-field", "1", "", "some-message"]);
       assert.instanceOf(dg, DummyResponse);
       assert.equal(dg.id, DG.DUMMY_RESPONSE);
+    });
+  });
+
+  describe("Seek", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.SEEK, ["1", "some-user", "gm sh", "1", "2", "3", "some-rating", "1", "2", "1", "1", "1000", "2000", "1", "1"]);
+      assert.instanceOf(dg, Seek);
+      assert.equal(dg.id, DG.SEEK);
+      assert.equal(dg.index(), 1);
+      assert.equal(dg.username(), "some-user");
+      assert.sameMembers(dg.titles(), ["gm", "sh"]);
+      assert.equal(dg.rating(), 1);
+      assert.equal(dg.provisionalStatus(), ProvisionalStatus.ESTABLISHED);
+      assert.equal(dg.wild(), Wild.RANDOM_MIRROR);
+      assert.equal(dg.ratingName(), "some-rating");
+      assert.equal(dg.time(), 60000);
+      assert.equal(dg.increment(), 2000);
+      assert.isTrue(dg.rated());
+      assert.equal(dg.color(), Color.WHITE);
+      assert.equal(dg.minRating(), 1000);
+      assert.equal(dg.maxRating(), 2000);
+      assert.isTrue(dg.autoAccept());
+      assert.isTrue(dg.checksFormula());
     });
   });
 });

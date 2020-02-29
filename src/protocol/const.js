@@ -134,6 +134,12 @@ module.exports = {
     SIDELINE: 6 // Not yet implemented
   }),
 
+  ProvisionalStatus: Object.freeze({
+    NO_GAMES: 0,
+    PROVISIONAL: 1,
+    ESTABLISHED: 2
+  }),
+
   SeekVisibility: Object.freeze({
     NEVER: 0,
     WHEN_BROWSING_ONLY: 1,

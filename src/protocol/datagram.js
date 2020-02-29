@@ -1119,6 +1119,70 @@ class FormFeedback extends Datagram {
 
 class DummyResponse extends Datagram {}
 
+class Seek extends Datagram {
+  index() {
+    return this.params[0].asInt();
+  }
+
+  username() {
+    return this.params[1].asString();
+  }
+
+  titles() {
+    return this.params[2].asStringList();
+  }
+
+  rating() {
+    return this.params[3].asInt();
+  }
+
+  // Returns enum ProvisionalStatus.
+  provisionalStatus() {
+    return this.params[4].asInt();
+  }
+
+  // Returns enum Wild.
+  wild() {
+    return this.params[5].asInt();
+  }
+
+  ratingName() {
+    return this.params[6].asString();
+  }
+
+  time() {
+    return this.params[7].asMsFromMinutes();
+  }
+
+  increment() {
+    return this.params[8].asMsFromSeconds();
+  }
+
+  rated() {
+    return this.params[9].asBool();
+  }
+
+  color() {
+    return this.params[10].asColor();
+  }
+
+  minRating() {
+    return this.params[11].asInt();
+  }
+
+  maxRating() {
+    return this.params[12].asInt();
+  }
+
+  autoAccept() {
+    return this.params[13].asBool();
+  }
+
+  checksFormula() {
+    return this.params[14].asBool();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1185,6 +1249,7 @@ datagramFactory[DG.PSTAT2] = PStat2;
 datagramFactory[DG.RATING] = Rating;
 datagramFactory[DG.RATING_TYPE_KEY] = RatingTypeKey;
 datagramFactory[DG.REFRESH] = Refresh;
+datagramFactory[DG.SEEK] = Seek;
 datagramFactory[DG.SEND_MOVES] = SendMoves;
 datagramFactory[DG.SET_CLOCK] = SetClock;
 datagramFactory[DG.SOUND] = Sound;
@@ -1276,6 +1341,7 @@ module.exports = {
   Rating,
   RatingTypeKey,
   Refresh,
+  Seek,
   SendMoves,
   SetClock,
   Sound,
