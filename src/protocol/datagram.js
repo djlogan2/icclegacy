@@ -1051,6 +1051,16 @@ class MyRating extends Datagram {
 
 class NewMyRating extends MyRating {}
 
+class WildKey extends Datagram {
+  index() {
+    return this.params[0].asInt();
+  }
+
+  wildName() {
+    return this.params[1].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1125,6 +1135,7 @@ datagramFactory[DG.TOURNEY_GAME_STARTED] = TourneyGameStarted;
 datagramFactory[DG.UNARROW] = UnArrow;
 datagramFactory[DG.UNCIRCLE] = UnCircle;
 datagramFactory[DG.WHO_AM_I] = WhoAmI;
+datagramFactory[DG.WILD_KEY] = WildKey;
 
 function createDatagram(id, params) {
   if (typeof id !== "number") throw new Error("id");
@@ -1212,5 +1223,6 @@ module.exports = {
   UnArrow,
   UnCircle,
   WhoAmI,
+  WildKey,
   createDatagram
 };

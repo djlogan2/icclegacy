@@ -76,6 +76,7 @@ const {
   UnArrow,
   UnCircle,
   WhoAmI,
+  WildKey,
   createDatagram
 } = require("./datagram");
 const { Color, KibitzType, MarkerBrush, MarkerType, MoveVariation, TellType, Wild } = require("./const");
@@ -1095,6 +1096,16 @@ describe("Datagram", () => {
       assert.instanceOf(dg, NewMyRating);
       assert.equal(dg.id, DG.NEW_MY_RATING);
       assert.sameMembers(dg.ratings(), [1, 2, 3, 4]);
+    });
+  });
+
+  describe("WildKey", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.WILD_KEY, ["1", "some-wild"]);
+      assert.instanceOf(dg, WildKey);
+      assert.equal(dg.id, DG.WILD_KEY);
+      assert.equal(dg.index(), "1");
+      assert.equal(dg.wildName(), "some-wild");
     });
   });
 });
