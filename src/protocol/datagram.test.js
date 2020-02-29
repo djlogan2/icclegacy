@@ -47,6 +47,7 @@ const {
   PersonalTellEcho,
   PersonalQTell,
   PgnTag,
+  PlayerArrivedSimple,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,
@@ -959,6 +960,15 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.equal(dg.name(), "tag-name");
       assert.equal(dg.value(), "tag-value");
+    });
+  });
+
+  describe("PlayerArrivedSimple", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PLAYER_ARRIVED_SIMPLE, ["some-player"]);
+      assert.instanceOf(dg, PlayerArrivedSimple);
+      assert.equal(dg.id, DG.PLAYER_ARRIVED_SIMPLE);
+      assert.equal(dg.username(), "some-player");
     });
   });
 });

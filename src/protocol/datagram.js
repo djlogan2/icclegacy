@@ -919,6 +919,12 @@ class PgnTag extends Datagram {
   }
 }
 
+class PlayerArrivedSimple extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -964,6 +970,7 @@ datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
 datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.PGN_TAG] = PgnTag;
+datagramFactory[DG.PLAYER_ARRIVED_SIMPLE] = PlayerArrivedSimple;
 datagramFactory[DG.PLAYERS_IN_MY_GAME] = PlayersInMyGame;
 datagramFactory[DG.POOL_JOINED] = PoolJoined;
 datagramFactory[DG.POOL_LEFT] = PoolLeft;
@@ -1039,6 +1046,7 @@ module.exports = {
   PersonalTellEcho,
   PersonalQTell,
   PgnTag,
+  PlayerArrivedSimple,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,
