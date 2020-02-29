@@ -1103,6 +1103,22 @@ class Rating extends Datagram {
   }
 }
 
+class FormFeedback extends Datagram {
+  fieldName() {
+    return this.params[0].asString();
+  }
+
+  code() {
+    return this.params[1].asInt();
+  }
+
+  errorMessage() {
+    return this.params[3].asString();
+  }
+}
+
+class DummyResponse extends Datagram {}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -1113,6 +1129,7 @@ datagramFactory[DG.CHANNEL_QTELL] = ChannelQTell;
 datagramFactory[DG.CIRCLE] = Circle;
 datagramFactory[DG.COUNTRY] = Country;
 datagramFactory[DG.DISABLE_PREMOVE] = DisablePremove;
+datagramFactory[DG.DUMMY_RESPONSE] = DummyResponse;
 datagramFactory[DG.END_PROFILE] = EndProfile;
 datagramFactory[DG.ERROR] = Error;
 datagramFactory[DG.EXAMINED_GAME_IS_GONE] = ExaminedGameIsGone;
@@ -1121,6 +1138,7 @@ datagramFactory[DG.FAIL] = Fail;
 datagramFactory[DG.FEN] = Fen;
 datagramFactory[DG.FIELD] = Field;
 datagramFactory[DG.FLIP] = Flip;
+datagramFactory[DG.FORM_FEEDBACK] = FormFeedback;
 datagramFactory[DG.GAME_MESSAGE] = GameMessage;
 datagramFactory[DG.GAME_RESULT] = GameResult;
 datagramFactory[DG.GAME_STARTED] = GameStarted;
@@ -1202,6 +1220,7 @@ module.exports = {
   Country,
   Datagram,
   DisablePremove,
+  DummyResponse,
   EndProfile,
   Error,
   ExaminedGameIsGone,
@@ -1210,6 +1229,7 @@ module.exports = {
   Fen,
   Flip,
   Field,
+  FormFeedback,
   GameMessage,
   GameResult,
   GameStarted,

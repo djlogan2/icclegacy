@@ -568,7 +568,7 @@ module.exports = {
     PASSWORD: 114,
     UNUSED_115: 115,
     WILD_KEY: 116,
-    UNUSED_117: 117,
+    FORM_FEEDBACK: 117,
     UNUSED_118: 118,
     KEY_VERSION: 119,
     SWITCH_SERVERS: 120,

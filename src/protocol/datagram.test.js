@@ -12,6 +12,7 @@ const {
   Circle,
   Country,
   DisablePremove,
+  DummyResponse,
   EndProfile,
   Error,
   ExaminedGameIsGone,
@@ -20,6 +21,7 @@ const {
   Fen,
   Field,
   Flip,
+  FormFeedback,
   GameMessage,
   GameResult,
   GameStarted,
@@ -1125,6 +1127,25 @@ describe("Datagram", () => {
       assert.equal(dg.totalLosses(), 7);
       assert.equal(dg.bestRatingScore(), 8);
       assert.equal(dg.bestRatingDate(), 1582632251000);
+    });
+  });
+
+  describe("FormFeedback", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.FORM_FEEDBACK, ["some-field", "1", "", "some-message"]);
+      assert.instanceOf(dg, FormFeedback);
+      assert.equal(dg.id, DG.FORM_FEEDBACK);
+      assert.equal(dg.fieldName(), "some-field");
+      assert.equal(dg.code(), 1);
+      assert.equal(dg.errorMessage(), "some-message");
+    });
+  });
+
+  describe("DummyResponse", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.DUMMY_RESPONSE, ["some-field", "1", "", "some-message"]);
+      assert.instanceOf(dg, DummyResponse);
+      assert.equal(dg.id, DG.DUMMY_RESPONSE);
     });
   });
 });
