@@ -943,6 +943,30 @@ class NotifyLeft extends Datagram {
   }
 }
 
+class NotifyState extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  status() {
+    return this.params[1].asString();
+  }
+
+  gameNumber() {
+    return this.params[2].asInt();
+  }
+}
+
+class MyNotifyList extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+
+  added() {
+    return this.params[1].asBool();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -979,11 +1003,13 @@ datagramFactory[DG.MY_GAME_CHANGE] = MyGameChanged;
 datagramFactory[DG.MY_GAME_ENDED] = MyGameEnded;
 datagramFactory[DG.MY_GAME_RESULT] = MyGameResult;
 datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
+datagramFactory[DG.MY_NOTIFY_LIST] = MyNotifyList;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.MY_TURN] = MyTurn;
 datagramFactory[DG.NOTE] = Note;
 datagramFactory[DG.NOTIFY_ARRIVED] = NotifyArrived;
 datagramFactory[DG.NOTIFY_LEFT] = NotifyLeft;
+datagramFactory[DG.NOTIFY_STATE] = NotifyState;
 datagramFactory[DG.OFFERS_IN_MY_GAME] = OffersInMyGame;
 datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
@@ -1058,11 +1084,13 @@ module.exports = {
   MyGameEnded,
   MyGameResult,
   MyGameStarted,
+  MyNotifyList,
   MyRelationToGame,
   MyTurn,
   Note,
   NotifyArrived,
   NotifyLeft,
+  NotifyState,
   OffersInMyGame,
   PastMoves,
   PersonalTell,

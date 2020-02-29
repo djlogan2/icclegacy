@@ -38,11 +38,13 @@ const {
   MyGameEnded,
   MyGameResult,
   MyGameStarted,
+  MyNotifyList,
   MyRelationToGame,
   MyTurn,
   Note,
   NotifyArrived,
   NotifyLeft,
+  NotifyState,
   OffersInMyGame,
   PastMoves,
   PersonalTell,
@@ -999,6 +1001,27 @@ describe("Datagram", () => {
       assert.instanceOf(dg, NotifyLeft);
       assert.equal(dg.id, DG.NOTIFY_LEFT);
       assert.equal(dg.username(), "some-player");
+    });
+  });
+
+  describe("MyNotifyList", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.MY_NOTIFY_LIST, ["some-player", "1"]);
+      assert.instanceOf(dg, MyNotifyList);
+      assert.equal(dg.id, DG.MY_NOTIFY_LIST);
+      assert.equal(dg.username(), "some-player");
+      assert.isTrue(dg.added());
+    });
+  });
+
+  describe("NotifyState", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.NOTIFY_STATE, ["some-player", "foobar", "42"]);
+      assert.instanceOf(dg, NotifyState);
+      assert.equal(dg.id, DG.NOTIFY_STATE);
+      assert.equal(dg.username(), "some-player");
+      assert.equal(dg.status(), "foobar");
+      assert.equal(dg.gameNumber(), 42);
     });
   });
 });
