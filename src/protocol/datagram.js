@@ -925,6 +925,24 @@ class PlayerArrivedSimple extends Datagram {
   }
 }
 
+class NotifyArrived extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+}
+
+class PlayerLeft extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+}
+
+class NotifyLeft extends Datagram {
+  username() {
+    return this.params[0].asString();
+  }
+}
+
 const datagramFactory = [];
 datagramFactory.length = DG.COUNT;
 datagramFactory[DG.ARROW] = Arrow;
@@ -964,6 +982,8 @@ datagramFactory[DG.MY_GAME_STARTED] = MyGameStarted;
 datagramFactory[DG.MY_RELATION_TO_GAME] = MyRelationToGame;
 datagramFactory[DG.MY_TURN] = MyTurn;
 datagramFactory[DG.NOTE] = Note;
+datagramFactory[DG.NOTIFY_ARRIVED] = NotifyArrived;
+datagramFactory[DG.NOTIFY_LEFT] = NotifyLeft;
 datagramFactory[DG.OFFERS_IN_MY_GAME] = OffersInMyGame;
 datagramFactory[DG.PAST_MOVE] = PastMoves;
 datagramFactory[DG.PERSONAL_TELL] = PersonalTell;
@@ -971,6 +991,7 @@ datagramFactory[DG.PERSONAL_TELL_ECHO] = PersonalTellEcho;
 datagramFactory[DG.PERSONAL_QTELL] = PersonalQTell;
 datagramFactory[DG.PGN_TAG] = PgnTag;
 datagramFactory[DG.PLAYER_ARRIVED_SIMPLE] = PlayerArrivedSimple;
+datagramFactory[DG.PLAYER_LEFT] = PlayerLeft;
 datagramFactory[DG.PLAYERS_IN_MY_GAME] = PlayersInMyGame;
 datagramFactory[DG.POOL_JOINED] = PoolJoined;
 datagramFactory[DG.POOL_LEFT] = PoolLeft;
@@ -1040,6 +1061,8 @@ module.exports = {
   MyRelationToGame,
   MyTurn,
   Note,
+  NotifyArrived,
+  NotifyLeft,
   OffersInMyGame,
   PastMoves,
   PersonalTell,
@@ -1047,6 +1070,7 @@ module.exports = {
   PersonalQTell,
   PgnTag,
   PlayerArrivedSimple,
+  PlayerLeft,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,

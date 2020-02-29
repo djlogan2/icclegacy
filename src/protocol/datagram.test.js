@@ -41,6 +41,8 @@ const {
   MyRelationToGame,
   MyTurn,
   Note,
+  NotifyArrived,
+  NotifyLeft,
   OffersInMyGame,
   PastMoves,
   PersonalTell,
@@ -48,6 +50,7 @@ const {
   PersonalQTell,
   PgnTag,
   PlayerArrivedSimple,
+  PlayerLeft,
   PlayersInMyGame,
   PoolJoined,
   PoolLeft,
@@ -968,6 +971,33 @@ describe("Datagram", () => {
       const dg = createDatagram(DG.PLAYER_ARRIVED_SIMPLE, ["some-player"]);
       assert.instanceOf(dg, PlayerArrivedSimple);
       assert.equal(dg.id, DG.PLAYER_ARRIVED_SIMPLE);
+      assert.equal(dg.username(), "some-player");
+    });
+  });
+
+  describe("PlayerLeft", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.PLAYER_LEFT, ["some-player"]);
+      assert.instanceOf(dg, PlayerLeft);
+      assert.equal(dg.id, DG.PLAYER_LEFT);
+      assert.equal(dg.username(), "some-player");
+    });
+  });
+
+  describe("NotifyArrived", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.NOTIFY_ARRIVED, ["some-player"]);
+      assert.instanceOf(dg, NotifyArrived);
+      assert.equal(dg.id, DG.NOTIFY_ARRIVED);
+      assert.equal(dg.username(), "some-player");
+    });
+  });
+
+  describe("NotifyLeft", () => {
+    it("assigns params correctly", () => {
+      const dg = createDatagram(DG.NOTIFY_LEFT, ["some-player"]);
+      assert.instanceOf(dg, NotifyLeft);
+      assert.equal(dg.id, DG.NOTIFY_LEFT);
       assert.equal(dg.username(), "some-player");
     });
   });
