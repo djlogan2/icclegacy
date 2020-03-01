@@ -25,6 +25,9 @@ class Client {
 
     this.onDatagram(DG.WHO_AM_I, dg => handleWhoAmI(this, dg));
     this.onDatagram(DG.LOGIN_FAILED, dg => handleLoginFailed(this, dg));
+
+    // Configure datagram SEND_MOVES. The model assumes this configuration.
+    this.onDatagram(DG.MOVE_SMITH, () => {});
   }
 
   async login(socket, host, port, credentials) {
