@@ -77,35 +77,37 @@ describe("Integration", function() {
         assert.instanceOf(cmd, Date);
       });
 
-      it("me", async () => {
-        const client = await clientP;
-        const cmd = await client
-          .cli()
-          .vars()
-          .send();
-        assert.instanceOf(cmd, Vars);
-        assert.isTrue(cmd.isMyVars());
-      });
+      describe("vars", () => {
+        it("no args", async () => {
+          const client = await clientP;
+          const cmd = await client
+            .cli()
+            .vars()
+            .send();
+          assert.instanceOf(cmd, Vars);
+          assert.isTrue(cmd.isMyVars());
+        });
 
-      it("other", async () => {
-        const client = await clientP;
-        const cmd = await client
-          .cli()
-          .vars("asido")
-          .send();
-        assert.instanceOf(cmd, Vars);
-        assert.isFalse(cmd.isMyVars());
-        assert.equal(cmd.username(), "Asido");
-      });
+        it("existing player", async () => {
+          const client = await clientP;
+          const cmd = await client
+            .cli()
+            .vars("asido")
+            .send();
+          assert.instanceOf(cmd, Vars);
+          assert.isFalse(cmd.isMyVars());
+          assert.equal(cmd.username(), "Asido");
+        });
 
-      it("unexisting players", async () => {
-        const client = await clientP;
-        const cmd = await client
-          .cli()
-          .vars(UNEXISTING_USERNAME)
-          .send();
-        assert.isTrue(cmd.notFound());
-        assert.instanceOf(cmd, Vars);
+        it("unexisting player", async () => {
+          const client = await clientP;
+          const cmd = await client
+            .cli()
+            .vars(UNEXISTING_USERNAME)
+            .send();
+          assert.isTrue(cmd.notFound());
+          assert.instanceOf(cmd, Vars);
+        });
       });
     });
   });
