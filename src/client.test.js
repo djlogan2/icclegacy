@@ -4,6 +4,7 @@ const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const sinon = require("sinon");
 const { Client, handleLoginPrompt, handleDatagram } = require("./client");
+const { CommandBuilder } = require("./cmdbuilder");
 const { GuestCredentials } = require("./credentials");
 const { DG, WhoAmI } = require("./protocol");
 const { STATE_CONNECTING, STATE_OFFLINE } = require("./state");
@@ -133,6 +134,24 @@ describe("Client", () => {
       client.socket = { write: sinon.spy() };
       client.send("foobar");
       assert.isTrue(client.socket.write.calledOnceWith("`s0`foobar\n"));
+    });
+  });
+
+  describe("cli", () => {
+    it("returns command builder", () => {
+      const client = new Client();
+      const cli = client.cli();
+      assert.instanceOf(cli, CommandBuilder);
+    });
+
+    it("send calls client send", () => {
+      const client = new Client();
+      client.send = sinon.spy();
+      client
+        .cli()
+        .date()
+        .send();
+      assert.isTrue(client.send.calledOnceWith("date"));
     });
   });
 });
