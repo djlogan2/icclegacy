@@ -33,7 +33,7 @@ class Bad extends Command {}
 
 class Date extends Command {}
 
-class IllegalMove extends Command {}
+class SIllegalMove extends Command {}
 
 class Finger extends Command {}
 
@@ -786,7 +786,7 @@ commandFactory[CN.MINUS] = Minus;
 commandFactory[CN.OBSERVE] = Observe;
 commandFactory[CN.PGN] = Pgn;
 commandFactory[CN.PLUS] = Plus;
-commandFactory[CN.S_ILLEGAL_MOVE] = IllegalMove;
+commandFactory[CN.S_ILLEGAL_MOVE] = SIllegalMove;
 commandFactory[CN.VARS0] = Vars;
 commandFactory[CN.VARS] = Vars;
 commandFactory[CN.YFINGER] = YFinger;
@@ -810,7 +810,7 @@ module.exports = {
   BestScore,
   Command,
   Date,
-  IllegalMove,
+  SIllegalMove,
   Finger,
   Glicko,
   List,
