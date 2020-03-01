@@ -3,6 +3,7 @@
 const iconv = require("iconv-lite");
 const { Parser, DG } = require("./protocol");
 const { StateMachine, STATE_CONNECTING, STATE_OFFLINE, STATE_AUTHENTICATING, STATE_LOGGED_IN } = require("./state");
+const { CommandBuilder } = require("./cmdbuilder");
 const { EventEmitter } = require("./event");
 const { Sessions } = require("./sessions");
 
@@ -86,7 +87,9 @@ class Client {
     if (this.enabledDatagrams[dg] !== "1") {
       this.enabledDatagrams[dg] = "1";
       if (this.state.currentState.loggedIn) {
-        this.set2(dg, true);
+        this.cli()
+          .set2(dg, true)
+          .send();
       }
     }
   }
@@ -114,25 +117,10 @@ class Client {
     return promise;
   }
 
-  admin(password) {
-    if (typeof password !== "string" || !password) throw new Error("password");
-    return this.send("admin " + password);
-  }
-
-  date() {
-    return this.send("date");
-  }
-
-  set2(dg, enable) {
-    if (typeof dg !== "number") throw new Error("dg");
-    if (typeof enable !== "boolean") throw new Error("enable");
-
-    return this.send(`set-2 ${dg} ${enable ? "1" : "0"}`);
-  }
-
-  vars(player) {
-    if (player && typeof player !== "string") throw new Error("player");
-    return this.send("vars" + (player ? " " + player : ""));
+  cli() {
+    const builder = new CommandBuilder();
+    builder.send = () => this.send(builder.toString());
+    return builder;
   }
 }
 

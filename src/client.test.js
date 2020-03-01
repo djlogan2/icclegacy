@@ -1,12 +1,11 @@
 "use strict";
 
-const { Socket } = require("net");
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
 const sinon = require("sinon");
 const { Client, handleLoginPrompt, handleDatagram } = require("./client");
 const { GuestCredentials } = require("./credentials");
-const { DG, LoginFailed, WhoAmI } = require("./protocol");
+const { DG, WhoAmI } = require("./protocol");
 const { STATE_CONNECTING, STATE_OFFLINE } = require("./state");
 
 describe("Client", () => {
@@ -106,10 +105,10 @@ describe("Client", () => {
 
     it("sends set-2 when logged in", async () => {
       const client = await newOnlineClient(mockSocket());
-      client.set2 = sinon.spy();
+      client.send = sinon.spy();
       client.onDatagram(DG.UNUSED_54, () => {});
-      assert.equal(client.set2.callCount, 1);
-      assert.sameMembers(client.set2.getCall(0).args, [DG.UNUSED_54, true]);
+      assert.equal(client.send.callCount, 1);
+      assert.equal(client.send.getCall(0).args, "set-2 54 1");
     });
   });
 
@@ -134,54 +133,6 @@ describe("Client", () => {
       client.socket = { write: sinon.spy() };
       client.send("foobar");
       assert.isTrue(client.socket.write.calledOnceWith("`s0`foobar\n"));
-    });
-  });
-
-  describe("set2", () => {
-    it("formats enable command", async () => {
-      const client = new Client();
-      client.send = sinon.spy();
-      await client.set2(DG.UNUSED_54, true);
-      assert.isTrue(client.send.calledOnceWith("set-2 54 1"));
-    });
-
-    it("formats disable command", async () => {
-      const client = new Client();
-      client.send = sinon.spy();
-      await client.set2(DG.UNUSED_54, false);
-      assert.isTrue(client.send.calledOnceWith("set-2 54 0"));
-    });
-  });
-
-  describe("can format command", () => {
-    it("admin", async () => {
-      const client = new Client();
-      client.send = sinon.spy();
-      await client.admin("p@s5w0rd");
-      assert.isTrue(client.send.calledOnceWith("admin p@s5w0rd"));
-    });
-
-    it("date", async () => {
-      const client = new Client();
-      client.send = sinon.spy();
-      await client.date();
-      assert.isTrue(client.send.calledOnceWith("date"));
-    });
-
-    describe("vars", () => {
-      it("without player", async () => {
-        const client = new Client();
-        client.send = sinon.spy();
-        await client.vars();
-        assert.isTrue(client.send.calledOnceWith("vars"));
-      });
-
-      it("with player", async () => {
-        const client = new Client();
-        client.send = sinon.spy();
-        await client.vars("test-user");
-        assert.isTrue(client.send.calledOnceWith("vars test-user"));
-      });
     });
   });
 });

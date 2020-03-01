@@ -61,26 +61,38 @@ describe("Integration", function() {
 
       it("admin", async () => {
         const client = await clientP;
-        const cmd = await client.admin("p@s5w0rd");
+        const cmd = await client
+          .cli()
+          .admin("p@s5w0rd")
+          .send();
         assert.instanceOf(cmd, Bad); // Guests can't use the command.
       });
 
       it("date", async () => {
         const client = await clientP;
-        const cmd = await client.date();
+        const cmd = await client
+          .cli()
+          .date()
+          .send();
         assert.instanceOf(cmd, Date);
       });
 
       it("me", async () => {
         const client = await clientP;
-        const cmd = await client.vars();
+        const cmd = await client
+          .cli()
+          .vars()
+          .send();
         assert.instanceOf(cmd, Vars);
         assert.isTrue(cmd.isMyVars());
       });
 
       it("other", async () => {
         const client = await clientP;
-        const cmd = await client.vars("asido");
+        const cmd = await client
+          .cli()
+          .vars("asido")
+          .send();
         assert.instanceOf(cmd, Vars);
         assert.isFalse(cmd.isMyVars());
         assert.equal(cmd.username(), "Asido");
@@ -88,7 +100,10 @@ describe("Integration", function() {
 
       it("unexisting players", async () => {
         const client = await clientP;
-        const cmd = await client.vars(UNEXISTING_USERNAME);
+        const cmd = await client
+          .cli()
+          .vars(UNEXISTING_USERNAME)
+          .send();
         assert.isTrue(cmd.notFound());
         assert.instanceOf(cmd, Vars);
       });
