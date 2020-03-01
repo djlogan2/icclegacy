@@ -481,7 +481,7 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.isTrue(dg.becomeExamined());
       assert.equal(dg.resultCode(), "a");
-      assert.equal(dg.scoreString(), "b");
+      assert.equal(dg.score(), "b");
       assert.equal(dg.description(), "c");
       assert.equal(dg.eco(), "d");
     });
@@ -495,7 +495,7 @@ describe("Datagram", () => {
       assert.equal(dg.gameNumber(), 42);
       assert.isTrue(dg.becomeExamined());
       assert.equal(dg.resultCode(), "a");
-      assert.equal(dg.scoreString(), "b");
+      assert.equal(dg.score(), "b");
       assert.equal(dg.description(), "c");
       assert.equal(dg.eco(), "d");
     });
@@ -563,7 +563,7 @@ describe("Datagram", () => {
       assert.equal(dg.black(), "black-user");
       assert.equal(dg.white(), "white-user");
       assert.equal(dg.gameId(), "g42");
-      assert.equal(dg.scoreString(), "42");
+      assert.equal(dg.score(), "42");
     });
   });
 

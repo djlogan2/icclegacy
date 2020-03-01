@@ -500,7 +500,7 @@ class GameResult extends Datagram {
     return this.params[2].asString();
   }
 
-  scoreString() {
+  score() {
     return this.params[3].asString();
   }
 
@@ -588,7 +588,7 @@ class TourneyGameEnded extends Datagram {
     return this.params[3].asString();
   }
 
-  scoreString() {
+  score() {
     return this.params[4].asString();
   }
 }

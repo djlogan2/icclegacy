@@ -2,7 +2,7 @@
 
 const { describe, it } = require("mocha");
 const { assert } = require("chai");
-const { INVALID_GAME_ID, Command, Meta, Date, IllegalMove, Finger, Glicko, List, Minus, Observe, Pgn, Plus, Vars, YFinger, createCommand } = require("./command");
+const { INVALID_GAME_ID, Command, Meta, Date, SIllegalMove, Finger, Glicko, List, Minus, Observe, Pgn, Plus, Vars, YFinger, createCommand } = require("./command");
 const { CN } = require("./id");
 const {
   AllowKibitzWhilePlaying,
@@ -627,7 +627,7 @@ Address asido4@gmail.com`,
 
     it("S_ILLEGAL_MOVE", () => {
       const cmd = createCommand(new Meta(CN.S_ILLEGAL_MOVE, "test"), "");
-      assert.instanceOf(cmd, IllegalMove);
+      assert.instanceOf(cmd, SIllegalMove);
     });
 
     it("VARS", () => {
