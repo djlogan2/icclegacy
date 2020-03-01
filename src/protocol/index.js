@@ -2,7 +2,7 @@
 
 const { Parser } = require("./parser");
 const { CN, DG } = require("./id");
-const { Command, Meta, Date, Finger, IllegalMove, List, Minus, Observe, Pgn, Plus, Vars, YFinger } = require("./command");
+const { Bad, Command, Meta, Date, Finger, IllegalMove, List, Minus, Observe, Pgn, Plus, Vars, YFinger } = require("./command");
 const { Datagram, LoginFailed, WhoAmI } = require("./datagram");
 const {
   AllowKibitzWhilePlaying,
@@ -33,6 +33,7 @@ module.exports = {
   Datagram,
   Meta,
 
+  Bad,
   Date,
   Finger,
   IllegalMove,

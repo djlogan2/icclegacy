@@ -29,6 +29,8 @@ class Command {
   }
 }
 
+class Bad extends Command {}
+
 class Date extends Command {}
 
 class IllegalMove extends Command {}
@@ -776,6 +778,7 @@ class BestScore {
 
 const commandFactory = [];
 commandFactory.length = CN.COUNT;
+commandFactory[CN.S_BAD] = Bad;
 commandFactory[CN.DATE] = Date;
 commandFactory[CN.FINGER] = Finger;
 commandFactory[CN.LIST] = List;
@@ -803,6 +806,7 @@ function createCommand(meta, content, datagrams) {
 module.exports = {
   INVALID_GAME_ID,
   UNKNOWN_META,
+  Bad,
   BestScore,
   Command,
   Date,

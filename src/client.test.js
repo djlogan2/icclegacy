@@ -154,10 +154,17 @@ describe("Client", () => {
   });
 
   describe("can format command", () => {
+    it("admin", async () => {
+      const client = new Client();
+      client.send = sinon.spy();
+      await client.admin("p@s5w0rd");
+      assert.isTrue(client.send.calledOnceWith("admin p@s5w0rd"));
+    });
+
     it("date", async () => {
       const client = new Client();
       client.send = sinon.spy();
-      await client.date(DG.UNUSED_54, false);
+      await client.date();
       assert.isTrue(client.send.calledOnceWith("date"));
     });
 

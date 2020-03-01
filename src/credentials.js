@@ -2,7 +2,6 @@
 
 class Credentials {
   constructor() {
-    this.adminPassword = null;
     this.isAnonymous = false;
   }
 }

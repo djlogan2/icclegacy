@@ -114,6 +114,11 @@ class Client {
     return promise;
   }
 
+  admin(password) {
+    if (typeof password !== "string" || !password) throw new Error("password");
+    return this.send("admin " + password);
+  }
+
   date() {
     return this.send("date");
   }

@@ -6,7 +6,7 @@ const { assert } = require("chai");
 const { expectThrowsAsync } = require("./test");
 const { Client } = require("./client");
 const { GuestCredentials, UserPasswordCredentials } = require("./credentials");
-const { Date, Vars, LoginFailed, WhoAmI } = require("./protocol");
+const { Bad, Date, Vars, LoginFailed, WhoAmI } = require("./protocol");
 
 const QUEEN_HOST = "queen.chessclub.com";
 const QUEEN_PORT = 5000;
@@ -58,6 +58,12 @@ describe("Integration", function() {
 
     describe("can interpret command", () => {
       const clientP = newGuestClient();
+
+      it("admin", async () => {
+        const client = await clientP;
+        const cmd = await client.admin("p@s5w0rd");
+        assert.instanceOf(cmd, Bad); // Guests can't use the command.
+      });
 
       it("date", async () => {
         const client = await clientP;
