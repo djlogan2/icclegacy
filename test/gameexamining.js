@@ -1,5 +1,5 @@
 const chai = require('chai');
-const Legacy = require('../legacy').LegacyICC;
+const Legacy = require('icclegacy').LegacyICC;
 
 function log(n, data) {
     console.log("--- user" + n + " ---");

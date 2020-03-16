@@ -1,5 +1,5 @@
 const chai = require('chai');
-const Legacy = require('../legacy').LegacyICC;
+const Legacy = require('icclegacy').LegacyICC;
 
 function check_offers(n, data) {
     this["user" + n].resolves.offers(this);

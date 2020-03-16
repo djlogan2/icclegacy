@@ -1,6 +1,6 @@
 const chai = require('chai');
 const sinon = require('sinon');
-const Legacy = require('../legacy').LegacyICC;
+const Legacy = require('icclegacy').LegacyICC;
 const net = require("net");
 
 
