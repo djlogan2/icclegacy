@@ -8,10 +8,10 @@ function log(n, data) {
 
 function unexamine(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.players = resolve;
+        obj.user1.resolves.players = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.players = resolve;
+        obj.user2.resolves.players = resolve;
     });
 
     obj["user" + n].unexamine("unexamine");
@@ -43,12 +43,12 @@ function delete_library_game(obj, n, slot) {
 
 function mexamine(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.players = resolve;
+        obj.user1.resolves.players = resolve;
     });
     let promise2;
-    if (!!obj["user2"]) {
+    if (!!obj.user2) {
         promise2 = new Promise((resolve, reject) => {
-            obj["user2"].resolves.players = resolve;
+            obj.user2.resolves.players = resolve;
         });
     } else
         promise2 = Promise.resolve(obj);
@@ -79,12 +79,12 @@ function check_move(n, data) {
 
 function make_move(obj, n, move) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.move = resolve;
+        obj.user1.resolves.move = resolve;
     });
     let promise2;
-    if (!!obj["user2"])
+    if (!!obj.user2)
         promise2 = new Promise((resolve, reject) => {
-            obj["user2"].resolves.move = resolve;
+            obj.user2.resolves.move = resolve;
         });
     else
         promise2 = Promise.resolve(obj);
@@ -107,10 +107,10 @@ function check_players(n, data) {
 
 function observe(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.players = resolve;
+        obj.user1.resolves.players = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.players = resolve;
+        obj.user2.resolves.players = resolve;
     });
     const otherguy = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
     obj["user" + n].observe("observe-" + otherguy, otherguy);
@@ -118,16 +118,16 @@ function observe(obj, n) {
 }
 
 function forward(obj, n, moves) {
-    obj["user1"].resolves.move_count = moves;
-    if(obj["user2"])
-        obj["user2"].resolves.move_count = moves;
+    obj.user1.resolves.move_count = moves;
+    if(obj.user2)
+        obj.user2.resolves.move_count = moves;
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.move = resolve;
+        obj.user1.resolves.move = resolve;
     });
     let promise2;
-    if (!!obj["user2"])
+    if (!!obj.user2)
         promise2 = new Promise((resolve, reject) => {
-            obj["user2"].resolves.move = resolve;
+            obj.user2.resolves.move = resolve;
         });
     else
         promise2 = Promise.resolve(obj);
@@ -137,12 +137,12 @@ function forward(obj, n, moves) {
 
 function backward_cmd(obj, n, moves) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.backward = resolve;
+        obj.user1.resolves.backward = resolve;
     });
     let promise2;
-    if (!!obj["user2"])
+    if (!!obj.user2)
         promise2 = new Promise((resolve, reject) => {
-            obj["user2"].resolves.backward = resolve;
+            obj.user2.resolves.backward = resolve;
         });
     else
         promise2 = Promise.resolve(obj);
@@ -178,7 +178,7 @@ function error(n, data) {
 
 function revert(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.backward = resolve;
+        obj.user1.resolves.backward = resolve;
     });
     obj["user" + n].revert("revert-" + n);
     return promise1;
@@ -199,7 +199,7 @@ function unarrow_dg(n, data) {
 
 function circle_cmd(obj, n, sq) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.circle = resolve;
+        obj.user1.resolves.circle = resolve;
     });
     obj["user" + n].circle("circle-" + n, "e5");
     return promise1;
@@ -207,7 +207,7 @@ function circle_cmd(obj, n, sq) {
 
 function arrow_cmd(obj, n, sq1, sq2) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.arrow = resolve;
+        obj.user1.resolves.arrow = resolve;
     });
     obj["user" + n].arrow("arrow-" + n, "d1", "e8");
     return promise1;
@@ -215,7 +215,7 @@ function arrow_cmd(obj, n, sq1, sq2) {
 
 function uncircle_cmd(obj, n, sq) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.uncircle = resolve;
+        obj.user1.resolves.uncircle = resolve;
     });
     obj["user" + n].uncircle("uncircle-" + n, "e5");
     return promise1;
@@ -223,7 +223,7 @@ function uncircle_cmd(obj, n, sq) {
 
 function unarrow_cmd(obj, n, sq1, sq2) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.unarrow = resolve;
+        obj.user1.resolves.unarrow = resolve;
     });
     obj["user" + n].unarrow("arrow-" + n, "d1", "e8");
     return promise1;
@@ -310,8 +310,8 @@ describe("Examining games", function () {
     it("returns an error correctly if unexamine fails", function () {
         return login({}, 1, process.env.USERNAME, process.env.PASSWORD)
             .then((obj) => {
-                const promise = new Promise((resolve, reject) => obj["user1"].resolves.error = resolve);
-                obj["user1"].unexamine("unexamine");
+                const promise = new Promise((resolve, reject) => obj.user1.resolves.error = resolve);
+                obj.user1.unexamine("unexamine");
                 return promise;
             })
             .then((obj) => logout(obj, 1));

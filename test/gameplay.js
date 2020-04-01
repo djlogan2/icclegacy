@@ -7,10 +7,10 @@ function check_offers(n, data) {
 
 function request_takeback(obj, n, nm) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.offers = resolve;
+        obj.user1.resolves.offers = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.offers = resolve;
+        obj.user2.resolves.offers = resolve;
     });
     obj["user" + n].takeback("request-takeback", nm);
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -18,10 +18,10 @@ function request_takeback(obj, n, nm) {
 
 function request_adjourn(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-            obj["user1"].resolves.offers = resolve;
+            obj.user1.resolves.offers = resolve;
         });
     const promise2 = new Promise((resolve, reject) => {
-            obj["user2"].resolves.offers = resolve;
+            obj.user2.resolves.offers = resolve;
         });
     obj["user" + n].adjourn("request-adjourn");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -29,10 +29,10 @@ function request_adjourn(obj, n) {
 
 function request_draw(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.offers = resolve;
+        obj.user1.resolves.offers = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.offers = resolve;
+        obj.user2.resolves.offers = resolve;
     });
     obj["user" + n].draw("request-draw");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -40,10 +40,10 @@ function request_draw(obj, n) {
 
 function decline(obj, n, what) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.offers = resolve;
+        obj.user1.resolves.offers = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.offers = resolve;
+        obj.user2.resolves.offers = resolve;
     });
     obj["user" + n].decline("decline-" + what, what);
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -51,10 +51,10 @@ function decline(obj, n, what) {
 
 function request_abort(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.offers = resolve;
+        obj.user1.resolves.offers = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.offers = resolve;
+        obj.user2.resolves.offers = resolve;
     });
     obj["user" + n].abort("request-abort");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -62,10 +62,10 @@ function request_abort(obj, n) {
 
 function accept_adjourn(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_result = resolve;
+        obj.user1.resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_result = resolve;
+        obj.user2.resolves.game_result = resolve;
     });
     obj["user" + n].adjourn("accept-adjourn");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -74,10 +74,10 @@ function accept_adjourn(obj, n) {
 function accept_takeback(obj, n) {
 /*
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_result = resolve;
+        obj.user1.resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_result = resolve;
+        obj.user2.resolves.game_result = resolve;
     });
 */
     obj["user" + n].takeback("accept-takeback");
@@ -87,10 +87,10 @@ function accept_takeback(obj, n) {
 
 function accept_abort(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_result = resolve;
+        obj.user1.resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_result = resolve;
+        obj.user2.resolves.game_result = resolve;
     });
     obj["user" + n].abort("accept-abort");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -98,10 +98,10 @@ function accept_abort(obj, n) {
 
 function accept_draw(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_result = resolve;
+        obj.user1.resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_result = resolve;
+        obj.user2.resolves.game_result = resolve;
     });
     obj["user" + n].draw("accept-draw");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -113,10 +113,10 @@ function check_move(n, data) {
 
 function make_move(obj, n, move) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.move = resolve;
+        obj.user1.resolves.move = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.move = resolve;
+        obj.user2.resolves.move = resolve;
     });
     obj["user" + n].move("move-" + move, move);
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -148,10 +148,10 @@ function check_game_start(n, data) {
 function accept_match(obj, n) {
     const username = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_start = resolve;
+        obj.user1.resolves.game_start = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_start = resolve;
+        obj.user2.resolves.game_start = resolve;
     });
     obj["user" + n].accept("accept-" + n + "-" + username, username);
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -163,10 +163,10 @@ function check_result(n, data) {
 
 function resign(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.game_result = resolve;
+        obj.user1.resolves.game_result = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.game_result = resolve;
+        obj.user2.resolves.game_result = resolve;
     });
     obj["user" + n].resign("resigning");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -175,10 +175,10 @@ function resign(obj, n) {
 function issue_match(obj, n) {
     const username = n === 1 ? process.env.USERNAME2 : process.env.USERNAME;
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.match = resolve;
+        obj.user1.resolves.match = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.match = resolve;
+        obj.user2.resolves.match = resolve;
     });
     obj["user" + n].match("match-" + n + "-" + username, username, 15, 0, null, null, false, 0, "white");
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
@@ -186,10 +186,10 @@ function issue_match(obj, n) {
 
 function resume_game(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
-        obj["user1"].resolves.match = resolve;
+        obj.user1.resolves.match = resolve;
     });
     const promise2 = new Promise((resolve, reject) => {
-        obj["user2"].resolves.match = resolve;
+        obj.user2.resolves.match = resolve;
     });
     obj["user" + n].resume("resume-" + n);
     return Promise.all([promise1, promise2]).then(() => Promise.resolve(obj));
