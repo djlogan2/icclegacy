@@ -1,11 +1,6 @@
 const chai = require('chai');
 const Legacy = require('icclegacy').LegacyICC;
 
-function log(n, data) {
-    console.log("--- user" + n + " ---");
-    console.log(data);
-}
-
 function unexamine(obj, n) {
     const promise1 = new Promise((resolve, reject) => {
         obj.user1.resolves.players = resolve;
