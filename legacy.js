@@ -1097,6 +1097,10 @@ const LegacyICC = function (options) {
     write(message_identifier, "libdelete %" + slot);
   } //boardinfo <type> <square-a> <square-b> [<color>]
 
+  function autologout(message_identifier, true_or_false) {
+    write(message_identifier, "set noautologout " + true_or_false ? "1" : "0");
+  }
+
   function boardinfo(message_identifier, type, square_a, square_b, color) {
     write(
       message_identifier,
@@ -1252,6 +1256,9 @@ const LegacyICC = function (options) {
     },
     libdelete: function (message_identifier, slot) {
       libdelete(message_identifier, slot);
+    },
+    autologout: function (message_identifier, true_or_false) {
+      autologout(message_identifier, true_or_false);
     },
     libkeepexam: function (
       message_identifier,
