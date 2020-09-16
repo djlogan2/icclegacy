@@ -21,7 +21,8 @@ const PACKET_FUNCTIONS = {
   ],
   offers_in_my_game: [L2.OFFERS_IN_MY_GAME],
   players_in_my_game: [L2.PLAYERS_IN_MY_GAME],
-  my_game_ended: [L2.EXAMINED_GAME_IS_GONE, L2.MY_GAME_ENDED],
+  examined_game_is_gone: [L2.EXAMINED_GAME_IS_GONE],
+  my_game_ended: [L2.MY_GAME_ENDED],
   backward: [L2.BACKWARD],
   circle: [L2.CIRCLE],
   uncircle: [L2.UNCIRCLE],
@@ -527,8 +528,15 @@ const LegacyICC = function (options) {
             });
           }
           break;
-        case L2.MY_GAME_ENDED:
         case L2.EXAMINED_GAME_IS_GONE:
+          if (functions.examined_game_is_gone) {
+            functions.examined_game_is_gone({
+              message_identifier: p.l1messageidentifier,
+              gamenumber: parseInt(p2[0]),
+            });
+          }
+          break;
+        case L2.MY_GAME_ENDED:
           if (functions.my_game_ended) {
             functions.my_game_ended({
               message_identifier: p.l1messageidentifier,
@@ -1097,8 +1105,11 @@ const LegacyICC = function (options) {
     write(message_identifier, "libdelete %" + slot);
   } //boardinfo <type> <square-a> <square-b> [<color>]
 
-  function autologout(message_identifier, true_or_false) {
-    write(message_identifier, "set noautologout " + true_or_false ? "1" : "0");
+  function noautologout(message_identifier, true_or_false) {
+    write(
+      message_identifier,
+      "set noautologout " + (true_or_false ? "1" : "0")
+    );
   }
 
   function boardinfo(message_identifier, type, square_a, square_b, color) {
@@ -1257,8 +1268,8 @@ const LegacyICC = function (options) {
     libdelete: function (message_identifier, slot) {
       libdelete(message_identifier, slot);
     },
-    autologout: function (message_identifier, true_or_false) {
-      autologout(message_identifier, true_or_false);
+    noautologout: function (message_identifier, true_or_false) {
+      noautologout(message_identifier, true_or_false);
     },
     libkeepexam: function (
       message_identifier,
