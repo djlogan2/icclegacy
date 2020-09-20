@@ -33,7 +33,7 @@ const PACKET_FUNCTIONS = {
   player_left: [],
   game_started: [L2.GAME_STARTED],
   game_result: [L2.GAME_RESULT],
-    personal_tell: [L2.PERSONAL_TELL_ECHO, L2.PERSONAL_TELL, L2.PERSONAL_QTELL]
+  personal_tell: [L2.PERSONAL_TELL_ECHO, L2.PERSONAL_TELL, L2.PERSONAL_QTELL],
 };
 
 const sorted_ratings = [
@@ -693,30 +693,30 @@ const LegacyICC = function (options) {
             });
           }
           break;
-          case L2.PERSONAL_TELL_ECHO:
-              if(functions.personal_tell) {
-                  functions.personal_tell({
-                      //(receivername type ^Y{string^Y})
-                      message_identifier: p.l1messageidentifier,
-                      receiver: p2[0],
-                      type: p2[1],
-                      text: p2[2]
-                  });
-              }
-              break;
-          //TODO: wire up here
-          case L2.PERSONAL_TELL:
-              if(functions.personal_tell) {
-                  functions.personal_tell({
-                      //playername titles ^Y{tell string^Y} type
-                      message_identifier: p.l1messageidentifier,
-                      sender: p2[0],
-                      titles: p2[1].split(" "),
-                      text: p2[2],
-                      type: p2[3]
-                  });
-              }
-              break;
+        case L2.PERSONAL_TELL_ECHO:
+          if (functions.personal_tell) {
+            functions.personal_tell({
+              //(receivername type ^Y{string^Y})
+              message_identifier: p.l1messageidentifier,
+              receiver: p2[0],
+              type: p2[1],
+              text: p2[2],
+            });
+          }
+          break;
+        //TODO: wire up here
+        case L2.PERSONAL_TELL:
+          if (functions.personal_tell) {
+            functions.personal_tell({
+              //playername titles ^Y{tell string^Y} type
+              message_identifier: p.l1messageidentifier,
+              sender: p2[0],
+              titles: p2[1].split(" "),
+              text: p2[2],
+              type: p2[3],
+            });
+          }
+          break;
         case L2.SEEK_REMOVED:
           if (functions.seek_removed)
             functions.seek_removed({
@@ -1082,13 +1082,13 @@ const LegacyICC = function (options) {
     write(message_identifier, "resume");
   }
 
-    function personal_tell(message_identifier, who, what) {
-        write(message_identifier, "xtell " + who + " " + what);
-    }
+  function personal_tell(message_identifier, who, what) {
+    write(message_identifier, "xtell " + who + " " + what);
+  }
 
-    function draw(message_identifier) {
-        write(message_identifier, "draw");
-    }
+  function draw(message_identifier) {
+    write(message_identifier, "draw");
+  }
   function draw(message_identifier) {
     write(message_identifier, "draw");
   }
@@ -1317,13 +1317,12 @@ const LegacyICC = function (options) {
       socket_data(data);
     },
 
-        active_level2: function () {
-            return level2values.slice(0);
-        },
-        personal_tell: function (message_identifier, who, what) {
-            personal_tell(message_identifier, who, what);
-        }
-    }
+    active_level2: function () {
+      return level2values.slice(0);
+    },
+    personal_tell: function (message_identifier, who, what) {
+      personal_tell(message_identifier, who, what);
+    },
     active_level2: function () {
       return level2values.slice(0);
     },
