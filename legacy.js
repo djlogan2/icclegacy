@@ -22,7 +22,8 @@ const PACKET_FUNCTIONS = {
     "unarrow": [L2.UNARROW],
     "boardinfo": [L2.BOARDINFO],
     "player_arrived": [],
-    "player_left": []
+    "player_left": [],
+    "personal_tell": [L2.PERSONAL_TELL_ECHO, L2.PERSONAL_TELL, L2.PERSONAL_QTELL]
 };
 
 const sorted_ratings = [L2.BULLET, L2.BLITZ, L2.STANDARD, L2.WILD, L2.BUGHOUSE, L2.LOSERS, L2.CRAZYHOUSE, L2.FIVEMINUTE, L2.ONEMINUTE, L2.CORRESPONDENCE_RATING, L2.FIFTEENMINUTE, L2.THREEMINUTE, L2.FORTYFIVEMINUTE, L2.CHESS960];
@@ -617,6 +618,31 @@ const LegacyICC = function (options) {
                             fancy_time_control: p2[15]
                         });
                     break;
+                    //TODO: wire up here
+                case L2.PERSONAL_TELL_ECHO:
+                    if(functions.personal_tell) {
+                        functions.personal_tell({
+                            //(receivername type ^Y{string^Y})
+                            message_identifier: p.l1messageidentifier,
+                            receiver: p2[0],
+                            type: p2[1],
+                            text: p2[2]
+                        });
+                    }
+                    break;
+                    //TODO: wire up here
+                case L2.PERSONAL_TELL:
+                    if(functions.personal_tell) {
+                        functions.personal_tell({
+                            //playername titles ^Y{tell string^Y} type
+                            message_identifier: p.l1messageidentifier,
+                            sender: p2[0],
+                            titles: p2[1].split(" "),
+                            text: p2[2],
+                            type: p2[3]
+                        });
+                    }
+                    break;
                 case L2.WHO_AM_I:
                     my_username = p2[0];
                     write(null, "set style 13");
@@ -899,6 +925,10 @@ const LegacyICC = function (options) {
         write(message_identifier, "resume");
     }
 
+    function personal_tell(message_identifier, who, what) {
+        write(message_identifier, "xtell " + who + " " + what);
+    }
+
     function draw(message_identifier) {
         write(message_identifier, "draw");
     }
@@ -1064,6 +1094,9 @@ const LegacyICC = function (options) {
 
         active_level2: function () {
             return level2values.slice(0);
+        },
+        personal_tell: function (message_identifier, who, what) {
+            personal_tell(message_identifier, who, what);
         }
     }
 };
