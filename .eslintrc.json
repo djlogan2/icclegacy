@@ -1,0 +1,20 @@
+{
+  "plugins": ["prettier"],
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "globals": {
+    "BigInt": true
+  },
+  "rules": {
+    "no-console": "warn",
+    "prettier/prettier": "error"
+  }
+}
