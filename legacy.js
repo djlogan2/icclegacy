@@ -1322,10 +1322,7 @@ const LegacyICC = function (options) {
     },
     personal_tell: function (message_identifier, who, what) {
       personal_tell(message_identifier, who, what);
-    },
-    active_level2: function () {
-      return level2values.slice(0);
-    },
+    }
   };
 };
 
