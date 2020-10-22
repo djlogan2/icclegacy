@@ -338,7 +338,7 @@ const LegacyICC = function (options) {
   function colorrequest(v) {
     switch (v) {
       case "-1":
-        return null;
+        return "none";
       case "0":
         return "black";
       case "1":
@@ -1322,7 +1322,7 @@ const LegacyICC = function (options) {
     },
     personal_tell: function (message_identifier, who, what) {
       personal_tell(message_identifier, who, what);
-    }
+    },
   };
 };
 
