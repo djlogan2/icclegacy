@@ -5,6 +5,7 @@ const net = require("net");
 const PACKET_FUNCTIONS = {
   loggedin: [L2.WHO_AM_I],
   login_failed: [L2.LOGIN_FAILED],
+  logged_out: [],
   match: [L2.MATCH, L2.MATCH_ASSESSMENT],
   match_removed: [L2.MATCH_REMOVED],
   seek: [L2.SEEK],
@@ -817,6 +818,11 @@ const LegacyICC = function (options) {
       const cmd = parseInt(hdrstring[0]);
       const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
       switch (cmd) {
+        case CN.S_REALLY_QUIT:
+          if (functions.logged_out) {
+            functions.logged_out();
+          }
+          break;
         case CN.MEXAMINE:
           if (
             p1.length > 1 &&

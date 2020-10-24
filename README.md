@@ -20,6 +20,7 @@ const legacy = new Legacy({
 
     loggedin: (data) => {},        // DG0 - WHO_AM_I
     login_failed: (data) => {},    // DG69 - LOGIN_FAILED
+    logged_out: () => {},          // SCN19 - SCN_REALLY_QUIT
 
     match: (data) => {},           // DG29 - MATCH
     match_removed: (data) => {},   // DG30 - MATCH_REMOVED
