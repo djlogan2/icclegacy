@@ -18,18 +18,38 @@ const legacy = new Legacy({
     preprocessor: (packets) => {}, // Function called after preparser and before specific datagram functions
     preparser: (data) => {},       // Function called after receiving new data from ICC socket
 
-    loggedin: (data) => {},        // DG0 - WHO_AM_I
-    login_failed: (data) => {},    // DG69 - LOGIN_FAILED
-    logged_out: () => {},          // SCN19 - SCN_REALLY_QUIT
+    loggedin: (data) => {},
+    login_failed: (data) => {},    
+    logged_out: () => {},          
 
-    match: (data) => {},           // DG29 - MATCH
-    match_removed: (data) => {},   // DG30 - MATCH_REMOVED
+    match: (data) => {},           
+    match_removed: (data) => {},   
 
-    seek: (data) => {},            // DG50 - SEEK
-    seek_removed: (data) => {}.    // DG51 - SEEK_REMOVED
+    seek: (data) => {},            
+    seek_removed: (data) => {},    
 
-    my_game_started: (data) => {}  // DG15 - MY_GAME_STARTED
-    my_game_result: (data) => {}   // DG16 - MY_GAME_RESULT
+    my_game_started: (data) => {},  
+    my_game_result: (data) => {}, 
+    move: (data) => {},
+    offers_in_my_game: (data) => {},
+    players_in_my_game: (data) => {},
+    examined_game_is_gone: (data) => {},
+    my_game_ended: (data) => {},
+
+    player_arrived: (data) => {},
+    player_left: (data) => {},
+
+    game_started: (data) => {},
+    game_result: (data) => {},
+
+    backward: (data) => {},
+    circle: (data) => {},
+    uncircle: (data) => {},
+    arrow: (data) => {},
+    unarrow: (data) => {},
+    boardinfo: (data) => {},
+
+    personal_tell: (data) => {}
 });
 
 legacy.login();
@@ -47,7 +67,28 @@ legacy.resign(message_identifier, who);
 legacy.decline_match(message_identifier, who);
 legacy.adjourn(message_identifier);
 legacy.resume(message_identifier);
-legacy.decline_adjourn(message_identifier);
+legacy.abort(message_identifier);
+legacy.takeback(message_identifier, count);
+legacy.draw(message_identifier);
+
+legacy.observe(message_identifier, what);
+
+legacy.examine(message_identifier, what);
+legacy.forward(message_identifier, count);
+legacy.backward(message_identifier, count);
+legacy.mexamine(message_identifier, who);
+legacy.unexamine(message_identifier);
+legacy.circle(message_identifier, sq);
+legacy.uncircle(message_identifier, sq);
+legacy.arrow(message_identifier, sq1, sq2);
+legacy.unarrow(message_identifier, sq1, sq2);
+legacy.revert(message_identifier);
+
+legacy.boardinfo(message_identifier, type, square_a, square_b, color);
+legacy.libdelete(message_identifier, slot);
+legacy.noautologout(message_identifier, true_or_false);
+legacy.libkeepexam(message_identifier, whitename, blackname, result, slot);
+legacy.personal_tell(message_identifier, who, what);
 
 legacy.active_level2(); // Just returns an array of level 2 datagrams we are receiving
 
