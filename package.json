@@ -1,6 +1,6 @@
 {
   "name": "@chessclub.com/legacy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Telnet connection to legacy ICC servers",
   "main": "legacy.js",
   "filename": "legacy.min.js",
