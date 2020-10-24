@@ -818,7 +818,7 @@ const LegacyICC = function (options) {
       const cmd = parseInt(hdrstring[0]);
       const arbitrary_string = hdrstring.length > 2 ? hdrstring[2] : undefined;
       switch (cmd) {
-        case CN.S_REALLY_QUIT:
+        case CN.S_LOGOUT:
           if (functions.logged_out) {
             functions.logged_out();
           }
