@@ -35,6 +35,7 @@ const legacy = new Legacy({
     players_in_my_game: (data) => {},
     examined_game_is_gone: (data) => {},
     my_game_ended: (data) => {},
+    msec(data) => {},
 
     player_arrived: (data) => {},
     player_left: (data) => {},

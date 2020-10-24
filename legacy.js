@@ -20,6 +20,7 @@ const PACKET_FUNCTIONS = {
     L2.MOVE_CLOCK,
     L2.IS_VARIATION,
   ],
+  msec: [L2.MSEC],
   offers_in_my_game: [L2.OFFERS_IN_MY_GAME],
   players_in_my_game: [L2.PLAYERS_IN_MY_GAME],
   examined_game_is_gone: [L2.EXAMINED_GAME_IS_GONE],
@@ -594,6 +595,19 @@ const LegacyICC = function (options) {
             functions.offers_in_my_game(save_offers[parseInt(p2[0])]);
           }
           break;
+        case L2.MSEC:
+          if (functions.msec) {
+            functions.msec({
+              message_identifier: p.l1messageidentifier,
+              gamenumber: parseInt(p2[0]),
+              color: p2[1],
+              msec: parseInt(p2[2]),
+              running: p2[3] === "1",
+              free_time_to_move: parseInt(p2[4]),
+              min_move_time: parseInt(p2[5]),
+            });
+          }
+          break;
         case L2.SEND_MOVES:
           if (functions.move) {
             functions.move({
@@ -1095,6 +1109,7 @@ const LegacyICC = function (options) {
   function draw(message_identifier) {
     write(message_identifier, "draw");
   }
+
   function draw(message_identifier) {
     write(message_identifier, "draw");
   }
@@ -1173,8 +1188,8 @@ const LegacyICC = function (options) {
   // noinspection JSUnusedGlobalSymbols
   return {
     /*
-            Public API
-         */
+                Public API
+             */
     login: function () {
       login();
     },
