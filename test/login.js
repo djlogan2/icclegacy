@@ -1,6 +1,6 @@
 const chai = require("chai");
 const sinon = require("sinon");
-const Legacy = require("icclegacy").LegacyICC;
+const Legacy = require("../legacy").LegacyICC;
 const net = require("net");
 
 const CONTROL_Y = String.fromCharCode(25);
