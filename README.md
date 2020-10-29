@@ -1,6 +1,15 @@
 # icclegacy
 A library to interact with the legacy ICC server from Node/Javascript
 
+This is a work in progress. I am writing this primarily for my own purposes to add to another ICC related project.
+Thus, there are going to be lots of things that aren't possible right away. Error messaging doesn't work as
+well as it needs to, etc.
+
+Feel free to pull and add to the code if you so desire. I will do my best to let you know if I have to change
+the code to meet my own needs, and of course I will do my best to make sure I can fit within the existing framework
+if you write it.
+
+Here are the hooks and methods written so far:
 ```const Legacy = require('../legacy').LegacyICC;
 
 const legacy = new Legacy({
