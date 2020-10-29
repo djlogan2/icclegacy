@@ -10,9 +10,15 @@ the code to meet my own needs, and of course I will do my best to make sure I ca
 if you write it.
 
 Here are the hooks and methods written so far:
-```const Legacy = require('../legacy').LegacyICC;
+```
 
-const legacy = new Legacy({
+//const Legacy = require('../legacy').LegacyICC;
+//or
+//import legacy from "icclegacy";
+
+//const legacy = new Legacy({
+//or
+//const legacy = new legacy.LegacyICC({
     username: "x",    /* Defaults to a guest login */
     password: "x",    /* Defaults to a guest login */
     host: "x",        /* Defaults, so generally no reason to use */
@@ -104,4 +110,4 @@ legacy.active_level2(); // Just returns an array of level 2 datagrams we are rec
 
 /* ... */
 
-Legacy.logout();
+legacy.logout();
