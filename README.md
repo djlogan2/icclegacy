@@ -111,3 +111,78 @@ legacy.active_level2(); // Just returns an array of level 2 datagrams we are rec
 /* ... */
 
 legacy.logout();
+```
+Here is an example of how we are using it in our Meteor based project today:
+```
+import legacy from "icclegacy";
+//...
+//...
+LegacyUser.login = function(user) {
+  legacy_users[user._id] = new legacy.LegacyICC({
+    username: user.profile.legacy.username,
+    password: decrypt(user.profile.legacy.password),
+    error_function: Meteor.bindEnvironment(error_function),
+    loggedin: Meteor.bindEnvironment(data => loggedin(data, user._id)),
+    logged_out: Meteor.bindEnvironment(data => loggedout(data, user._id)),
+    login_failed: Meteor.bindEnvironment(login_failed),
+    seek: Meteor.bindEnvironment(seek),
+    seek_removed: Meteor.bindEnvironment(seek_removed),
+    preprocessor: Meteor.bindEnvironment(debugpackets),
+    preparser: Meteor.bindEnvironment(debugrawdata),
+    sendpreprocessor: Meteor.bindEnvironment(debugsentcommands),
+    player_arrived: Meteor.bindEnvironment(player_arrived),
+    player_left: Meteor.bindEnvironment(player_left),
+    match: Meteor.bindEnvironment(match),
+    match_removed: Meteor.bindEnvironment(match_removed),
+    my_game_started: Meteor.bindEnvironment(my_game_started),
+    my_game_result: Meteor.bindEnvironment(my_game_result),
+    my_game_ended: Meteor.bindEnvironment(my_game_ended),
+    msec: Meteor.bindEnvironment(msec),
+    move: Meteor.bindEnvironment(move)
+  });
+  this.userId = user._id;
+  legacy_users[user._id].login();
+};
+//
+// A few of our methods just for illustration:
+//
+function seek_removed(data) {
+  //log.debug("seek_removed", data);
+  GameRequests.removeLegacySeek("server", data.index, data.reasoncode);
+}
+
+function debugpackets(data) {
+  //log.debug("PACKETS=", data);
+}
+
+function debugrawdata(databuffer) {
+  //log.debug("RAW=", databuffer);
+}
+
+function debugsentcommands(databuffer) {}
+
+function player_arrived(data) {
+  log.debug("player_arrived", data);
+  LegacyUsersCollection.insert(data);
+}
+
+function player_left(data) {
+  log.debug("player_left", data);
+  LegacyUsersCollection.remove({ player_name: data.player_name });
+}
+
+function match_removed(data) {
+  log.debug("match_removed", data);
+  GameRequests.removeLegacyMatchRequest(
+    data.message_identifier,
+    data.challenger_name,
+    data.receiver_name,
+    data.explanation_string
+  );
+}
+
+```
+In general, the library will return you an object that has every field in format.txt in the same order, typed correctly (ints are ints, booleans are booleans, etc.)
+It uses the level 1 "aribitrary-word" support to send what we call a "message-identifier", which basically means that when you send a command to ICC like ```legacy.accept('acceptgame-123', 'djlogan')```,
+any packets associated with this command will have a message_identifier of ```'acceptgame-123'```. In this example, you should receive a message identifier of ```'acceptgame-123'``` whether the packets are game started packets or error packets.
+This obviously gives you the ability to route packets to the right place based on unique message identifiers of your choosing.
