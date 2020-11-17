@@ -36,6 +36,8 @@ const PACKET_FUNCTIONS = {
   game_started: [L2.GAME_STARTED],
   game_result: [L2.GAME_RESULT],
   personal_tell: [L2.PERSONAL_TELL_ECHO, L2.PERSONAL_TELL, L2.PERSONAL_QTELL],
+  takeback: [L2.TAKEBACK],
+  fen: [L2.FEN],
 };
 
 const sorted_ratings = [
@@ -593,6 +595,23 @@ const LegacyICC = function (options) {
               btakeback: parseInt(p2[8]),
             };
             functions.offers_in_my_game(save_offers[parseInt(p2[0])]);
+          }
+          break;
+        case L2.FEN:
+          if (functions.fen) {
+            functions.fen({
+              gamenumber: parseInt(p2[0]),
+              fenstring: p2[1],
+            });
+          }
+          break;
+        case L2.TAKEBACK:
+          if (functions.takeback) {
+            functions.takeback({
+              message_identifier: p.l1messageidentifier,
+              gamenumber: parseInt(p2[0]),
+              takebackcount: parseInt(p2[1]),
+            });
           }
           break;
         case L2.MSEC:
